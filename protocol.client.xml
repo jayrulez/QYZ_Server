@@ -1,0 +1,31 @@
+<application name="lx" shareHome="../../share" pvids="">
+
+	<!--
+	引入协议和生成协议。
+	协议不在这个文件定义。
+	-->
+	<import file="protocol.gsd.xml"/>
+	<state name="Auth" >
+		<protocol ref="gnet.Challenge"/>
+		<protocol ref="gnet.Response"/>
+		<protocol ref="gnet.KeepAlive"/>
+		<protocol ref="gnet.KeyExchange"/>
+		<protocol ref="gnet.OnlineAnnounce"/>
+		<protocol ref="gnet.DispatchByUserid"/>
+		<protocol ref="gnet.ErrorInfo"/>
+		<protocol ref="gnet.RequireLoginActivationCode"/>
+		<protocol ref="gnet.InputLoginActivationCode"/>
+	</state>
+
+	<state name="Game">
+		<provider ref="gs"/>
+	</state>
+
+	<service name="client">
+		<manager name="LinkClient" type="client" initstate="Auth" port="10000">
+			<state ref="Auth"/>
+			<state ref="Game"/>
+			<state ref="MapProvider"/>
+		</manager>
+	</service>
+</application>

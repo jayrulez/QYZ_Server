@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Coder>
+	<Protocol class="gnet.AGetPayReturn" maxsize="1000"/>
+	<Protocol class="gnet.AGetPayReturnInfo" maxsize="100000"/>
+	<Protocol class="gnet.AGetRoleInfo" maxsize="1000"/>
+	<Protocol class="gnet.AnnounceServerInfo" maxsize="256"/>
+	<Rpc class="gnet.AuAnyLogin" maxsize="4096"/>
+	<Protocol class="gnet.AuanyToGs" maxsize="100000"/>
+	<Protocol class="gnet.ConfirmUseActivationCode" maxsize="128"/>
+	<Protocol class="gnet.GGetPayReturn" maxsize="1000"/>
+	<Protocol class="gnet.GGetPayReturnInfo" maxsize="1000"/>
+	<Protocol class="gnet.GGetRoleInfo" maxsize="1000"/>
+	<Protocol class="gnet.GsToAuany" maxsize="100000"/>
+	<Protocol class="gnet.KeepAlive" maxsize="16"/>
+	<Protocol class="gnet.NotifyOrderInfo" maxsize="65536"/>
+	<Protocol class="gnet.NotifyOrderInfoAck" maxsize="2048"/>
+	<Protocol class="gnet.NotifyUseActivationCode" maxsize="128"/>
+	<Protocol class="gnet.UseActivationCode" maxsize="128"/>
+	<Rpc class="gnet.VerifyLoginActivationCode" maxsize="4096"/>
+</Coder>

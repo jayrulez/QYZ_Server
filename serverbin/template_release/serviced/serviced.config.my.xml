@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gsd 
+	debug="false"
+
+	serverid="SERVICED_GLOBAL_ID"
+	
+	trace.level="INFO"
+	trace.protocol="false"
+
+	xio.xml="serviced.xio.my.xml"
+	
+	config.dir="config"
+	config.encoding="utf8"
+	
+	rmi.host="127.0.0.1"
+	rmi.port="30200"
+	
+	gm.telnetport="30201"
+    >
+</gsd>

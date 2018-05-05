@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="gbk"?>
+
+<xdb xgenOutput="beans" trace="info" traceTo=":file"
+	procPoolSize="64"  corePoolSize="10" schedPoolSize="5" dbhome="xdb" logpages="4096"
+	backupDir="xbackup" checkpointPeriod="60000" backupIncPeriod="1800000" backupFullPeriod="3600000"
+	angelPeriod="1000">
+
+	<!-- 公共数据结构 为了嵌套使用-->
+	<xbean name="IntList">
+		<variable id="1" name="val" type="list" value="int" />
+	</xbean>
+
+	<xbean name="LongList">
+		<variable id="1" name="val" type="list" value="long" />
+	</xbean>
+
+	<xbean name="IntSet">
+		<variable id="1" name="val" type="set" value="int" />
+	</xbean>
+
+	<xbean name="LongSet">
+		<variable id="1" name="val" type="set" value="long" />
+	</xbean>
+	<!-- 公共数据结构 -->
+
+	<!-- 账号数据 -->
+	<xbean name="User">
+		<variable id="1" name="roleids" type="list" value="long" />
+		<variable id="2" name="lastloginrole" type="long" />
+		<variable id="3" name="deletedroles" type="int" />
+		<variable id="4" name="deleteinfo" type="map" key="long" value="long" />
+	</xbean>
+
+	<table name="users" key="long" value="User" lock="userlock" />
+
+	<xbean name="OnlineUser">
+		<variable id="1" name="username" type="string" />
+		<variable id="2" name="plattype" type="int" />
+		<variable id="3" name="deviceid" type="string" />
+		<variable id="4" name="os" type="string" />
+		<variable id="5" name="peer" type="string" />
+		<variable id="6" name="logintime" type="long" />
+		<variable id="7" name="platform" type="string"/>
+	</xbean>
+
+	<table name="onlineusers" key="long" value="OnlineUser" persistence="MEMORY" lock="userlock" cacheCapacity="20000" />
+    
+    <xbean name="DeletedRole">
+        <variable id="1" name="roleid" type="long" />
+        <variable id="2" name="username" type="string" />
+        <variable id="3" name="newusername" type="string" />
+        <variable id="4" name="deletetime" type="long" />
+    </xbean>
+    
+    <xbean name="UserDeletedRole">
+        <variable id="1" name="roles" type="list" value="DeletedRole" />
+    </xbean>
+    
+    <table name="userdeletedroles" key="long" value="UserDeletedRole" lock="userlock" />
+
+	<!-- 角色内存数据 -->
+	<xbean name="RoleMemInfo">
+		<variable id="1" name="herogroupmeminfos" type="map" key="int" value="HeroesGroupMemInfo" comment="青云英雄录内存数据"/>groupid->HeroesGroupMemInfo
+	</xbean>
+	<table name="rolememinfos" key="long" value="RoleMemInfo" lock="rolelock" persistence="MEMORY" cacheCapacity="20000" />
+
+	<!-- 角色基础数据 -->
+	<xbean name="RoleInfo">
+		<variable id="1" name="userid" type="long" />
+		<variable id="4" name="profession" type="int" />
+		<variable id="19" name="createtime" type="long" />
+		<variable id="34" name="serverid" type="int"/>
+		
+		<variable id="5" name="lastlogintime" type="long" />
+		<variable id="8" name="totalonlinetime" type="long" />
+        <variable id="41" name="lastlvluptotalonlinetime" type="long"/>
+		<variable id="25" name="lastlogouttime" type="long" comment="用来判断是否0点在线的问题"/>
+		<variable id="20" name="logindaycount" type="int" comment="总的登录天数"/>		
+		<variable id="42" name="lastaddlogindaytime" type="long"/>
+		<variable id="21" name="continuesloginday" type="int" comment="连续登录天数"/>
+		<variable id="22" name="totaldayonlinetime" type="long" comment="每天在线时长，每天登录的时候重置"/>
+		<variable id="23" name="leftgifttimes" type="int" comment="剩余连续登录奖励领取次数,每天登录的时候重置"/>
+		<variable id="24" name="monthcardlefttimes" type="int" comment="月卡剩余天数"/>
+		<variable id="26" name="buymonthcardtimes" type="int" comment="购买月卡次数"/>
+		<variable id="27" name="buygrowplan" type="int" comment="是否购买过成长计划"/>
+        <variable id="45" name="growonetime" type="int" comment="购买成长计划1的时间，用登录第几天表示"/>
+        <variable id="43" name="buygrowplantwo" type="int" comment="购买成长计划2，苹果测试用"/>
+        <variable id="46" name="growtwotime" type="int" comment="购买成长计划2的时间，用登录第几天表示"/>
+        <variable id="44" name="buygrowplanthree" type="int" comment="购买成长计划3，苹果测试用"/>
+        <variable id="47" name="growthreetime" type="int" comment="购买成长计划3的时间，用登录第几天表示"/>
+		<variable id="2" name="name" type="string" />
+        <variable id="36" name="changenametime" type="int"/>
+
+		<variable id="12" name="level" type="int"/>
+        <variable id="35" name="lastlvluptime" type="long"/>
+		<variable id="14" name="viplevel" type="int"/>
+		<variable id="18" name="vipexp" type="long"/>
+		
+		<variable id="16" name="currencys" type="map" key="int" value="long"/> cfg.currency.CurrencyType -> num
+		<variable id="28" name="gender" type="int"/> cfg.role.GenderType
+		<variable id="29" name="totalcostyuanbao" type="int" comment="累计花费元宝,不算绑定的"/> 
+		<variable id="32" name="lastaddtilitime" type="long"/>上次自动加体力的时间
+        <variable id="37" name="lastworldtalktime" type="long"/>上次世界频道发言时间
+        <variable id="38" name="silentendtime" type="long"/>禁言到期时间
+        <variable id="39" name="leftreporttime" type="int"/>剩余举报次数，每天重置
+        <variable id="40" name="bereportedtime" type="int"/>被举报次数，每次被禁言后就清空一次
+
+	</xbean>
+
+	<table name="rolename2ids" key="string" value="long" />
+	<table name="roleinfos" key="long" value="RoleInfo" lock="rolelock" autoIncrement="true"/>
+	
+	<xbean name="RoleConfigure">
+		<variable id="1" name="datas" type="map" key="string" value="string"/>
+	</xbean>
+	<table name="roleconfigure" key="long" value="RoleConfigure" lock="rolelock"/>
+	
+	<xbean name="TimeRange">
+		<variable id="2" name="opentime" type="long"/>
+		<variable id="3" name="closetime" type="long"/>
+	</xbean>
+	<xbean name="GlobalActivityOpenInfos">
+		<variable id="1" name="infos" type="list" value="TimeRange"/>
+		<variable id="2" name="enable" type="boolean"/>
+	</xbean>
+	<xbean name="GlobalActivity">
+		<variable id="1" name="timestamp" type="long"/>
+	</xbean>
+	
+	<xbean name="GlobalAllActivity">
+		<variable id="1" name="openinfos" type="map" key="int" value="GlobalActivityOpenInfos"/>
+		<variable id="2" name="datas" type="map" key="int" value="GlobalActivity"/>
+	</xbean>
+	
+	<xbean name="RoleActivityStatus">
+		<variable id="1" name="timestamp" type="long"/>
+        <variable id="2" name="status" type="int"/>
+	</xbean>
+    <xbean name="RoleActivityRecord">
+        <variable id="1" name="totalcostyuanbbao" type="long" comment="累计花费元宝奖励"/>
+        <variable id="2" name="killworldboss" type="int" comment="杀死世界boss个数"/>
+        <variable id="3" name="arenawin" type="int" comment="竞技场胜场"/>
+        <variable id="5" name="teamspeedwin" type="int" comment="鸿蒙争霸胜场"/>
+        <variable id="6" name="teamfightwin" type="int" comment="天下会武胜场"/>
+    </xbean>
+	<xbean name="RoleActivityRecordMap">
+		<variable id="1" name="records" type="map" key="long" value="RoleActivityRecord" comment="活动数据"/>key->时间
+	</xbean>
+	<xbean name="RoleAllActivity">
+		<variable id="1" name="status" type="map" key="int" value="RoleActivityStatus" comment="每个活动的状态"/>key-> 具体活动id
+        <variable id="2" name="records" type="map" key="int" value="RoleActivityRecordMap" comment="活动数据"/>key->活动typeid
+	</xbean>
+	
+	<table name="globallactivity" key="int" value="GlobalAllActivity" lock="activitylock"/>
+	<table name="roleallactivity" key="long" value="RoleAllActivity" lock="rolelock"/>
+
+
+	<xbean name="IdGen">
+		<variable id="1" name="itemid" type="long" />
+	</xbean>
+	<table name="idgen" key="long" value="IdGen" lock="rolelock"/>
+
+
+	<xbean name="Forbid">
+        <enum name="LOGIN" value="1"  />
+        <enum name="TALK" value="2"  />
+        
+        <variable id="4" name="items" type="map" key="int" value="ForbidItem"  />
+    </xbean>
+    
+    <xbean name="ForbidItem" >
+        <variable id="1" name="forbidtimeinterval" type="long" />
+        <variable id="2" name="forbidrealsetime" type="long"  />
+        <variable id="3" name="desc" type="string" />
+        <variable id="4" name="notifytouser" type="string" />
+    </xbean>
+    
+    <table name="forbids" key="long" value="Forbid" lock="rolelock" />
+	<xbean name="GroupAttr">
+		<variable id="1" name="attrs" type="map" key="int" value="float"/>
+	</xbean>
+	<xbean name="RoleAttr">	
+		<variable id="3" name="roleid" type="long"/>
+		<variable id="1" name="rolecombatpower" type="int"/>
+		<variable id="4" name="rawattrs" type="list" value="float"/>
+		<variable id="2" name="finalattrs" type="list" value="float"/>
+		<variable id="5" name="groupattrs" type="map" key="string" value="GroupAttr"/>
+		<variable id="6" name="hp" type="int"/>
+		<variable id="7" name="mp" type="int"/>
+		<variable id="8" name="skillcolddowns" type="map" key="int" value="long"/>
+		<variable id="9" name="resethpmp" type="int"/>
+		<variable id="10" name="petcombatpower" type="int"/>
+		<variable id="11" name="totalcombatpower" type="int"/>
+	</xbean>
+	<table name="roleattrs" key="long" value="RoleAttr" lock="rolelock"/>
+    
+	<xbean name="Vector3">
+		<variable id="1" name="x" type="float"/>
+		<variable id="2" name="y" type="float"/>
+		<variable id="3" name="z" type="float"/>
+	</xbean>
+	
+	<xbean name="RoleMapInfo">
+		<variable id="6" name="mapid" type="long"/>
+		<variable id="4" name="position" type="Vector3" />
+		<variable id="5" name="orient" type="Vector3"/>
+		<variable id="7" name="ridestatus" type="int"/>
+	</xbean>
+	
+	<xbean name="RoleMap">
+		<variable id="2" name="pkstates" type="map" key="int" value="int"/> 在各大地图中的pk状态 worldid -> cfg.fight.PKState
+		<variable id="3" name="finishprologue" type="boolean"/>
+		<variable id="4" name="hp" type="int"/>
+		<variable id="5" name="mp" type="int"/>
+		<variable id="9" name="prevs" type="list" value="RoleMapInfo"/>
+		<variable id="10" name="isnew" type="boolean"/>
+	</xbean>
+
+	<table name="rolemaps" key="long" value="RoleMap" lock="rolelock" />
+
+	<xbean name="RandomBonus">
+		<variable id="1" name="bindtype" type="int"/>
+		<variable id="2" name="items" type="map" key="int" value="int"/>
+	</xbean>
+
+	<xbean name="HeroesGroupMemInfo">
+		<variable id="1" name="ectypeid" type="int"/>
+		<variable id="2" name="randomTime" type="int" comment="已经随机的次数"/>
+		<variable id="3" name="bonus" type="list" value="RandomBonus" comment="上次随机但未领取的奖励，领取后则为空"/>
+	</xbean>
+
+	<xbean name="HeroesGroupInfo">
+		<variable id="1" name="refreshtime" type="int" comment="已经进行过的刷新次数"/>
+		<variable id="2" name="ectypeid" type="int" comment="上次随机到的副本id，为0或空则取默认值"/>
+	</xbean>
+
+	<xbean name="ClimbTowerInfo">
+		<variable id="1" name="maxfloorid" type="int"/>
+		<variable id="2" name="costtime" type="int"/>秒数
+	</xbean>
+
+	<xbean name="ChapterInfo">
+		<variable id="1" name="sectionstars" type="list" value="int"/> 对应关卡1,2,,,,
+		<variable id="2" name="obtainrewardindexs" type="list" value="int"/>
+	</xbean>
+	
+	<xbean name="DailyInfo">
+		<variable id="1" name="value" type="int"/>
+	</xbean>
+	
+	<xbean name="TeamFightInfo">
+		<variable id="1" name="lastupdatetime" type="long"/>
+		<variable id="2" name="weekscore" type="int"/>本周积分
+		<variable id="3" name="todaywinnum" type="int"/>本日胜利次数
+		<variable id="4" name="obtaintodaywinreward" type="boolean"/>是否领过今日奖励
+		<variable id="5" name="todayfightnum" type="int"/>本日参加次数
+		<variable id="6" name="obtainscorerewards" type="list" value="int"/>本周已领积分奖励
+	</xbean>
+
+	<xbean name="RoleEctype">
+		<variable id="1" name="climbtowers" type="map" key="int" value="ClimbTowerInfo"/>
+		<variable id="5" name="chapters" type="map" key="int" value="ChapterInfo"/>
+		<variable id="6" name="dailys" type="map" key="int" value="DailyInfo"/> key->ectypetype
+        <variable id="7" name="multistory" type="map" key="int" value="int" comment="多人剧情副本挑战的得星记录"/>ectypeid - star
+		<variable id="10" name="herogroups" type="map" key="int" value="HeroesGroupInfo"/>groupid->HeroesGroupInfo
+		<variable id="11" name="teamfight" type="TeamFightInfo"/>
+
+		<variable id="14" name="matchtype" type="int"/> cfg.ectype.MatchType
+		<variable id="13" name="nextmatchtime" type="long"/>
+        <variable id="15" name="multiectypid" type="int" comment="如果是在匹配多人剧情，需要记一下"/>
+	</xbean>
+	
+	<table name="roleectypes" key="long" value="RoleEctype" lock="rolelock"/>
+
+	<xbean name="RoleChat">
+		<variable id="1" name="chatface" type="set" value="string"/>
+	</xbean>
+	<table name="rolechat" key="long" value="RoleChat" lock="rolelock"/>
+
+
+	<xbean name="DailyEctypeRecord">
+		<variable id="1" name="roleid" type="long"/>
+		<variable id="2" name="value" type="int"/>
+	</xbean>
+	<xbean name="EctypeSingle">
+		<variable id="1" name="dailyectypebestrecords" type="map" key="int" value="DailyEctypeRecord"/> key = ectypeid
+	</xbean>
+	<table name="ectypesingle" key="int" value="EctypeSingle" lock="ectypelock"/>
+	    
+	<!-- 订单 -->
+	<xbean name="AppOrder">
+		<variable id="1" name="roleid" type="long" />
+		<variable id="2" name="productid" type="int" />
+		<variable id="3" name="time" type="long" />
+	</xbean>
+
+	<xbean name="RoleOrderHistroy">
+		<variable id="1" name="succeedorder" type="map" key="long" value="AppOrder"
+			 />
+		<variable id="3" name="timeoutorder" type="map" key="long" value="AppOrder"
+			 />
+	</xbean>
+
+	<table name="roleorderhistorys" key="long" value="RoleOrderHistroy"
+		lock="rolelock"  />
+
+	<table name="processingorders" key="long" value="AppOrder"
+		lock="processingorderlock"/>
+		
+	<xbean name="RolePay">
+        <variable id="10" name="cangetfirstbonus" type="boolean" comment="是否首冲过"/>
+		<variable id="9" name="isfirstpayused" type="boolean" comment="是否领取过首冲奖励" />
+        <variable id="1" name="isentryfirstpay" type="map" key="int" value="boolean" comment="每个充值条目是否首冲过"/>
+		<variable id="7" name="totalpay" type="long"  comment="累计充值，以分为单位，充值时花费人民币，得到元宝和绑定元宝"/>
+		<variable id="3" name="lastrefreshtime" type="long" comment="上次刷新时间"/>
+		<variable id="4" name="dailypaystatus" type="int" comment="每日充值状态，分为未充值，充值没领奖，充值已领奖"/>
+		<variable id="8" name="dailytotalpay" type="long" comment="每日累计充值"/>
+		<variable id="6" name="dailytotalpaystatus" type="int" comment="每日累计充值状态"/>
+        <variable id="11" name="roleallpay" type="long" comment="角色所有充钱的记录，包含月卡和成长计划"/>
+        <variable id="17" name="dailyactivepay" type="int" comment="每日特价购是否使用过"/>
+		
+		<variable id="12" name="hasgotpayreturn" type="boolean" comment="已经得到充值返还"/>
+		<variable id="14" name="totalyunbao" type="long"/>
+		<variable id="15" name="totalbindyuanbao" type="long"/>
+		<variable id="16" name="totalvipexp" type="long"/>
+	</xbean>
+	
+	<table name="rolepays" key="long" value="RolePay" lock="rolelock" />
+
+    <!-- ============聊天=========== -->
+	<!-- ================ 好友模块配置开始 =============== -->
+	<xbean name="RoleFriend">
+		<variable id="1" name="frienddegress" type="int" comment="我与好友的友好度 互送花决定"/> 
+		<variable id="2" name="relation" type="int" comment="我与好友的脉脉关系"/>
+		<variable id="3" name="time" type="long" comment="我与好友的脉脉关系"/>
+	</xbean>
+	<xbean name="IdolAwardClaim">
+		<variable id="1" name="claiminfo" type="set" value="int" comment="领取状况"/>
+	</xbean>
+	
+	<xbean name="RoleRelation">
+		<variable id="1" name="rolelist" type="list" value="long"/>
+	</xbean>
+
+    <xbean name="Enemyinfo">
+        <variable id="1" name="bekillnum" type="int"/>
+        <variable id="2" name="killnum" type="int"/>
+        <variable id="3" name="lastbekilltime" type="long" comment="最后被击杀的时间"/>
+    </xbean>
+	
+	<xbean name="RoleFriendsInfo">
+		<variable id="1"  name="friends" type="map" key="long" value="RoleFriend" comment="好友列表"/>
+		<variable id="2" name="requesting" type="map" key="long" value="long" comment="申请列表"/>
+		<variable id="4" name="blacklist" type="map" key="long" value="long" comment="被屏蔽的"/>
+		<variable id="8" name="charmdegree" type="int" comment="个人的魅力值，根据别人送给我的花决定"/>
+		<variable id="9" name="idolfrienddegree" type="map" key="long" value="int" comment="跟偶像的友好度，key为偶像的id"/>
+		<variable id="10" name="idolawardclaiminfo" type="map" key="long" value="IdolAwardClaim" comment="偶像奖励的领取情况，key为偶像id，value为领取情况"/>
+		<variable id="13" name="enemylist" type="map" key="long" value="Enemyinfo" comment="仇人信息"/>
+		<variable id="14" name="isallowfriendgetmm" type="int" comment="是否允许好友查看脉脉" />
+		<variable id="15" name="isallowstrangergetmm" type="int" comment="是否允许陌生人查看脉脉" />
+		<variable id="16" name="relationinfo" type="map" key="int" value="RoleRelation"  comment="maimai列表,key为脉脉类型" />
+	</xbean>
+	<table name="rolefriendsinfo" key="long" value="RoleFriendsInfo" lock="rolelock" />
+	<xbean name="IdolCharmInfo">
+		<variable id="1" name="charm" type="int"/>
+		<variable id="2" name="guardid" type="long"/>
+		<variable id="4" name="guarddegree" type="int"/>
+		<variable id="5" name="guardtime" type="long"/>
+	</xbean>
+	<table name="idolcharm" key="long" value="IdolCharmInfo" lock="idollock" />
+	
+	
+	<!-- ================ 好友模块配置结束 =============== -->
+	
+	<!-- ================结婚模块配置开始================= -->
+	<xbean name="RoleMarriage">
+		<variable id="1" name="coupleroleid" type="long" comment="对象的roleid，暂时存放在这里，以后可能存在脉脉中"/>
+		<variable id="2" name="curproposeid" type="long" comment="当前正在求婚对象的id"/>
+		<variable id="3" name="startproposetime" type="long" comment="开始求婚的时间,如果一段时间后没有反应，那么可以向别的人求婚"/>
+		<variable id="4" name="wishfriendlist" type="list" value="long" comment="求婚后发送祝福的好友"/>
+	</xbean>
+	<table name="rolemarriageinfo" key="long" value="RoleMarriage" lock="rolelock"/>
+	<!-- ================结婚模块配置结束================= -->
+
+
+	<!-- ================ 背包，物品，装备相关配置开始  ================ -->
+	<xbean name="Item" comment="普通物品">
+		<variable id="1" name="itemid" type="long" comment="物品唯一id"/>
+		<variable id="2" name="modelid" type="int" comment="物品model id"/>
+		<variable id="3" name="count" type="int" comment="物品数量"/>
+		<variable id="4" name="isbind" type="boolean" comment="是否绑定"/>
+		<variable id="5" name="position" type="int" comment="在包裹中的位置"/>
+		<variable id="6" name="expiretime" type="long" comment="过期时间"/>
+	</xbean>
+	<xbean name="RoleItemBag" comment="物品背包">
+		<variable id="1" name="capacity" type="int"  comment="包裹容量 "/>
+		<variable id="2" name="items" type="map" key="int" value="Item" comment="背包里的物品列表，key为格子index"/>
+	</xbean>
+	<table name="roleitembag" key="long" value="RoleItemBag" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+
+	<xbean name="Equip">
+		<variable id="1" name="equipid" type="long" comment="装备id"/>
+		<variable id="2" name="modelid" type="int" comment="model id"/>
+		<variable id="3" name="position" type="int" comment="包裹中的位置"/>
+		<variable id="4" name="expiretime" type="long" comment="过期时间"/>
+		<variable id="5" name="isBind" type="boolean" comment="是否绑定"/>
+		<variable id="7" name="normalequip" type="NormalEquip" comment="普通装备的属性"/>
+		<variable id="8" name="accessory" type="Accessory" comment="饰品类装备的属性"/>
+	</xbean>
+
+	<xbean name="NormalEquip" comment="衣服，帽子，鞋子，武器">
+		<variable id="1" name="anneallevel" type="int" comment="装备强化等级"/>
+		<variable id="2" name="perfuselevel" type="int" comment="装备灌注等级"/>
+		<variable id="3" name="goldcost" type="int" comment="追加消耗的虚拟币"/>
+		<variable id="4" name="annealitemcost" type="int" comment="炼器消耗的物品数量"/>
+		<variable id="5" name="perfuseitemcost" type="int" comment="灌注消耗的物品数量"/>
+	</xbean>
+
+	<xbean name="Accessory" comment="饰品类：戒指，项链，手镯">
+		<variable id="1" name="mainprop" type="list" value="AccessoryProp" comment="主属性,目前是2个"/>
+		<variable id="2" name="extraprop" type="list" value="AccessoryProp" comment="附加属性，目前是5个"/>
+		<variable id="3" name="lastwashrecord" type="AccessoryWashResult" comment="饰品洗练的临时结果,一次有效，成功应用或者取消后删除"/>
+	</xbean>
+
+	<xbean name="AccessoryProp" >
+		<variable id="1" name="key" type="int"  />
+		<variable id="2" name="val" type="float" />
+	</xbean>
+
+	<xbean name="AccessoryWashResult" comment="饰品洗练结果">
+		<variable id="1" name="oldpropindex" type="int" default="-1"  comment="旧的key"/>
+		<variable id="2" name="newprop" type="AccessoryProp"  comment="新属性key"/>
+		<variable id="3" name="needbind" type="boolean"  comment="需要设置成绑定"/>
+	</xbean>
+
+	<xbean name="RoleEquipBag">
+		<variable id="1" name="capacity" type="int"  comment="包裹容量 "/>
+		<variable id="2" name="equipmap" type="map" key="int" value="Equip" comment="装备包裹，key为格子index"/>
+		<variable id="3" name="equiponbodymap" type="map" key="int" value="Equip" comment="装备包裹，key为格子index"/>
+	</xbean>
+	<table name="roleequipbag" key="long" value="RoleEquipBag" lock="rolelock"  cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+
+	<xbean name="AdvancedEquip">
+		<!--<variable id="1" name="level" type="int" comment="神器套装等级" />-->
+		<!--<variable id="2" name="level" type="int" comment="神器套装等级" />-->
+	</xbean>
+
+
+	<xbean name="Fragment">
+		<variable id="1" name="fragmentid" type="long" comment="物品唯一id"/>
+		<variable id="2" name="modelid" type="int" comment="物品model id"/>
+		<variable id="3" name="count" type="int" comment="物品数量"/>
+		<variable id="4" name="isbind" type="boolean" comment="是否绑定"/>
+		<variable id="5" name="position" type="int" comment="在包裹中的位置"/>
+		<variable id="6" name="expiretime" type="long" comment="过期时间"/>
+	</xbean>
+	<xbean name="RoleFragmentBag">
+		<variable id="1" name="capacity" type="int"  comment="包裹容量 "/>
+		<variable id="2" name="items" type="map" key="int" value="Fragment" comment="背包里的碎片列表"/>
+	</xbean>
+	<table name="rolefragmentbag" key="long" value="RoleFragmentBag" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+
+	<xbean name="Talisman">
+		<variable id="1" name="talismanid" type="long"/>
+		<variable id="2" name="modelId" type="int" comment="法宝的策划配置id"/>
+		<variable id="3" name="pos" type= "int" comment="物品在包裹中的位置，从1开始编号"/>
+		<variable id="4" name="isbind" type="boolean" comment="法宝绑定类型"/>
+		<variable id="5" name="expiretime" type="long" comment="过期时间"/>
+		<variable id="6" name="normalexp" type="long" comment="法宝普通经验"/>
+		<variable id="7" name="normallevel" type="int" default="1" comment="法宝普通等级,开始为1"/>
+
+		<variable id="8" name="starexp" type="int" comment="法宝星阶经验"/>
+		<variable id="9" name="starlevel" type="int" default="1" comment="法宝星阶等级,开始为1"/>
+		<variable id="10" name="wuxingtype" type="int" comment="法宝当前的五行属性类型"/>
+		<variable id="11" name="wuxingvalue" type="int" comment="五行属性攻击值"/>
+		<variable id="12" name="awakelevel" type="int" comment="法宝觉醒等级,从0开始"/>
+		<variable id="13" name="skills" type="map" key="int" value="int"/>法宝技能
+	</xbean>
+	<xbean name="RoleTalismanBag">
+		<variable id="1" name="capacity" type="int"   comment="包裹容量"/>
+		<variable id="2" name="talismans" type="map" key="int" value="Talisman" comment="所有法宝,key为包裹编号"/>
+		<variable id="3" name="equipedtalismans" type="map" key="int" value="Talisman" comment="所有法宝,key为包裹编号"/>
+		<variable id="5" name="luckytype" type="int" comment="当前法宝洗练运势，为0时表示没有"/>
+		<variable id="6" name="luckywashtimes" type="int" comment="在当前运势下已经洗练的次数，策划会配置一个上限"/>
+		<variable id="7" name="maxcombatpower" type="int" comment="达到过的最大战斗力"/>
+
+	</xbean>
+	<table name="roletalismanbag" key="long" value="RoleTalismanBag" lock="rolelock"/>
+
+	<!-- ================ 背包，物品，装备相关配结束  ================ -->
+	<!-- ================ 护符相关开始 =================== -->
+
+	<xbean name="AmuletProperty">
+		<variable id="1" name="propindex" type="int" comment="属性id"/>
+		<variable id="2" name="islock" type="int" comment="是否锁定，0为未锁定，1为锁定"/>
+		<variable id="3" name="skillid" type="int" comment="技能id"/>
+		<variable id="4" name="professionid" type="int" comment="职业id"/>
+		<variable id="5" name="addlevel" type="int" comment="技能增值"/>
+	</xbean>
+	<xbean name="AmuletPage">
+		<variable id="1" name="pageindex" type="int" comment="护符页的id"/>
+		<variable id="2" name="propmap" type="map" key="int" value="AmuletProperty" comment="key是属性index，value是护符属性"/>
+		<variable id="3" name="lastwashresult" type="map" key="int" value="AmuletProperty" comment="上次洗练结果"/>
+	</xbean>
+	<xbean name="RoleAmuletInfo">
+		<variable id="1" name="pagemap" type="map" key="int" value="AmuletPage" comment="护符页信息,key为页id，1,2,3"/>
+	</xbean>
+	<table name="amulet" key="long" value="RoleAmuletInfo" lock="rolelock"/>
+	<!-- ================ 护符相关结束 =================== -->
+
+	<!-- ================ 玉佩相关开始 =================== -->
+	<xbean name="Jewelry">
+		<variable id="1" name="id" type="int" comment="宝珠id"/>
+    	<variable id="2" name="level" type="int" comment="宝珠等级"/>
+		<variable id="3" name="exp" type="int" comment="宝珠经验"/>
+	</xbean>
+	
+	<xbean name="RoleJadeInfo">
+		<variable id="1" name="level" type="int" comment="玉佩等级"/>
+    	<variable id="2" name="bonus" type="int" comment="玉佩增加值"/>
+		<variable id="3" name="holenum" type="int" comment="玉佩孔打开的数量"/>
+		<variable id="4" name="jewelry" type="map" key="int" value="Jewelry" comment="装备到玉佩上的宝珠"/>
+    	<variable id="5" name="jewelrybag" type="vector" value="Jewelry" comment="宝珠背包"/>
+		<variable id="6" name="jewelrygetlevel" type="int" comment="猎取师档位"/>
+	</xbean>
+	<table name="jade" key="long" value="RoleJadeInfo" lock="rolelock"/>
+	<!-- ================ 玉佩相关结束 =================== -->
+
+
+	<!-- ================ 伙伴模块相关配置开始  ================= -->
+	<xbean name="Pet" comment="伙伴信息">
+		<variable id="2" name="modelid" type="int"/>
+		<variable id="3" name="activeskinid" type="int"/>
+		<variable id="4" name="skinidlist" type="set" value="int"/>
+		<variable id="5" name="level" type="int" comment="伙伴的级别"/>
+		<variable id="15" name="exp" type="long" comment="伙伴的经验值"/>
+		<variable id="7" name="starlevel" type="int" comment="星阶"/>
+		<variable id="8" name="skills" type="map" key="int" value="int" comment="伙伴的技能信息"/>
+		<variable id="9" name="awakelevel" type="int" comment="觉醒的等级"/>
+		<variable id="10" name="fixedattrs" type="map" key="int" value="float"/> 固定属性,不会被替换,目前只有buff属性添加到里面
+		<variable id="11" name="karmaattrs" type="map" key="int" value="float"/> 缘分属性,会有变化
+		<variable id="12" name="growthattrs" type="map" key="int" value="float"/> 成长属性,会有变化
+		<variable id="13" name="buffids" type="list" value="int"/>
+		<variable id="14" name="lastwashrecord" type="map" key="int" value="float"/>
+		<variable id="16" name="washattrs" type="map" key="int" value="float"/> 洗练属性，不会替换，只累加，但是需要旧值做判断所以单独存
+	</xbean>
+	<xbean name="RolePet" comment="角色的伙伴相关配置信息，包括包裹，已经上阵的伙伴，助阵的伙伴等">
+		<variable id="1" name="petmap" type="map" key="int" value="Pet"/>
+		<variable id="2" name="fightpets" type="list" value="int"/>
+		<variable id="3" name="activepetmodelid" type="int"/>
+		<variable id="4" name="petfragmentmap" type="map" key="int" value="int"/>
+		<variable id="5" name="totalcombatpower" type="int" />
+	</xbean>
+	<table name="rolepet" key="long" value="RolePet" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<!-- ================ 伙伴模块相关配置结束  ================= -->
+
+	<!-- 仓库表 -->
+	<xbean name="RoleEquipDepot">
+		<variable id="1" name="capacity" type="int" comment="包裹容量 "/>
+		<variable id="2" name="equipbag" type="treemap" key="int" value="Equip" comment="装备包裹，key为物品的包裹编号"/>
+	</xbean>
+
+	<xbean name="RoleFragmentDepot">
+		<variable id="1" name="capacity" type="int" comment="包裹容量 "/>
+		<variable id="2" name="fragments" type="map" key="int" value="Fragment" comment="背包里的碎片列表"/>
+	</xbean>
+
+	<xbean name="RoleItemDepot">
+		<variable id="1" name="capacity" type="int" comment="包裹容量 "/>
+		<variable id="2" name="items" type="map" key="int" value="Item" comment="背包里的物品列表，key为包裹编号"/>
+	</xbean>
+
+	<xbean name="RoleTalismanDepot">
+		<variable id="1" name="capacity" type="int"  comment="包裹容量"/>
+		<variable id="2" name="talismans" type="map" key="int" value="Talisman" comment="所有法宝,key为包裹编号"/>
+	</xbean>
+
+	<table name="roleequipdepot" key="long" value="RoleEquipDepot" lock="rolelock"  cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<table name="roleitemdepot" key="long" value="RoleItemDepot" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<table name="rolefragmentdepot" key="long" value="RoleFragmentDepot" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<table name="roletalismandepot" key="long" value="RoleTalismanDepot" lock="rolelock" cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<table name="goldcoindepot" key="long" value="long" lock="rolelock"  cacheCapacity="10000" cachehigh="512" cachelow="256"/>
+	<!-- 仓库表 -->
+
+	<!-- ============= 时装，坐骑功能开始  =============== -->
+	<xbean name="Dress">
+		<variable id="1" name="modelId" type="int"/>
+		<variable id="6" name="expiretime" type="long" comment="过期时间"/> 小于等于0表示永久
+	</xbean>
+	<xbean name="RoleDress">
+		<variable id="1" name="dresses" type="map" key="int" value="Dress" comment="角色的时装信息"/>
+		<variable id="2" name="activedress" type="int" comment="当前激活的时装"/>
+	</xbean>
+	<table name="dress" key="long" value="RoleDress" lock="rolelock"/>
+	
+	<xbean name="Ride">
+		<variable id="1" name="modelId" type="int"/>
+		<variable id="5" name="expiretime" type="long" comment="过期时间"/> 小于等于0表示永久
+	</xbean>
+	<xbean name="RoleRide">
+		<variable id="1" name="rides" type="map" key="int" value="Ride" comment="角色的坐骑信息"/>
+		<variable id="2" name="activeride" type="int" comment="当前激活的坐骑"/>
+	</xbean>
+	<table name="ride" key="long" value="RoleRide" lock="rolelock"/>	
+	<!-- ============= 时装，坐骑功能结束 -->
+	
+	<!-- ================ 排行榜相关开始  ================ -->
+
+	<xbean name="ARankInfo">
+
+	</xbean>
+	<xbean name="RoleRank">
+		<variable id="1" name="ranks" type="map" key="int" value="ARankInfo"/> key -> ranktype
+	</xbean>
+	<table name="rolerank" key="long" value="RoleRank" lock="rolelock"/>
+	
+	<xbean name="RankRecord">
+		<variable id="1" name="value" type="long"/>
+		<variable id="2" name="id" type="long"/>
+	</xbean>
+	<xbean name="ARank">
+		<variable id="1" name="id2rank" type="map" key="long" value="int"/> roleid-rank
+		<variable id="2" name="records" type="map" key="int" value="RankRecord"/>
+		<variable id="3" name="createtime" type="long"/>
+	</xbean>
+	<table name="ranks" key="int" value="ARank" lock="ranklock"/> key->ranktype
+
+	<xbean name="BoardEntry">
+		<variable id="1" name="ranking" type="int" />
+		<variable id="2" name="id" type="long" /> 家族战力榜寸的是家族id,其他是存roleid
+		<variable id="3" name="name" type="string" />
+		<variable id="4" name="val1" type="long" />
+		<variable id="5" name="val2" type="int" />
+		<variable id="6" name="updatetime" type="long" />更新时间，值相同的记录排序时时间早的在前面
+	</xbean>
+
+	<xbean name="BoardInfo">
+		<variable id="1" name="latestboard" type="map" key="int" value="BoardEntry" />
+		<variable id="2" name="rolerank" type="map" key="long" value="int" />
+		<variable id="5" name="lastupdatetime" type="long"/>
+		<variable id="6" name="yesterdayrank" type="map" key="long" value="int" />
+	</xbean>
+	<table name="leaderboards" key="int" value="BoardInfo" lock="ranklock"/>
+
+	<xbean name="BoardRecordEntry">
+		<variable id="1" name="val1" type="long" />
+		<variable id="2" name="val2" type="int" />
+		<variable id="3" name="updatetime" type="long" />更新时间，值相同的记录排序时时间早的在前面
+	</xbean>
+
+	<xbean name="BoardRecord">
+		<variable id="1" name="records" type="map" key="int" value="BoardRecordEntry" />
+	</xbean>
+
+	<table name="leaderboardrecord" key="long" value="BoardRecord" lock="rolelock"/>
+	<!-- ================ 排行榜相关结束  ================ -->
+	
+	<!--== 任务系统 开始 ==!-->
+	
+	<xbean name="TaskHistory">
+		<variable id="3" name="taskid" type="int"/>
+		<variable id="1" name="count" type="int"/>
+		<variable id="2" name="expiretime" type="long"/>
+	</xbean>
+	<xbean name="TaskData">
+		<variable id="2" name="taskid" type="int"/>
+		<variable id="1" name="counter" type="map" key="int" value="int"/>
+	</xbean>
+	
+	<xbean name="FamilyTaskDetail">
+		<variable id="1" name="taskid" type="int" comment="环任务中某环的任务id"/>
+		<variable id="2" name="npcid" type="int" comment="环任务中某环的npcid，同时也是下一环的任务发放npc"/>
+	</xbean>
+	<xbean name="RoleTask">
+		<variable id="6" name="roleid" type="long"/>
+		<variable id="1" name="minhistoryexpiretime" type="long"/>
+		<variable id="2" name="historys" type="map" key="int" value="TaskHistory"/>
+		<variable id="15" name="lastcompletetaskid" type="map" key="int" value="int" comment="记录上一个完成任务的id，包括主线和支线任务"/>
+		<variable id="16" name="acceptbranchtasks" type="int" comment="记录接取的支线任务条数"/>
+		<variable id="17" name="shownpcs" type="set" value="int" comment="要显式的npcid集合"/>
+		<variable id="20" name="hidemines" type="set" value="int" comment="要隐藏的矿物集合"/>
+		<variable id="3" name="tasks" type="map" key="int" value="TaskData"/>
+		<variable id="7" name="variables" type="map" key="int" value="int"/>
+		<variable id="8" name="acceptedfamilytasks" type="vector" value="FamilyTaskDetail" comment="当前接收的环任务概览"/>
+		<variable id="9" name="completednumsinfamtasks" type="int" comment="每组环任务中完成的环数"/>
+		<variable id="13" name="isuseyuanbao" type="int" comment="是否使用了元宝来直接完成环任务，0，否；1，是"/>
+		<variable id="18" name="iscancletask" type="int" comment="是否取消过任务,0，否；1，是"/>
+		<variable id="10" name="dailycompletedfamTasks" type="int" comment="每天完成的环任务组数"/>
+		<variable id="11" name="weekcompletedsmallfamtasks" type="int" comment="每周完成的环任务组数"/>
+		<variable id="14" name="weekspebonus" type="list" value="int" comment="已经领取的周计数任务奖励"/>
+		<variable id="12" name="lastgiveupfamtasktime" type="long" comment="上次放弃家族任务的时间"/>
+		<variable id="19" name="guideBranchTaskID" type="int" comment="主界面上当前显示的支线任务"/>
+        <variable id="23" name="accepttasktime" type="map" key="int" value="long" comment="接取任务时的时间,记日志用"/>
+        <variable id="21" name="familytaskorder" type="map" key="int" value="int" comment="测试环任务用，按顺序取环任务"/>
+        <variable id="22" name="familylasttaskorder" type="map" key="int" value="int" comment="测试环任务用，取最后一环"/>
+	    <variable id="24" name="allcandobranch" type="set" value="int" comment="所有能做的支线任务的第一个任务id"/>
+    </xbean>
+	<table name="roletask" key="long" value="RoleTask" lock="rolelock"/>
+	
+	
+	<!--== 任务系统 结束==-->
+	
+	<xbean name="Bonus">
+		<variable id="0" name="bindtype" type="int"/>
+		<variable id="1" name="currencys" type="map" key="int" value="int"/> 货币(exp,vipexp也算货币)
+		<variable id="2" name="items" type="map" key="int" value="int"/> 物品，包含装备,碎片和消耗性物品
+		<variable id="3" name="equips" type="list" value="Equip"/>
+	</xbean>
+	
+	<!--== 邮箱系统 开始==-->
+    <xbean name="Mail">
+		<variable id="7" name="mailid" type="int"/>cfg.mail.Mail
+        <variable id="2" name="sendtime" type="long" />
+        <variable id="0" name="title" type="string" />
+        <variable id="1" name="content" type="string" />
+		<variable id="8" name="read" type="int" />
+		<variable id="9" name="accessory" type="Bonus"/>
+		<variable id="10" name="params" type="list" value="string"/>
+    </xbean>
+
+    <xbean name="MailBox">
+        <variable id="0" name="nextmailid" type="int"/>
+        <variable id="1" name="mails" type="map" key="int" value="Mail" />
+		<variable id="2" name="maxsysmail" type="long"/> 已经领取的最大的系统邮件的id
+	</xbean>
+
+    <table name="mailbox" key="long" value="MailBox" lock="rolelock"/>
+
+	<xbean name="SystemMail">
+		<variable id="1" name="id" type="long"/>
+		<variable id="2" name="mailid" type="int"/>cfg.mail.Mail
+		<variable id="3" name="sendtime" type="long" />
+		<variable id="4" name="title" type="string" />
+		<variable id="5" name="content" type="string" />
+		<variable id="6" name="bonus" type="Bonus"/>
+		<variable id="7" name="params" type="list" value="string"/>
+		<variable id="8" name="records" type="set" value="long" /> 已领奖玩家id
+	</xbean>
+
+    <table name="systemmailbox" key="long" value="SystemMail" lock="systemmail"/>
+    <!--== 邮箱系统 结束==-->
+	
+	<!--== 商城系统及福利系统 开始==-->
+	<xbean name="RoleWelfareInfo">
+		<variable id="14" name="lastsigntime" type="long" comment="上次签到的时间"/>
+		<variable id="1" name="totalsigncount" type="int" comment="总的签到天数"/>
+		<variable id="2" name="continuesigncount" type="int" comment="连续签到天数,每月开始都重置"/>
+		<variable id="3" name="signdate" type="list" value="int" comment="当月已签到的日期,每30天清空一次"/>
+        <variable id="4" name="hastodaysign" type="int" comment="记录今天是否已经签到"/>
+		<!--<variable id="4" name="addsigncount" type="int" comment="已补签次数，有次数限制，每月清空"/>-->
+		<variable id="5" name="receivedmonthcarddate" type="vector" value="int" comment="已领取每月卡专属礼包的日期,30天清空一次"/>
+		<variable id="6" name="receivedonlinegift" type="list" value="int" comment="已经领取的每日在线时长奖励，每天0点清空"/>
+		<variable id="7" name="receivednewgift" type="list" value="int" comment="已经领取的新手礼包id"/>
+		<variable id="19" name="receiveconlogingift" type="list" value="int" comment="已经领取的连续登陆礼包"/>
+        <variable id="8" name="wishtimes" type="int" comment="每天已许愿次数,上限为5次,其中免费许愿一次，vip购买宝碟可额外许愿，每天0点清空"/>
+		<variable id="9" name="lastwishtime" type="long" comment="上次许愿时间"/>
+		<variable id="16" name="lastwishpetid" type="long" comment="上次许愿的伙伴"/>
+		<variable id="10" name="receivedgrowplangift" type="list" value="int" comment="已领取的成长计划礼包"/>
+		<variable id="15" name="receivedpaycharge" type="list" value="int" comment="已领取的充值和消费礼包"/>
+		<variable id="17" name="iseatlunch" type="int" comment="是否领取午餐；0，否；1，是"/>
+        <variable id="18" name="iseatdinner" type="int" comment="是否领取晚餐"/>
+        <variable id="20" name="threegrowplan" type="list" value="int" comment="领取的成长计划礼包，第一档"/>
+        <variable id="21" name="fivegrowplan" type="list" value="int"/>
+        <variable id="22" name="sevengrowplan" type="list" value="int"/>
+        <!--
+		<variable id="11" name="receiveddailycharge" type="list" value="int" comment="已领取的每日累计充值礼包"/>
+		<variable id="12" name="receivedtotalcharge" type="list" value="int" comment="已领取的累计充值礼包"/>
+		<variable id="13" name="receivedtotalcost" type="list" value="int" comment="已领取的累计花费礼包"/>
+		-->
+	</xbean>
+	
+	<table name="rolewelfareinfo" key="long" value="RoleWelfareInfo" lock="rolelock"/>
+	
+	<!--== 商城系统及福利系统 结束==-->
+	<!-- 每日活跃与小助手系统 开始 -->
+	<xbean name="DailyActive">
+		<variable id="1" name="activetimes" type="map" key="int" value="int" comment="各种活动完成的次数"/>
+		<variable id="2" name="receivedbonus" type="list" value="int" comment="已领取的奖励类型"/>
+		<variable id="3" name="activescores" type="int" comment="完成活动得到的总积分"/> 
+		<variable id="4" name="undoactive" type="map" key="int" value="int" comment="每种活动当天未完成的次数"/>
+        <variable id="5" name="eventdonetimes" type="map" key="int" value="int" comment="每种活动当天完成总次数，找回用"/>
+	    <variable id="6" name="lastactivelvl" type="int" comment="昨日最后活跃的等级，找回用"/>
+    </xbean>
+	<table name="dailyactives" key="long" value="DailyActive" lock="rolelock"/>
+	<!-- 每日活跃与小组手系统 结束 -->
+	
+	<!-- 抽卡系统开始 -->
+    <xbean name="PickCardInfo">
+        <variable id="1" name="lastfreehuoban" type="long" comment="上次伙伴虚拟币免费单抽时间"/>
+        <variable id="2" name="huobanhighyuanbao" type="int" comment="伙伴高额元宝抽卡次数"/>
+        <!--<variable id="3" name="huobanhighfree" type="int" comment="伙伴高额元宝免费抽"/>-->
+        <variable id="4" name="huobanlowyuanbao" type="int" comment="伙伴低额元宝抽卡次数"/>
+        <!--<variable id="5" name="huobanlowfree" type="int" comment="伙伴低额元宝免费抽"/>-->
+        <variable id="6" name="fabaoyuanbao" type="int" comment="法宝元宝抽卡次数"/>
+        <variable id="7" name="fabaofree" type="int" comment="法宝元宝免费次数"/>
+        <variable id="8" name="fabaoxunibi" type="int" comment="法宝虚拟币抽卡次数，免费次数也统计在内"/>
+    </xbean>
+    <table name="pickcardinfos" key="long" value="PickCardInfo" lock="rolelock"/>
+	<!-- 抽卡系统结束 -->
+	
+	<!--== 限购系统 开始==-->
+	
+	<xbean name="Limit">
+		<variable id="0" name="id" type="long"/>
+		<variable id="1" name="typenums" type="map" key="int" value="int"/>limittype -> num 每种限制类型相应的已达到的次数
+		<variable id="2" name="lastbuytime" type="int"/>
+	</xbean>
+	<xbean name="CoolDown">
+		<variable id="1" name="id" type="long"/>
+		<variable id="2" name="expiretime" type="long"/>
+	</xbean>
+
+	<xbean name="RoleLimit">
+		<variable id="1" name="limits" type="map" key="long" value="Limit"/> key->(moduleid, eventid)
+		<variable id="2" name="cooldowns" type="map" key="long" value="CoolDown"/> key->(moduleid, eventid)	
+	</xbean>
+	<table name="rolelimit" key="long" value="RoleLimit" lock="rolelock"/>
+	<!--== 限购系统 结束==-->
+	
+	
+	<xbean name="DailyArena">
+		<variable id="1" name="challengesuccnum" type="int"/>
+		<variable id="2" name="obtainrewards" type="list" value="int"/>
+	</xbean>
+	<xbean name="DailyMonsterExp">
+		<variable id="2" name="todaytotaladdmonsterexp" type="long"/>
+	</xbean>
+	<xbean name="DailyResetData">
+		<variable id="1" name="lastupdatedailytime" type="long"/>
+		<variable id="2" name="arena" type="DailyArena"/>
+		<variable id="3" name="monsterexp" type="DailyMonsterExp"/>
+		<variable id="4" name="killexpmonsters" type="int"/> 击杀经验怪的数量
+        <variable id="5" name="recexpmonbonus" type="list" value="int"/>已经领取的击杀经验怪奖励
+		<!-- 添加新的每日重置数据时记得在 FLimit.clearExpireDailyData中添加发送重置信息的协议 -->
+	</xbean>
+	<table name="roledailyresetdata" key="long" value="DailyResetData" lock="rolelock"/>
+	
+	<!--== 通告系统(离线消息,拒绝加好友之类) 开始==-->
+	<xbean name="Notice">
+		<variable id="1" name="data" type="binary"/>
+	</xbean>
+	<xbean name="RoleNotice">
+		<variable id="0" name="notices" type="list" value="Notice"/>
+	</xbean>
+	<table name="rolenotice" key="long" value="RoleNotice" lock="rolelock"/>
+	<!--== notice系统 结束==-->
+	
+	<!-- ============ 竞技场相关配置开始  ============== -->
+	<xbean name="ArenaFightReport" comment="角色在竞技场里的战报信息">
+		<variable id="1" name="fighttime" type="long"/>
+		<variable id="2" name="challengetype" type="int"/>
+		<variable id="3" name="succ" type="int"/>
+		<variable id="4" name="newrank" type="int"/>
+		<variable id="7" name="opponentname" type="string"/>
+		<variable id="8" name="oldrank" type="int"/>
+	</xbean>
+    
+	<xbean name="RoleArena">
+		<variable id="9" name="open" type="boolean"/>
+		<variable id="10" name="isrobot" type="boolean"/>
+		<variable id="2" name="lastupdateshengwangtime" type="long"/>
+		<variable id="3" name="challengeranks" type="list" value="int" />
+		<variable id="22" name="challengerobots" type="list" value="long" />仅仅首次挑战Pvp时有效,其余时候都是空的
+		<variable id="4" name="bechallenging" type="int"/>
+		<variable id="5" name="bechallengelockexpiretime" type="long"/>
+		<variable id="6" name="fightreports" type="list" value="ArenaFightReport"/>
+		<variable id="7" name="bestrank" type="int"/>
+		<variable id="20" name="haswin" type="boolean"/>是否赢过
+		<variable id="21" name="fakerank" type="int"/>
+	</xbean> 
+	<table name="rolearena" key="long" value="RoleArena" lock="rolelock"/>
+	<!-- ============ 竞技场相关配置结束  ============== -->
+	
+	
+	
+	<!-- ============ 交易行相关配置开始  ============== -->
+	<xbean name="RoleExchange">
+		<variable id="0" name="items" type="list" value="long"/> exchid
+		<variable id="2" name="logs" type="list" value="long"/> logid
+	</xbean>
+	<table name="roleexchange" key="long" value="RoleExchange" lock="rolelock"/>
+	
+	<xbean name="ExchangeLog">
+		<variable id="4" name="seller" type="long"/>
+		<variable id="1" name="buyer" type="long"/>
+		<variable id="2" name="item" type="ExchangeItem"/>
+		<variable id="3" name="time" type="long"/>
+	</xbean>
+	<xbean name="ExchangeItem">
+		<variable id="1" name="id" type="long"/>
+		<variable id="2" name="owner" type="long"/>
+		<variable id="3" name="price" type="int"/>单价
+		<variable id="4" name="modelId" type="int" />
+		<variable id="5" name="num" type="int"/>
+		<variable id="7" name="expiretime" type="long"/>
+		<variable id="8" name="anneallevel" type="int" />
+		<variable id="9" name="perfuselevel" type="int" />
+		<variable id="10" name="accessorymainprop" type="list" value="AccessoryProp" />
+		<variable id="11" name="accessoryviceprop" type="list" value="AccessoryProp" />
+		<variable id="12" name="unshelvetime" type="long"/>下架时间
+	</xbean>
+	<table name="exchangeitem" key="long" value="ExchangeItem" lock="exchitemlock" autoIncrement="true"/>
+	<table name="exchangelog" key="long" value="ExchangeLog" lock="exchloglock" autoIncrement="true"/>
+	
+	<!-- ============ 交易行相关配置结束  ============== -->
+	<!-- ============ 组队相关配置开始   =============== -->
+	<xbean name="RoleTeamInfo">
+		<variable id="1" name="teamid" type="long"/>
+		<variable id="2" name="autoacceptrequest" type="int" comment="是否自动接收别人的入队申请"/>
+		<variable id="3" name="autoacceptinvite"  type="int" comment="是否自动接收别人的入队邀请"/>
+		<variable id="4" name="requesttojoin" type="map" key="long" value="TeamMember" comment="请求加入别人队伍的申请，key为队伍的队长角色id,long为发送申请的时间"/>
+	
+	</xbean>
+	<xbean name="TeamMember">
+		<variable id="1" name="roleid" type="long"/>
+		<variable id="2" name="jointime" type="long" comment="时间，根据不同的集合表示不同的时间，申请时间，发送邀请的时间，加入队伍的时间等等"/>
+		<variable id="3" name="follow" type="int" comment="是否在跟随状态,0为非跟随，1为跟随"/>
+		<variable id="4" name="followtime" type="long" comment="跟随开始的时间"/>
+	</xbean>
+	<xbean name="Team">
+		<variable id="1" name="teamid" type="long" comment="teamid"/>
+		<variable id="2" name="leaderid" type="long"/>
+		<variable id="3" name="createtime" type="long" comment="组队时间"/>
+		<variable id="4" name="members" type="map" key="long" value="TeamMember" comment="队友信息，key为角色id，value为角色加入队伍的时间"/>
+		<variable id="5" name="requestforjoin" type="map" key="long" value="long" comment="请求入队的申请，key为申请加入的角色id"/>
+		<variable id="6" name="invitetojoin" type="map" key="long" value="long" comment="邀请别人加入自己的队伍，key为邀请人的角色id，value为邀请的时间"/>
+		<variable id="7" name="invitefollow" type="map" key="long" value="long" comment="邀请别人跟随，key为邀请角色id，value为邀请的时间，邀请有时间冷却限定"/>
+		<variable id="8" name="leadertransroleid" type="long" comment="队长转移申请发送给的roleid，0为未发出转移申请"/>
+	</xbean>
+	<table name="team" key="long" value="Team" lock="teamlock" autoIncrement="true" persistence="MEMORY" cacheCapacity="20000" cachehigh="128" cachelow="64"/>
+	<table name="role2team" key="long" value="RoleTeamInfo" lock="rolelock" />
+	<!-- ============ 组队相关配置结束  =============== -->
+	
+	<!-- ============ 技能系统开始  ============== -->
+	<xbean name="SkillInfo">
+		<variable id="0" name="level" type="int"/>
+	</xbean>
+	
+	<xbean name="RoleSkill">
+		<variable id="0" name="skills" type="map" key="int" value="SkillInfo"/>
+		<variable id="1" name="equipskillpositions" type="map" key="int" value="int"/>
+	</xbean>
+	<table name="roleskill" key="long" value="RoleSkill" lock="rolelock"/>	
+	
+	<!-- ============ 技能系统结束  ============== -->
+	<!-- ============ 称号相关配置开始 ============ -->
+	<xbean name="Title">
+		<variable id="1" name="titlekey" type="int" comment="称号id"/>
+		<variable id="2" name="titletype" type="int" comment="称号所属类型，战力榜，竞技场榜，财富榜等"/>
+		<variable id="3" name="state" type="int" comment="称号的状态，0为未获得，1为获得，2为激活"/>
+		<variable id="4" name="gettime" type="long" comment="称号获得的时间"/>
+		<variable id="5" name="activetime" type="long" comment="称号激活的时间"/>
+        <variable id="6" name="expiretime" type="long" comment="称号到期时间"/>
+	</xbean>
+	<xbean name="GroupTitle">
+		<variable id="1" name="titles" type="map" key="int" value="Title" comment="称号信息"/>
+	</xbean>
+	<xbean name="RoleTitle">
+		<variable id="1" name="activekey" type="int" comment="当前激活的称号id"/>
+		<variable id="2" name="activetype" type="int" comment="当前激活的称号的类型"/>
+		<variable id="3" name="titleinfo" type="map" key="int" value="GroupTitle" comment="称号信息，key为称号的类型，如战力榜，竞技场榜，财富榜，成就榜等"/>
+	</xbean>
+	<table name="title" key="long" value="RoleTitle" lock="rolelock"/>
+	
+	<!-- ============ 称号相关配置结束 ============ -->
+	
+	<!-- ============ 成就相关配置开始 ============ -->
+	
+	<xbean name="CounterSet">
+		<variable id="0" name="items" type="set" value="long"/>
+	</xbean>
+	
+	<xbean name="RoleAchievement">
+		<variable id="0" name="achievementstates" type="map" key="int" value="int"/>
+		<variable id="1" name="counters" type="map" key="int" value="long"/>
+		<variable id="2" name="countersets" type="map" key="int" value="CounterSet"/>
+	</xbean>
+	<table name="roleachievement" key="long" value="RoleAchievement" lock="rolelock"/>
+	
+	<!-- ============ 成就相关配置结束 ============ -->
+	<!-- ============ 家族功能相关配置开始  ============ -->
+	<xbean name="FamilyMember" comment="个人家族信息">
+		<variable id="1" name="jointime" type="long" comment="加入家族的时间，如果familyid为0，该时间为退出时间，如果为0表明未加入也未退出过"/>
+		<variable id="2" name="familyjob" type="int" comment="家族的职位，组长，青龙使，副组长等等"/> 
+		<variable id="3" name="roleid" type="long" comment="个人角色Id,为了方便排序找到最大贡献度"/>
+		<!--variable id="4" name="quittime" type="long" comment="退出群的时间，主要为了保留信息使用"/-->
+		<variable id="5" name="personalbuild" type="long" comment="个人贡献度,转移族长的时候用"/>
+		<!--variable id="6" name="name" type="string" comment="名字"/-->
+        <variable id="7" name="dailybuild" type="long" comment="每日贡献度,每天清空一次，用下面的时间判断"/>
+        <!--variable id="8" name="lastpraytime" type="long" comment="上次加贡献度的时间"/-->
+	</xbean>
+	<xbean name="RoleFamily" comment="角色游戏周期内所有的家族信息">
+		<variable id="1" name="currentfid" type="long" comment="当前所在的家族id"/>
+		<!--variable id="2" name="familyinfo" type="map" key="long" value="FamilyMember" comment="key为家族id，value为角色家族信息"/-->
+		<!--  <variable id="3" name="bonusclaim" type="map" key="int" value="int" comment="奖励领取情况，每周重置一次"/>-->
+		<variable id="4" name="requestedfamily" type="map" key="long" value="long" comment="申请过的家族信息列表"/>
+		<variable id="5" name="lastquittime" type="long" comment="最近一次退出家族的时间"/>
+		<variable id="6" name="totalquitnum" type="int" comment="总共退出家族的次数"/>
+		<!--<variable id="7" name="initcrowdfamid" type="long" comment="发起的众筹家族id，同时只能发起一个众筹"/>-->
+		<!--<variable id="8" name="involvecrowdfam" type="set" value="long" comment="参与的众筹项目，一旦有一个成功，就自动退出其余的众筹，并退钱"/>-->
+        <variable id="9" name="hasjoinpartytoday" type="int" comment="今天是否参加过仙府聚宴, 0,否，1,是"/>
+        <variable id="10" name="isfindbackparty" type="int" comment="是否找回昨天的仙府聚宴，0，否，1，是"/>
+	</xbean>
+	<table name="rolefamily" key="long" value="RoleFamily" lock="rolelock"/>
+	
+	<xbean name="FamilyLogReport" comment="家族日志记录">
+		<variable id="1" name="actiontype" type="int" comment="家族日志类型，入帮，升职等等,参考协议中的bean定义"/>
+		<variable id="2" name="roleid" type="long" comment="角色id"/>
+		<variable id="3" name="actiontime" type="long" comment="日志记录的时间"/> 
+		<variable id="4" name="number" type="int" comment="操作对应的数值"/>
+	</xbean>
+	<xbean name="FamilyJobStaffList">
+		<variable id="1" name="staffs" type="map" key="long" value="long" comment="key为角色id，long为成为该职位的时间"/>
+	</xbean>
+	
+	<xbean name="FamilySkill" comment="家族技能信息">
+		<variable id="1" name="skillid" type="int" comment="家族技能id"/>
+		<variable id="2" name="studytime" type="long" comment="学习的时间"/>
+		<variable id="3" name="level" type="int" comment="技能的等级"/>
+		<variable id="4" name="uptime" type="long" comment="技能升级的时间"/>
+	</xbean>
+	<xbean name="FamilyWelfare" comment="家族福利相关">
+		<variable id="1" name="skills" type="map" key="int" value="FamilySkill" comment="家族技能信息"/>
+		<variable id="2" name="maxskilllevel" type="int" comment="家族技能最大值" default="1"/>
+	</xbean>
+	
+	<xbean name="FamilyGodAnimal" comment="家族神兽信息">
+		<variable id="1" name="animalid" type="int"/>
+		<variable id="2" name="animallevel" type="int" comment="神兽进化到的level" default="1"/>
+		<variable id="3" name="exp" type="long" comment="神兽经验值"/>
+	</xbean>
+	<xbean name="FamilyActivity" comment="家族活动信息">
+		<variable id="1" name="godanimalinfo" type="map" key="int" value="FamilyGodAnimal" comment="家族神兽信息"/>		
+	</xbean>
+	<xbean name="FamilyGodAnimalAct" comment="家族神兽活动挑战时间信息 ">
+		<variable id="1" name="lastlaunchtime" type="long" comment="最近一次开启的时间"/>
+		<variable id="2" name="starttime" type="long" comment="活动开始时间"/>
+        <variable id="4" name="endtime" type="long" comment="活动结束时间"/>
+		<variable id="3" name="weeklaunchnum" type="int" comment="每周开启的次数"/>
+	</xbean>
+	
+	<xbean name="Family" comment="家族信息">
+		<variable id="1" name="familyid" type="long" comment="家族id"/>
+		<variable id="2" name="familyname" type="string" comment="家族名字"/>
+		<variable id="3" name="flevel" type="int" comment="家族等级"/>
+		<variable id="4" name="money" type="long" comment="家族资金"/>
+		<variable id="5" name="curlvlbuilddegree" type="int" comment="当前等级家族建设度"/>
+		<variable id="21" name="totalbuilddegree" type="int" comment="总的家族建设度,排行榜使用"/>
+		<variable id="22" name="totalbanggong" type="long" comment="总的家族帮贡"/>
+		<variable id="6" name="declaration" type="string" comment="家族宣言"/>
+		<variable id="7" name="publicinfo" type="string" comment="家族公告"/>
+		<variable id="8" name="publictime" type="long" comment="公告时间"/>
+		<variable id="9" name="malllevel" type="int"  comment="家族商店级别" default="1"/>
+		<!--variable id="10" name="membernum" type="int" comment="家族成员数"/-->
+		<variable id="11" name="logs" type="list" value="FamilyLogReport" comment="家族日志信息"/>
+		<variable id="12" name="requestinglist" type="map" key="long" value="long" comment="申请成员列表,key为角色id，value为申请时间"/>
+		<variable id="13" name="activity" type="FamilyActivity" comment="家族神兽信息"/>
+		<variable id="20" name="beatanimalactivity" type="FamilyGodAnimalAct" comment="神兽挑战信息"/>
+		<variable id="14" name="welfare" type="FamilyWelfare" comment="家族福利相关的信息"/>
+		<variable id="15" name="chiefid" type="long" comment="组长角色id"/>
+		<variable id="16" name="jobinfo" type="map" key="int" value="FamilyJobStaffList" 
+				comment="家族职位信息，key为职位id，value为该职位人员信息允许一个职位多个人"/>
+		<variable id="17" name="members" type="map" key="long" value="FamilyMember" comment="家族成员信息"/>
+		<variable id="18" name="updatetime" type="long" comment="信息更新时间"/>
+		<variable id="19" name="createtime" type="long" comment="家族创建的时间"/>
+        <variable id="23" name="lastpartyopentime" type="long" comment="家族聚会上次开启时间"/>
+        <variable id="24" name="lastpartycalltime" type="long" comment="上次召集教众时间"/>
+        <variable id="25" name="issystemfam" type="int" comment="是否是系统创建的家族，0否，1是"/>
+        <variable id="26" name="invitelist" type="map" key="long" value="long" comment="邀请列表"/>
+		<variable id="27" name="lastresettime" type="long"/>
+	</xbean>
+	<table name="family" key="long" value="Family" lock="familylock" autoIncrement="true"/>
+	
+	<xbean name="IdList">
+		<variable id="1" name="lists" type="list" value="long"/>
+	</xbean>
+	<table name="familyextrinfo" key="long" value="IdList" comment="该表用来记录报名参加神兽挑战的家族信息，key只有一个，为0"/>
+
+	<xbean name="FNameToID">
+		<variable id="1" name="data" type="map" key="string" value="long" />
+	</xbean>
+	<table name="familyname2id" key="int" value="FNameToID" lock="familyname2id" comment="key为0，对应家族的名字"/>fullname-id，下面的表同
+	<!--<table name="crowdfamilyname2id" key="int" value="FNameToID" lock="crowdfamilyname2id" comment="只有一个为0的key"/>-->
+	<!-- ============ 家族功能相关配置结束  ============ -->
+	
+	<!-- ============ 七脉会武相关配置开始  ============ -->
+	
+	<xbean name="HuiWuChampion">
+		<variable id="3" name="roleid" type="long"/>
+		<variable id="1" name="worshipnum" type="int"/>
+		<variable id="2" name="awardword" type="string"/>
+	</xbean>
+	<xbean name="HuiWuPriviousTerm">
+		<variable id="1" name="termid" type="int"/>
+		<variable id="2" name="opentime" type="long"/>
+		<variable id="3" name="endtime" type="long"/> 
+		<variable id="4" name="champions" type="map" key="int" value="HuiWuChampion"/> profession -> HuiWuChampion
+	</xbean>
+	
+	<xbean name="HuiWuBattle">
+		<variable id="5" name="index" type="int"/>
+		<variable id="1" name="roleid1" type="long"/>
+		<variable id="2" name="roleid2" type="long"/>
+		<variable id="3" name="state" type="int"/> cfg.huiwu.BattleState
+		<variable id="4" name="mapid" type="long"/>
+	</xbean>
+	
+	<xbean name="HuiWuRound">
+		<variable id="1" name="battles" type="list" value="HuiWuBattle"/>
+	</xbean>
+	
+	<xbean name="HuiWuProfessionTerm">
+		<variable id="7" name="profession" type="int"/>
+		<variable id="1" name="enrollroleids" type="set" value="long"/>报名玩家
+		<variable id="5" name="preselection1roleids" type="list" value="long"/>筛选玩家
+		<variable id="2" name="preselection2roleids" type="list" value="long"/>预选玩家
+		<variable id="3" name="preselection2roleidbeguessnums" type="map" key="long" value="int"/>预选玩家
+		<variable id="4" name="rounds" type="map" key="int" value="HuiWuRound"/> round -> HuiWuRound
+		<variable id="6" name="champion" type="long"/>
+	</xbean>
+
+	<xbean name="HuiWuCurTerm">
+		<variable id="1" name="termid" type="int"/>
+		<variable id="2" name="opentime" type="long"/>
+		<variable id="3" name="endtime" type="long"/>
+		<variable id="8" name="guessendtime" type="long"/>
+		<variable id="4" name="stage" type="int"/> cfg.huiwu.Stage
+		<variable id="12" name="roundindex" type="int"/>
+		<variable id="13" name="roundstage" type="int"/> cfg.huiwu.RoundStage
+		<variable id="14" name="battlebegintime" type="long"/>
+		<variable id="11" name="terminfobyprofession" type="map" key="int" value="HuiWuProfessionTerm"/>
+		<variable id="9" name="guess" type="map" key="long" value="long"/>投票
+		<variable id="10" name="continuouschampions" type="map" key="long" value="int"/> roleid -> continue win counts
+	</xbean>
+	<table name="huiwucurterms" key="int" value="HuiWuCurTerm" lock="huiwulock"/>
+	<table name="huiwupriviousterms" key="int" value="HuiWuPriviousTerm" lock="huwulock"/>
+	
+	<!-- ============ 七脉会武相关配置结束  ============ -->
+	
+	<xbean name="StoryNoteChapter">
+		<variable id="1" name="notes" type="set" value="int"/>
+	</xbean>
+	<xbean name="RoleStoryNote">
+		<variable id="1" name="chapters" type="map" key="int" value="StoryNoteChapter"/>
+	</xbean>
+	<table name="rolestorynotes" key="long" value="RoleStoryNote" lock="rolelock"/>
+	
+	<xbean name="System">
+		<variable id="1" name="initrobot" type="boolean"/>
+		<variable id="2" name="outrankrobots" type="list" value="long"/>
+        <variable id="3" name="gsdfirststarttime" type="long"/>
+        <variable id="4" name="rolenumsreach20" type="int"/>
+        <variable id="5" name="maxsystemfamnum" type="int" default="200"/>
+	</xbean>
+	
+	<table name="system" key="int" value="System" lock="systemlock"/>
+
+	<xbean name = "GMSenseword">
+		<variable id="1" name="addwords" type="set" value="string"/>
+		<variable id="2" name="removewords" type="set" value="string"/>
+	</xbean>
+
+	<table name="gmsenseword" key="int" value="GMSenseword" lock="systemlock"/>
+
+	
+	<xbean name="ActiveCode">
+		<variable id="1" name="lastusetime" type="long"/>
+		<variable id="2" name="todayusecount" type="int"/>
+		<variable id="3" name="totalusecount" type="int"/>
+	</xbean>
+	
+	<xbean name="RoleActiveCode">
+		<variable id="1" name="codegroups" type="map" key="int" value="ActiveCode"/>
+	</xbean>
+	
+	<table name="roleactivecodes" key="long" value="RoleActiveCode" lock="rolelock"/>
+	
+	
+		<!--
+	<xbean name="TestBus">
+		<variable id="1" name="b1" type="boolean"/>
+		<variable id="2" name="b2" type="int"/>
+		<variable id="3" name="b3" type="short"/>
+		<variable id="4" name="b4" type="int"/>
+		<variable id="5" name="b5" type="long"/>
+		<variable id="6" name="b6" type="float"/>
+		<variable id="3" name="b3" type="int"/>
+		<variable id="4" name="b4" type="long"/>
+		<variable id="5" name="b6" type="float"/>
+		<variable id="6" name="b7" type="binary"/>
+		<variable id="7" name="b8" type="string"/>
+		<variable id="8" name="b9" type="TestBus"/>
+		<variable id="10" name="b10" type="list" value="int"/>
+		<variable id="11" name="b11" type="list" value="TestBus"/>
+		<variable id="12" name="b12" type="set" value="long"/>
+		<variable id="13" name="b13" type="map" key="int" value="int"/>
+		<variable id="14" name="b14" type="map" key="int" value="TestBus"/>
+		<variable id="13" name="b13" type="map" key="int" value="int"/>
+	</xbean>
+	<xbean name="TestMar">
+		<variable id="3" name="b3" type="int"/>
+		<variable id="5" name="b6" type="float"/>
+		<variable id="7" name="b8" type="string"/>
+		<variable id="10" name="b10" type="list" value="int"/>
+		<variable id="12" name="b12" type="set" value="long"/>
+		<variable id="13" name="b13" type="map" key="int" value="int"/>
+		
+		<variable id="111" name="b1" type="boolean"/>
+		<variable id="112" name="b2" type="short"/>
+		<variable id="114" name="b4" type="long"/>
+		<variable id="116" name="b7" type="binary"/>
+		<variable id="118" name="b9" type="TestBus"/>
+		<variable id="1111" name="b11" type="list" value="TestBus"/>
+		<variable id="1114" name="b14" type="map" key="int" value="TestBus"/>
+	</xbean>
+
+		<xbean name="TestMar">
+		<variable id="200" name="b2" type="int"/>
+		<variable id="201" name="b4" type="float"/>
+		<variable id="3" name="b3" type="int"/>
+		<variable id="7" name="b8" type="string"/>
+		<variable id="10" name="b10" type="list" value="int"/>
+		
+		<variable id="202" name="b5" type="string"/>
+		<variable id="111" name="b1" type="boolean"/>
+		<variable id="1111" name="b11" type="list" value="TestBus"/>
+	</xbean>
+	<xbean name="TestMar">
+		<variable id="300" name="b2" type="int"/>
+		<variable id="301" name="b4" type="float"/>
+	</xbean>
+	
+	<xbean name="TestMar">
+	
+		<variable id="0" name="dirty" type="int"/>
+		<variable id="400" name="b11" type="list" value="TestBus"/>
+	</xbean>
+	<table name="testmars" key="long" value="TestMar" lock="testlock"/>
+	
+	-->
+	
+	<!--================ 存储过程，唯一名字服务器配置 ================ -->
+	<ProcedureConf retryTimes="3"
+		retryDelay="100" />
+</xdb>

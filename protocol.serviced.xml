@@ -1,0 +1,27 @@
+<application name="lx" shareHome="../../../share" pvids="">
+
+	<!--
+	引入协议和生成协议。
+	协议不在这个文件定义。
+	-->
+	<import file="protocol.gsd.xml"/>
+
+	<state name="Game">
+		<protocol ref="gnet.AnnounceGsds"/>
+		<protocol ref="gnet.AnnounceGsd"/>
+		<protocol ref="gnet.AnnounceServiced"/>
+		
+		<protocol ref="map.msg.ServicedRefs"/>
+		<protocol ref="map.msg.XRpc"/>
+		<protocol ref="map.msg.MRpc"/>
+		<protocol ref="map.msg.XCreateTeamFight"/>
+		<protocol ref="map.msg.MCreateMap"/>
+		<protocol ref="map.msg.XCreateEctypeMultiStory"/>
+		<provider ref="matcher"/>
+	</state>
+
+	<service name="serviced">
+		<manager name="ServiceServer" class="gnet.ServiceServer" type="server" initstate="Game">
+		</manager>
+	</service>
+</application>

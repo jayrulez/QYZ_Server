@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="file:///bin/jio.jar" />
+    <libelement value="file://lib/JavaPNS_2.2.jar" />
+    <libelement value="file://lib/xdb.jar" />
+    <libelement value="file://lib/gm.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/../xauany/src" expected_position="0" />
+      <src_folder value="file://$MODULE_DIR$/../xauany/beans" expected_position="1" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../xauany/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../xauany">
+      <sourceFolder url="file://$MODULE_DIR$/../xauany/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../xauany/beans" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library name="jio.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/jio.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="JavaPNS_2.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/javapns_2.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="xdb" />
+    <orderEntry type="module-library" exported="">
+      <library name="xdb.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/xdb.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="gm.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/gm.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

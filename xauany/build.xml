@@ -1,0 +1,29 @@
+<project name="xauany" default="dist">
+	<target name="init">
+		<mkdir dir="bin" />
+	</target>
+
+	<target name="compile" depends="init">
+		<path id="classpath">
+			<fileset dir="../lib">
+				<include name="javapns_2.2.jar" />
+				<include name="xdb.jar" />
+				<include name="gm.jar" />
+			</fileset>
+		</path>
+		<javac encoding="GBK" srcdir="src:beans" destdir="bin" includeantruntime="false" classpathref="classpath" debug="true" debuglevel="vars,lines,source">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+
+	<target name="dist" depends="clean, compile">
+		<jar destfile="xauany.jar" basedir="bin" manifest="src/MANIFEST.MF">
+			<zipgroupfileset dir="../lib" includes="javapns_2.2.jar,xdb.jar,gm.jar" />
+		</jar>
+        <delete dir="bin"/>
+	</target>
+</project>

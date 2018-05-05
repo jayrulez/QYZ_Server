@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>gsd</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>cfg</name>
+			<type>2</type>
+			<location>D:\Projects\QYZ_SERVER\ServerCode\share</location>
+		</link>
+		<link>
+			<name>map</name>
+			<type>2</type>
+			<location>D:\Projects\QYZ_SERVER\ServerCode\map</location>
+		</link>
+		<link>
+			<name>protocol.client.xml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/protocol.client.xml</locationURI>
+		</link>
+		<link>
+			<name>protocol.gsd.xml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/protocol.gsd.xml</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

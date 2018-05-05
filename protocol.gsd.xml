@@ -1,0 +1,3918 @@
+<?xml version="1.0" encoding="utf8"?>
+
+<application name="lx" shareHome="../../share" pvids="100,101">
+
+    <import file="lib/gnet.xml"/>
+	<import file="map/map.xml"/>
+
+    <provider name="gs" pvid="100">
+		<protocol name="Dummy" type="18" >无用,纯粹为了引用那些不在协议中，但又被使用的bean
+			<variable name="generalrankinfo" type="lx.gs.rank.msg.GeneralRankInfo"/>
+			<variable name="findback" type="lx.gs.dailyactivity.msg.Findbacktype"/>
+			<variable name="familyrankinfo" type="lx.gs.rank.msg.FamilyRankInfo"/>
+			<variable name="equip" type="lx.gs.equip.Equip"/>
+			<variable name="item" type="lx.gs.item.Item"/>
+			<variable name="fragment" type="lx.gs.fragment.Fragment"/>
+			<variable name="talisman" type="lx.gs.talisman.Talisman"/>
+			<variable name="pet" type="lx.gs.pet.Pet"/>
+		</protocol>
+		
+		<protocol name="SError" type="2600" >
+			<enum name="OK" value="0"/>
+			<variable name="errcode" type="int"/>
+		</protocol>
+		<protocol name="SError2">
+			<variable name="err" type="string"/>
+		</protocol>
+
+		<protocol name="STips">
+			<variable name="location" type="int"/> 弹出位置 see cfg.tips.LocationType
+			<variable name="contentid" type="int"/> tips索引,优先用这个找tips，如果id小于等于0或者策划数据里没有，就用下面的tips
+			<variable name="content" type="string"/> 内容,碰到括弧"{}"需要按顺序去参数列表里取参数
+			<variable name="param" type="vector" value="string"/> 参数
+		</protocol>
+		
+		<protocol name="CPing">
+			<variable name="sendclienttime" type="long"/>
+			<variable name="receivedmessagecount" type="long"/>
+		</protocol>
+		
+		<protocol name="SPing">
+			<variable name="sendclienttime" type="long"/>
+			<variable name="sendservertime" type="long"/>
+			<variable name="recvclienttime" type="long"/>
+			<variable name="sendmessagecount" type="long"/>
+		</protocol>
+		
+        <namespace name="login">		
+            <protocol name="CGetRoleList" type="1" />
+
+            <protocol name="SGetRoleList" type="2" >
+                <variable name="prevloginroleid" type="long"/>
+                <variable name="roles" type="vector" value="lx.gs.role.msg.RoleBrief"/>
+                <variable name="deleteinfo" type="map" key="long" value="long"/>
+            </protocol>
+
+			<protocol name="CCancelDelteRole" >
+				<variable name="roleid" type="long"/>
+			</protocol>
+
+			<protocol name="SCancelDelteRole" >
+				<variable name="roleid" type="long"/>
+			</protocol>
+
+            <protocol name="CCreateRole" type="3" >
+                <variable name="name" type="string"/>
+                <variable name="profession" type="int"/>
+				 <variable name="gender" type="int"/>
+            </protocol>
+
+            <protocol name="SCreateRole" type="4" >
+                <variable name="err" type="int"/>
+                <variable name="newInfo" type="lx.gs.role.msg.RoleBrief"/>
+                <variable name="servertime" type="long"/>
+            </protocol>
+
+            <protocol name="CDeleteRole" type="5" >
+                <variable name="roleid" type="long"/>
+            </protocol>
+
+            <protocol name="SDeleteRole" type="6" >
+                <enum name="OK" value="0"/>
+                <enum name="DELETE_TOO_MANY_ROLE" value="1"/>
+                <enum name="ERR" value="2"/>
+                <variable name="err" type="int"/>
+                <variable name="roleid" type="long"/>
+            </protocol>
+
+            <bean name="RoleDetail" >
+               <variable name="roleid" type="long"/>
+			   <variable name="serverid" type="int"/>
+               <variable name="rolename" type="string"/>
+               <variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+               <variable name="level" type="int"/>
+				<variable name="vipexp" type="long"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="familyid" type="long"/>
+				<variable name="currencys" type="map" key="int" value="long"/> cfg.currency.CurrencyType -> num
+				<variable name="combatpower" type="int"/>
+				<variable name="attrs" type="map" key="int" value="float"/>
+				<variable name="todaytotaladdmonsterexp" type="long"/>
+				<variable name="changenametimes" type="int"/>
+				<variable name="creatroletime" type="long"/>
+            </bean>
+
+            <protocol name="CRoleLogin" type="7" >
+                <variable name="roleid" type="long"/>
+            </protocol>
+
+            <protocol name="SRoleLogin" type="8" >
+                <enum name="OK" value="0"/>
+                <enum name="ROLEID_NOT_IN_USER" value="1"/>
+                <enum name="ROLEINFO_NOT_FOUND" value="2"/>
+                <enum name="USER_NOT_FOUND" value="3"/>
+                <enum name="ROLE_LOGIN_IS_FORBIDDEN" value="4"/>
+				<enum name="ROLE_NOT_LOGIN" value="5"/>
+				<enum name="SESSION_CORRUPT" value="6"/>
+				<enum name="TOOMANY_ONLINES_ROLE" value="7"/> 超过最大在线人数
+				<enum name="SERVER_LOADAVG_BUSY" value="8"/> 服务器忙，cpu利用率达到8成
+
+                <variable name="err" type="int"/>
+                <variable name="roledetail" type="RoleDetail"/>
+                <variable name="servertime" type="long"/>
+                <variable name="servertimezone" type="string"/>
+				 <variable name="isservermerge" type="int"/>是否合服
+				 <variable name="forbiddesc" type="string"/>禁止登陆描述，错误码为4时显示
+            </protocol>
+
+			<protocol name="SKickRole">
+				<variable name="desc" type="string"/>
+			</protocol>
+			
+			<protocol name="CRoleRelogin">
+				<variable name="roleid" type="long"/>
+				<variable name="receivedmessagecount" type="long"/>
+			</protocol>
+			<protocol name="SRoleRelogin">
+				<variable name="err" type="int"/>
+				<variable name="roleid" type="long"/>
+			</protocol>			
+
+           <protocol name="CRoleLogout" type="17"  />
+			<protocol name="CRandomName" type="9" >
+				<variable name="gender" type="int"/>
+			</protocol>
+			<protocol name="SRandomName" type="10" >
+				<variable name="name" type="string"/>
+			</protocol>
+        </namespace>
+		
+		<namespace name="role">
+		<namespace name="msg">
+			<protocol name="CUseCode">
+				<variable name="code" type="string"/>
+			</protocol>
+			<protocol name="SUseCode" type="2606">
+				<variable name="retcode" type="int"/> // 错误码见 ActivationCodeErr 
+				<variable name="code" type="string"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>		
+			<protocol name="SLevelChange">
+				<variable name="level" type="int"/>
+			</protocol>
+			<bean name="PetExp">
+				<variable name="modelid" type="int"/>
+				<variable name="level" type="int"/>
+				<variable name="exp" type="long"/>
+			</bean>
+			<protocol name="SKillMonster">
+				<variable name="todaytotaladdmonsterexp" type="long"/>
+				<variable name="petexps" type="vector" value="PetExp"/>
+				<variable name="currencys" type="vector" value="CurrencyAddRecord"/>
+			</protocol>
+
+			
+			<protocol name="SCurrencyChange" type="2602" >
+				<variable name="currencys" type="map" key="int" value="long"/>
+			</protocol>
+			
+			<bean name="CurrencyAddRecord">
+				<variable name="ctype" type="int"/>
+				<variable name="add" type="int"/>
+			</bean>
+			<protocol name="SCurrencyAlert">
+				<variable name="currencys" type="vector" value="CurrencyAddRecord"/>
+			</protocol>
+			
+			<protocol name="SVipExpChange" type="2603" >
+				<variable name="exp" type="long"/>
+				<variable name="level" type="int"/>
+			</protocol>
+           <bean name="RoleBrief">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="rolename" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="dressid" type="int"/>
+				<variable name="equips" type="vector" value="map.msg.EquipBrief"/>
+           </bean>
+		   <bean name="PetBrief">
+				<variable name="petkey" type="int"/>
+		   </bean>	
+			<bean name="RoleShowInfo1">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="level" type="int" comment="级别"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="equips" type="vector" value="map.msg.EquipBrief"/>
+				<variable name="dressid" type="int"/>
+				<variable name="combatpower" type="int"/>
+			</bean>
+			<bean name="RoleShowInfo2">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+               <variable name="name" type="string"/>
+               <variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+               <variable name="level" type="int" comment="级别"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="equips" type="vector" value="map.msg.EquipBrief"/>
+				<variable name="dressid" type="int"/>
+				<variable name="familyname" type="string" comment="家族名字"/>
+			   <variable name="familyjob" type="int" comment="家族职位"/>
+			   <variable name="familylevel" type="int" comment="家族等级"/>
+			</bean>
+			<bean name="RoleShowInfo3">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="level" type="int" comment="级别"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="equips" type="vector" value="map.msg.EquipBrief"/>
+				<variable name="dressid" type="int"/>
+				<variable name="title" type="int" comment="称号的key"/>
+				<variable name="familyname" type="string" comment="家族名字"/>
+				<variable name="familyjob" type="int" comment="家族职位"/>
+				<variable name="familylevel" type="int" comment="家族等级"/>
+				<variable name="lovername" type="string" comment="情人的角色id"/>
+				<variable name="fightattrs" type="map" key="int" value="float" comment="战斗属性值"/>
+				<variable name="lastonlinetime" type="long" comment="上次在线时间"/>
+			</bean>
+			<bean name="RoleShowInfo4">
+				<variable name="roleid" type="long"/>
+			    <variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="level" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="lastonlinetime" type="long" comment="上次在线时间"/>
+				<variable name="familyid" type="long" comment="家族"/>
+			</bean>
+			<bean name="EquipInfo">
+				<variable name="modelid" type="int" comment="model id"/>
+				<variable name="normalequip" type="lx.gs.equip.NormalEquipProp" comment="普通装备的属性"/>
+				<variable name="accessory" type="lx.gs.equip.AccessoryProp" comment="饰品类装备的属性"/>
+			</bean>
+			<bean name="RoleShowInfo5">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="level" type="int" comment="级别"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="equips" type="vector" value="EquipInfo"/>
+				<variable name="dressid" type="int"/>
+				<variable name="title" type="int" comment="称号的key"/>
+				<variable name="familyname" type="string" comment="家族名字"/>
+				<variable name="familyjob" type="int" comment="家族职位"/>
+				<variable name="familylevel" type="int" comment="家族等级"/>
+				<variable name="lovername" type="string" comment="情人的角色id"/>
+				<variable name="fightattrs" type="map" key="int" value="float" comment="战斗属性值"/>
+				<variable name="lastonlinetime" type="long" comment="上次在线时间"/>
+			</bean>			
+			<protocol name="CGetRoleInfo" type="2604" >
+				<variable name="roleid" type="long" comment="对方角色信息"/>
+			</protocol>
+			<protocol name="SGetRoleInfo" type="2605" >
+				<variable name="roleid" type="long"/>
+				<variable name="roleinfo" type="RoleShowInfo5"/>
+			</protocol>
+			
+			<protocol name="SGetConfigures">
+				<variable name="datas" type="map" key="string" value="string"/>
+			</protocol>
+			
+			<protocol name="CSetConfigure">
+				<variable name="key" type="string"/>
+				<variable name="data" type="string"/>
+			</protocol>
+			<protocol name="SCombatPowerChange">
+				<variable name="combatpower" type="int"/>
+			</protocol>
+			<protocol name="SChangeAttrs">
+				<variable name="combatpower" type="int"/>
+				<variable name="attrs" type="map" key="int" value="float"/>
+			</protocol>
+			
+			<protocol name="SDayOver"/>
+			
+			<protocol name="CBuyTili"/>
+			<protocol name="SBuyTili"/>
+
+			<protocol name="CChangeName">
+				<variable name="newname" type="string"/>
+			</protocol>
+			<protocol name="SChangeName">
+				<variable name="changetimes" type="int"/>
+				<variable name="newname" type="string"/>
+			</protocol>
+		</namespace>
+		<!-- ========== 称号模块定义开始，协议从4300开始  =========== -->
+		<namespace name="title">
+			<namespace name="msg">
+				<bean name="Title">
+					<enum name="STATE_GET" value="1"/>
+					<enum name="STATE_ACTIVED" value="2"/>
+					<variable name="titlekey" type="int" comment="称号id"/>
+					<variable name="titletype" type="int" comment="称号所属类型，战力榜，竞技场榜，财富榜等"/>
+					<variable name="state" type="int" comment="称号的状态，0为未获得，1为获得，2为激活"/>
+					<variable name="gettime" type="long" comment="称号获得的时间"/>
+					<variable name="activetime" type="long" comment="称号激活的时间"/>
+					<variable name="expiretime" type="long" comment="称号到期的时间"/>
+				</bean>
+				<bean name="GroupTitle">
+					<variable name="titleinfo" type="vector" value="Title" comment="称号信息"/>
+				</bean>
+				<bean name="RoleTitle">
+					<variable name="activekey" type="int" comment="当前激活的称号id"/>
+					<variable name="activetype" type="int" comment="当前激活的称号类型"/>
+					<variable name="titles" type="map" key="int" value="GroupTitle" comment="称号信息，key为不同的类型，如战力榜，竞技场榜"/>
+				</bean>
+				<protocol name="CGetTitleInfo" type="4301"  comment="获取">
+				</protocol>
+				<protocol name="SGetTitleInfo" type="4302">
+					<variable name="titleinfo" type="RoleTitle"/>
+				</protocol>
+				
+				<protocol name="CActiveTitle"  type="4303" >
+					<variable name="titlekey" type="int" comment="要激活的title的key"/>
+					<variable name="titletype" type="int" comment="要激活的title的类型，属于哪个模块"/>
+				</protocol>
+				<protocol name="SActiveTitle" type="4304" >
+					<variable name="titlekey" type="int" comment="要激活的title的key"/>
+					<variable name="titletype" type="int" comment="要激活的title的类型，属于哪个模块"/>
+				</protocol>
+				
+				<protocol name="STitleGetNotify" type="4305" >
+					<variable name="title" type="Title" comment="获取到的称号"/>
+				</protocol>
+				
+				<protocol name="STitleTimeOutNotify" type="4306" >
+					<variable name="title" type="Title" comment="到时间的称号"/>
+				</protocol>
+				
+				<protocol name="CDeActiveTitle" type="4307" >
+					<variable name="titlekey" type="int" comment="要卸载的title的key"/>
+					<variable name="titletype" type="int" comment="要卸载的title的类型，属于哪个模块"/>
+				</protocol>
+				<protocol name="SDeActiveTitle" type="4308" >
+					<variable name="titlekey" type="int" comment="要卸载的title的key"/>
+					<variable name="titletype" type="int" comment="要卸载的title的类型，属于哪个模块"/>
+				</protocol>
+			</namespace>
+		</namespace>
+		<!-- ========== 称号模块定义结束，协议从4200开始=========== -->
+		</namespace>
+		
+		<namespace name="map"><namespace name="msg">
+			<!-- 	世界地图相关 -->
+			<!-- 地图分线相关协议　 -->
+			<bean name="LineInfo">
+				<variable name="lineid" type="int"/>
+				<variable name="rolenum" type="int"/>
+			</bean>
+			
+			<protocol name="CGetWorldLines" >
+				<variable name="worldid" type="int"/>
+			</protocol>
+			<protocol name="SGetWorldLines" >
+				<variable name="worldid" type="int"/>
+				<variable name="lines" type="vector" value="LineInfo"/>
+			</protocol>
+			
+			<protocol name="CEnterWorld">
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int" />
+			</protocol>
+			
+			<protocol name="CLeaveMap"/>
+			<protocol name="SLeaveMap"/>
+			
+			<protocol name="CSetPKState">
+				<variable name="worldid" type="int"/>
+				<variable name="pkstate" type="int"/>
+			</protocol>
+			
+			
+			<protocol name="CTransferWorldUseItem">
+				<variable name="worldid" type="int"/>
+				<variable name="position" type="map.msg.Vector3"/>
+			</protocol>
+			
+			<protocol name="CGetPlayerLocation">
+				<variable name="roleid" type="long"/>
+			</protocol>
+			<protocol name="SGetPlayerLocation">
+				<variable name="roleid" type="long"/>
+				<variable name="maptype" type="int"/>
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+				<variable name="position" type="map.msg.Vector3" />
+			</protocol>
+			
+			<bean name="ClimbTowerInfo">
+				<variable name="maxfloorid" type="int"/>
+				<variable name="costtime" type="int"/>秒数
+			</bean>
+			<bean name="ChapterInfo">
+				<variable name="sectionstars" type="vector" value="int"/> 对应关卡1,2,,,,
+				<variable name="obtainrewardindexs" type="vector" value="int"/>
+			</bean>
+			<bean name="DailyInfo">
+				<variable name="maxvalue" type="int"/>日常副本里最好成绩
+			</bean>
+			<bean name="MultiStoryInfo">
+				<variable name="bestStar" type="int"/>
+			</bean>
+			<bean name="TeamFightInfo">
+				<variable name="weekscore" type="int"/>本周积分
+				<variable name="todaywinnum" type="int"/>本日胜利次数
+				<variable name="obtaintodaywinreward" type="byte"/>是否领过今日奖励
+				<variable name="todayfightnum" type="int"/>本日参加次数
+				<variable name="obtainscorerewards" type="vector" value="int"/>本周已领积分奖励
+			</bean>
+			<protocol name="SEctypeInfo">
+				<variable name="climbtowers" type="map" key="int" value="ClimbTowerInfo"/>
+				<variable name="chapters" type="map" key="int" value="ChapterInfo"/>
+				<variable name="dailys" type="map" key="int" value="DailyInfo"/> key -> ectypetype 
+				<variable name="teamfight" type="TeamFightInfo"/>
+				<variable name="multistory" type="map" key="int" value="MultiStoryInfo"/>
+				<variable name="matchtype" type="int"/> cfg.ectype.MatchType
+				<variable name="nextmatchtime" type="long"/>允许参与下一次匹配的时间
+			</protocol>
+			<protocol name="SChangeClimbTower">
+				<variable name="ectypeid" type="int"/>
+				<variable name="info" type="ClimbTowerInfo"/>
+			</protocol>
+			<protocol name="SChangeSection">
+				<variable name="chapterid" type="int"/>
+				<variable name="sectionid" type="int"/>
+				<variable name="star" type="int"/>
+			</protocol>
+			<protocol name="CObtainChapterReward">
+				<variable name="chapterid" type="int"/>
+				<variable name="rewardindex" type="int"/>
+			</protocol>
+			<protocol name="SObtainChapterReward">
+				<variable name="chapterid" type="int"/>
+				<variable name="rewardindex" type="int"/>
+			</protocol>
+			<protocol name="SChangeMatch">
+				<variable name="matchtype" type="int"/>
+				<variable name="nextmatchtime" type="long"/>
+			</protocol>
+
+			<!-- 剧情副本 -->
+						
+			<protocol name="COpenStoryEctype">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			
+			<protocol name="CSweepStoryEctype">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="SSweepStoryEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+			<protocol name="CSweepChapterAllStoryEctype">
+				<variable name="chapterid" type="int"/>
+			</protocol>
+			<protocol name="SSweepChapterAllStoryEctype">
+				<variable name="chapterid" type="int"/>
+				<variable name="bonus" type="map" key="int" value="map.msg.Bonus"/>
+			</protocol>
+			<protocol name="CResetStoryEctypeOpenCount">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="SResetStoryEctypeOpenCount">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+
+			<!-- 多人组队剧情副本 匹配模式-->
+			<protocol name="CEnrollMultiStoryEctype" comment="报名组队剧情副本">
+				<enum name="SINGLE" value="1"/>
+				<enum name="TEAM" value="2"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="enrolltype" type="int"/>
+			</protocol>
+			<protocol name="SEnrollMultiStoryEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="enrolltype" type="int"/>
+			</protocol>
+			
+			<protocol name="SStartEnrollMultiStoryNotify" comment="开始匹配后通知所有玩家">
+				<variable name="ectypeid" type="int" comment="匹配中的副本"/>
+				<variable name="roleinfos" type="vector" value="EnrollBriefInfo"/>
+			</protocol>
+
+
+			<protocol name="CLeaveTeamAndEnrollSingle" comment="离开当前队伍并单人报名">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="SLeaveTeamAndEnrollSingle">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+
+			<protocol name="CCancelEnrollMultiStoryEctype" comment="取消报名"/>
+			<protocol name="SCancelEnrollMultiStoryEctype">
+				<variable name="result" type="int"/>
+			</protocol>
+			
+			<protocol name="SCancelEnrollMultiStorySuccessNotify" comment="取消报名成功后通知玩家">
+			</protocol>
+
+			<bean name="EnrollBriefInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="gender" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+			</bean>
+			<bean name="MatchMultiStroyInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="gender" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="star" type="int"/>
+				<variable name="usedtimes" type="int"/>
+				<variable name="level" type="int"/>
+			</bean>
+
+			<protocol name="SEnrollMultiStoryEctypeSuccessNotify">
+				<variable name="lefttime" type="int" comment="匹配成功，通知剩余开启时间"/>
+				<variable name="roleinfos" type="vector" value="EnrollBriefInfo"/>
+			</protocol>
+			
+			<protocol name="SPrepareMultiStoryEctypeFailNotify" comment="在匹配成功后，扣体力或者减次数失败时发送">
+				<variable name="reason" type="string"/>
+			</protocol>
+
+			<!-- 鸿蒙争霸 3v3竞速副本 开始 -->
+			<bean name="TimeRange"> 一天中的时间范围,小时:分:秒
+				<variable name="start" type="string"/>格式 HH:mm:ss
+				<variable name="end" type="string"/>格式 HH:mm:ss
+			</bean>
+
+			<protocol name="STeamSpeedTimeInfo">
+				<variable name="opentime" type="vector" value="TimeRange"/>开放时间
+				<variable name="applytime" type="int" /> 报名时间
+				<variable name="competitiontime" type="int" /> 比赛持续时间
+			</protocol>
+
+			<protocol name="CTeamApplyTeamSpeed">组队报名，只有队长才能使用
+			</protocol>
+			<protocol name="CPersonalApplyTeamSpeed">个人报名，会脱离原有队伍，需要弹出二次确认提示
+			</protocol>
+			<protocol name="SApplyTeamSpeedSucc">报名成功，进入副本地图
+			</protocol>
+
+			<protocol name="CCancelTeamSpeedApply" > 取消报名
+			</protocol>
+			<protocol name="SCancelTeamSpeedApply" > 取消报名
+			</protocol>
+
+			<protocol name="CLeaveTeamSpeed">离开副本
+			</protocol>
+			<protocol name="SLeaveTeamSpeed">离开副本
+			</protocol>
+
+			<!-- 鸿蒙争霸 3v3竞速副本 结束 -->
+
+			
+			<!-- 爬塔副本 -->
+			<protocol name="COpenClimbTowerEctype">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="CSweepClimbTower">
+			</protocol>
+			<protocol name="SSweepClimbTower">
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+			<!-- 血战青云 -->
+			<protocol name="CGuardTowerMatchStart">
+				<variable name="minpower" type="int"/>
+			</protocol>
+			<protocol name="SGuardTowerMatchStart"/>
+			<protocol name="CGuardTowerMatchCancel"/>
+			<protocol name="SGuardTowerMatchCancel">
+				<variable name="retcode" type="int"/>
+			</protocol>
+			<protocol name="SGuardTowerMatchError">
+				<variable name="retcode" type="int"/>
+			</protocol>
+			<protocol name="SGuardTowerMatcherUpdate">
+				<variable name="matched" type="int"/> 0 尚未匹配成功 1 匹配成功
+				<variable name="teaminfo" type="MatchTeamInfo"/>
+				<variable name="countdown" type="int"/>匹配成功之后的倒计时s
+			</protocol>
+			<protocol name="SGuardTowerMatchMemberOut">
+				<variable name="roleid" type="long"/>退出匹配的玩家roleid
+			</protocol>
+
+			<!-- 青云英雄录 -->
+			<bean name="HeroesGroupInfo">
+				<variable id="1" name="refreshtime" type="int" comment="已经进行过的刷新次数"/>
+				<variable id="2" name="ectypeid" type="int" comment="上次随机到的副本id，为0或空则取默认值"/>
+			</bean>
+
+			<protocol name="CGetHeroEctypeInfo">
+			</protocol>
+
+			<protocol name="SGetHeroEctypeInfo">
+				<variable name="herogroups" type="map" key="int" value="HeroesGroupInfo"/>groupid->HeroesGroupInfo
+			</protocol>
+
+			<protocol name="CHeroChangeEctype">
+				<variable name="groupid" type="int"/>
+			</protocol>
+
+			<protocol name="SHeroChangeEctype">
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+
+			<protocol name="SHeroGroupSyncInfo">
+				<variable id="1" name="groupid" type="int"/>
+				<variable id="2" name="groupinfo" type="HeroesGroupInfo"/>
+			</protocol>
+
+			<protocol name="COpenHeroEctype">
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+
+			<protocol name="CHeroRefreshAward">
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+
+			<protocol name="SHeroRefreshAward">
+				<variable name="awardinfo" type="map.msg.HeroesAwardInfo"/>
+			</protocol>
+
+			<protocol name="CHeroGainAward">
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="SHeroGainAward" type="6001"/>
+			
+			<bean name="MatchTeamInfo">
+				<variable name="members" type="vector" value="lx.gs.role.msg.RoleShowInfo4"/>
+			</bean>
+			<protocol name="SChangeTeamFight">
+				<variable name="info" type="TeamFightInfo"/>
+			</protocol>
+			
+			<protocol name="CBeginMatchTeamFight"/>
+			<protocol name="SBeginMatchTeamFight">
+				<variable name="errcode" type="int"/>
+			</protocol>
+			<protocol name="CCancelMatchTeamFight"/>
+			<protocol name="SCancelMatchTeamFight">	
+				<variable name="errcode" type="int"/>
+			</protocol>
+			<protocol name="SOtherMemberCancelMatchTeamFight">
+				<variable name="roleid" type="long"/>
+			</protocol>
+			
+			<protocol name="CObtainTeamFightDayReward"/>
+			<protocol name="SObtainTeamFightDayReward"/>
+			
+			<protocol name="CObtainTeamFightWeekReward">
+				<variable name="rewardid" type="int"/>
+			</protocol>
+			
+			<protocol name="SObtainTeamFightWeekReward">
+				<variable name="rewardid" type="int"/>
+			</protocol>
+			
+			<protocol name="SMatchTeamFightSucc">
+				<variable name="countdown" type="int"/>倒计时
+				<variable name="team1" type="MatchTeamInfo"/>
+				<variable name="team2" type="MatchTeamInfo"/>
+			</protocol>
+
+			<!-- 日常经验金钱造化副本 -->
+			<protocol name="COpenDailyEctype">
+				<variable name="ectypetype" type="int"/> cfg.ectype.EctypeType
+			</protocol>
+			
+			<protocol name="CResetDailyEctypeOpenCount">
+				<variable name="ectypetype" type="int"/> cfg.ectype.EctypeType
+			</protocol>
+			<protocol name="SResetDailyEctypeOpenCount">
+				<variable name="ectypetype" type="int"/> cfg.ectype.EctypeType
+			</protocol>
+			<protocol name="CGetDailyBestRecord">
+				<variable name="ectypetype" type="int"/>
+			</protocol>
+			<protocol name="SGetDailyBestRecord">
+				<variable name="ectypetype" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="mincosttime" type="int"/>秒数
+				<variable name="mymincosttime" type="int"/>秒数ss
+			</protocol>
+			<protocol name="COpenPersonalBossEctype">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			
+			<protocol name="CGetAttackCityInfo"/>		
+			<protocol name="SGetAttackCityInfo">
+				<variable name="stage" type="int"/>  cfg.ectype.AttackCityStage
+				<variable name="signup" type="byte"/> 是否报名
+			</protocol>
+			
+			<protocol name="CEnrollAttackCity"/>
+			<protocol name="SEnrollAttackCity"/>
+			
+			<protocol name="SChangeAttackCityStage">
+				<variable name="stage" type="int"/> cfg.ectype.AttackCityStage
+			</protocol>
+			<protocol name="CEnterAttackCity"/>
+			<protocol name="COpenFamilyTeamEctype"/>
+			
+			<protocol name="SKillOther">
+				<variable name="defencername" type="string"/>
+			</protocol>
+			
+			<protocol name="SBekillByOther">
+				<variable name="attackername" type="string"/>
+				<variable name="defencer" type="long"/>
+			</protocol>
+		</namespace></namespace>
+		<namespace name="rank"><namespace name="msg">
+			<bean name="GeneralRankInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="name" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="value" type="long"/>
+			</bean>
+			<bean name="FamilyRankInfo">
+				<variable name="id" type="long"/>
+				<variable name="name" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="value" type="long" comment="家族建设度"/>
+				<variable name="chiefid" type="long"/>族长id
+			</bean>
+			
+			<protocol name="CGetRank">
+				<variable name="ranktype" type="int"/>
+				<variable name="rankstart" type="int"/>
+				<variable name="rankend" type="int"/> 从rankstart到rankend的数据(包括rankend)
+			</protocol>
+			<protocol name="SGetRank">
+				<variable name="ranktype" type="int"/>
+				<variable name="ranksize" type="int"/>
+				<variable name="rankstart" type="int"/>
+				<variable name="data" type="octets"/>
+				<variable name="mycurrank" type="int"/>
+			</protocol>
+			
+			<protocol name="CGetReward" type="5021">
+				<variable name="ranktype" type="int"/>
+			</protocol>
+			<protocol name="SGetReward">
+				<variable name="ranktype" type="int"/>
+			</protocol>
+			<protocol name="CGetMyRank">
+				<variable name="ranktype" type="int"/>
+			</protocol>
+			<protocol name="SGetMyRank">
+				<variable name="ranktype" type="int"/>
+				<variable name="currank" type="int"/>
+			</protocol>
+			<bean name="RankInfo">
+				<variable name="ranktype" type="int"/>
+				<variable name="snaprank" type="int"/>
+			</bean>
+			<protocol name="SInfo">
+				<variable name="ranks" type="vector" value="RankInfo"/>
+			</protocol>
+		</namespace></namespace>
+
+		<namespace name="leaderboard"><namespace name="msg">
+			<bean name="BoardEntry">
+				<variable name="id" type="long"/>
+				<variable name="name" type="string"/>
+				<variable name="val1" type="long"/>
+				<variable name="val2" type="int"/>
+			</bean>
+			<bean name="BoardInfo">
+				<variable name="info" type="vector" value="BoardEntry"/>
+			</bean>
+			<protocol name="SLatestLeaderBoard">
+				<variable name="latestbord" type="map" key="int" value="BoardInfo"/>
+			</protocol>
+
+			<protocol name="SRoleRanking">
+				<variable name="info" type="map" key="int" value="int"/>
+			</protocol>
+
+			<protocol name="SYesterdayRanking">
+				<variable name="info" type="map" key="int" value="int"/>
+			</protocol>
+
+			<protocol name="CGetRankReward" >
+				<variable name="ranktype" type="int"/>
+			</protocol>
+		</namespace></namespace>
+		
+		<namespace name="task"><namespace name="msg">
+			<bean name="FamilyTaskInfo">
+				<variable name="taskid" type="int"/>
+				<variable name="npcid" type="int"/>
+			</bean>
+			<bean name="TaskInfo">
+				<variable name="taskid" type="int"/>
+				<variable name="counter" type="map" key="int" value="int"/>
+			</bean>
+			<protocol name="STask" type="700">
+				<variable name="variables" type="map" key="int" value="int"/>
+				<variable name="completehistory" type="map" key="int" value="int"/>
+				<variable name="acceptedtasks" type="vector" value="TaskInfo" comment="正在做的任务信息"/>
+				<variable name="curfamtasks" type="vector" value="FamilyTaskInfo" comment="当前已经获取的所有环任务"/>
+				<variable name="completefamtasknum" type="int" comment="在一组环任务内已经完成的环数"/>
+				<variable name="comdaycycle" type="int" comment="已经完成的日环任务组数"/> 
+				<variable name="comweeksmallcycle" type="int" comment="已经完成的周环任务组数"/>
+				<variable name="lastgiveuofamtime" type="long" comment="上次放弃家族任务的时间"/>
+				<variable name="shownpcs" type="set" value="int" comment="需要显示的npc集合"/>
+				<variable name="hidemines" type="set" value="int" comment="需要隐藏的矿物集合"/>
+				<variable name="isuseyuanbaocomtask" type="int" comment="标识是否使用元宝完成家族环任务，0：否；1：是"/>
+				<variable name="iscanclefamtask" type="int" comment="标识是否放弃过家族环任务,0:否；1：是"/>
+				<variable name="receivedweekbonus" type="vector" value="int" comment="已经领取过的周完成环数奖励情况"/>
+				<variable name="guideBranchTaskID" type="int" comment="主界面上要显示支线任务"/>
+				<variable name="allcandobranch" type="vector" value="int" comment="所有满足条件的支线的第一个任务"/>
+				<variable name="unlockcomtasks" type="vector" value="int" comment="客户端解锁模块中已经完成的任务"/>
+			</protocol>
+
+			<protocol name="SAddNewBranchTaskNotify" comment="新增的支线">
+				<variable name="newtask" type="vector" value="int"/>
+			</protocol>
+			
+			<protocol name="SChangeHistory" type="701" >
+				<variable name="changes" type="map" key="int" value="int"/>
+				<variable name="removes" type="vector" value="int"/>
+			</protocol>
+			
+			<protocol name="SChangeTask" type="702" >
+				<variable name="task" type="TaskInfo"/>
+			</protocol>
+			
+			<protocol name="CAcceptTask" type="704" >
+				<variable name="npcid" type="int"/>
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="SAcceptTask" type="705" >
+				<variable name="npcid" type="int"/>
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="CChooseShowBranchTask" type="712">
+				<variable name="guideBranchTaskID" type="int"/>
+			</protocol>
+
+			<protocol name="SChooseShowBranchTask" type="713">
+				<variable name="guideBranchTaskID" type="int"/>
+			</protocol>
+
+			<protocol name="CCancelTask" type="706" >
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="SCancelTask" type="707" >
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="CCompleteTask" type="708" >
+				<variable name="npcid" type="int"/>
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="SCompleteTask" type="709" >
+				<variable name="npcid" type="int"/>
+				<variable name="taskid" type="int"/>
+			</protocol>
+			
+			<protocol name="SChangeVariable" type="711" >
+				<variable name="changes" type="map" key="int" value="int"/>
+				<variable name="removes" type="vector" value="int"/>
+			</protocol>
+			
+			<protocol name="COpenTaskEctype">
+				<variable name="taskid" type="int"/>
+			</protocol>
+			<protocol name="SOpenTaskEctype">
+				<variable name="taskid" type="int"/>
+			</protocol>			
+			
+			<!--环任务协议-->
+			<protocol name="CGetFamilyTask">
+				<variable name="npcid" type="int" comment="环任务最开始都是在家族npc处获取，放弃任务后，再接取任务也是去家族npc接取"/>
+			</protocol>
+			<protocol name="SGetFamilyTask">
+				<variable name="npcid" type="int"/>
+				<variable name="taskinfo" type="FamilyTaskInfo" comment="获取到的环任务信息"/>
+			</protocol>
+
+			<protocol name="CAcceptFamilyTask" >
+				<variable name="npcid" type="int" comment=""/>
+				<variable name="taskid" type="int" comment=""/>
+			</protocol>
+			<protocol name="SAcceptFamilyTask">
+				<variable name="npcid" type="int"/>
+				<variable name="taskid" type="int"/>
+			</protocol>
+
+			<protocol name="CCancelFamilyTask">
+				<variable name="curtaskorder" type="int" comment="当前正在做第几环"/>
+				<variable name="taskid" type="int" comment="当前做的任务的id"/>
+			</protocol>
+			<protocol name="SCancelFamilyTask" type="715">
+				<variable name="curtaskorder" type="int" comment="当前正在做第几环"/>		
+				<variable name="taskid" type="int" comment="当前做的环任务id"/>		
+			</protocol>
+
+			<protocol name="CCompleteFamilyTask">
+				<variable name="curtaskorder" type="int" comment="当前提交的是第几环"/>
+				<variable name="taskid" type="int"/>
+				<variable name="npcid" type="int"/>
+			</protocol> 
+			<protocol name="SCompleteFamilyTask">
+				<variable name="curtaskorder" type="int" comment="当前提交的是第几环"/>
+				<variable name="taskid" type="int"/>
+				<variable name="comdaycycle" type="int" comment="已经完成的日环任务组数"/> 
+				<variable name="completefamtasknum" type="int" comment="在一组环任务内已经完成的环数"/>
+				<variable name="comweeksmallcycle" type="int" comment="已经完成的周环任务组数"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+				<variable name="nextfamtask" type="FamilyTaskInfo" comment="提交当前环后，返回下一环将要做的，如果是完成一组了，该返回为空"/>
+			</protocol>
+
+			<protocol name="CCompleteFamTaskWithYuanbao" comment="使用元宝快速完成当前小环任务,但是还要去完成npc处提交任务">
+				<variable name="curtaskorder" type="int" comment="当前正在做第几环"/>
+			</protocol>
+			<protocol name="SCompleteFamTaskWithYuanbao">
+				<variable name="curtaskorder" type="int" comment="当前正在做第几环"/>
+			</protocol>
+
+			<protocol name="CClearFamTask" comment="一键清环，使用元宝完成前十环任务，不用去家族提交,当天完成已经超过十环，不能一键清">
+			</protocol>
+			<protocol name="SClearFamTask">
+				<variable name="bonus" type="map.msg.Bonus" comment="一键清环的奖励"/>
+				<variable name="acceptedtasks" type="vector" value="TaskInfo" comment="正在做的任务信息"/>
+				<variable name="curfamtasks" type="vector" value="FamilyTaskInfo" comment="当前已经获取的所有环任务"/>
+				<variable name="completefamtasknum" type="int" comment="在一组环任务内已经完成的环数"/>
+				<variable name="comdaycycle" type="int" comment="已经完成的日环任务组数"/> 
+				<variable name="comweeksmallcycle" type="int" comment="已经完成的周环任务组数"/>
+				<variable name="isuseyuanbaocomtask" type="int" comment="标识是否使用元宝完成家族环任务，0：否；1：是"/>
+				<variable name="iscanclefamtask" type="int" comment="标识是否放弃过家族环任务,0:否；1：是"/>
+			</protocol>
+			
+			<protocol name="CGetWeekCompleteBonus" comment="每周完成一定小环环任务数后领奖，目前完成10，20，40，70环数后会有奖励">
+				<variable name="bonuslvl" type="int" comment="要领取的档位,用0，1，2，3...表示"/>
+			</protocol>
+			<protocol name="SGetWeekCompleteBonus">
+				<variable name="bonuslvl" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+
+			<protocol name="SDailyResetFamTaskNotify" comment="每天重置家族环任务信息">
+				<variable name="comdaycycle" type="int" comment="已经完成的日环任务组数"/> 
+				<variable name="comweeksmallcycle" type="int" comment="已经完成的周环任务组数"/>
+			</protocol>
+
+			<protocol name="SCancelHideMinesNotify" comment="取消隐藏矿物通知">
+				<variable name="unhideminse" type="set" value="int"/>
+			</protocol>
+			
+		</namespace></namespace>
+		
+		<namespace name="mail"><namespace name="msg">
+			<bean name="Mail">
+				<variable name="id" type="int"/>
+				<variable name="mailid" type="int"/> cfg.mail.Mail
+				<variable name="sendtime" type="long" />
+				<variable name="title" type="string" />
+				<variable name="content" type="string" />
+				<variable name="accessory" type="map.msg.Bonus"/>
+				<variable name="params" type="vector" value="string"/>
+				<variable name="read" type="int"/> 0表示未读,1表示已读
+			</bean>
+			<protocol name="SMailBox" type="800" >
+				<variable name="mails" type="vector" value="Mail"/>
+			</protocol>
+			
+			<protocol name="SNewMail" type="801" >
+				<variable name="mail" type="Mail"/>
+			</protocol>
+			
+			<protocol name="CDelMail" type="802" >
+				<variable name="delmailids" type="vector" value="int"/>
+			</protocol>
+			<protocol name="SDelMail" type="803">
+				<variable name="delmailids" type="vector" value="int"/>
+			</protocol>
+			
+			<protocol name="CObtainMailAccessory" type="805" >
+				<variable name="mailids" type="vector" value="int"/>
+			</protocol>
+			
+			<protocol name="SObtainMailAccessory" type="806">
+				<variable name="mailids" type="vector" value="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+			
+			<protocol name="CReadMail" type="808" >
+				<variable name="mailid" type="int"/>
+			</protocol>
+			
+			<protocol name="SReadMail" type="809" >
+				<variable name="mailid" type="int"/>
+			</protocol>
+		</namespace></namespace>
+
+		<!--  好友模块开始  协议号从301- -->
+		<namespace name="friend"><namespace name="msg">
+			<bean name="RoleShowInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="attackpower" type="int" comment="攻击力"/>
+				<variable name="online" type="int" comment="是在在线，1为在线，0为不在线"/>
+				<variable name="time" type="long" />
+			</bean>
+			<bean name="EnemyShowInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="attackpower" type="int" comment="攻击力"/>
+				<variable name="online" type="int" comment="是在在线，1为在线，0为不在线"/>
+				<variable name="time" type="long" />
+				<variable name="killtime" type="int" comment="击杀该玩家的次数"/>
+				<variable name="bekilltime" type="int" comment="被该玩家击杀的次数"/>
+			</bean>
+			<bean name="FriendInfo">
+				<variable name="roleinfo" type="RoleShowInfo"/>
+				<variable name="charmdegree" type="int"/>
+				<variable name="frienddegree" type="int" comment="我与好友的友好度，根据我送给对方花的数量决定"/>
+				<variable name="relation" type="int" comment="我与好友的关系"/>
+			</bean>
+			<bean name="IdolAwardClaim">
+				<variable name="claiminfo" type="set" value="int" comment="key为奖励id，value为领取状态，0为未领取，1为领取过"/>
+			</bean>
+
+			<bean name="RoleFriendInfo">
+				<variable name="idolfrienddegree" type="map" key="long" value="int" comment="跟偶像的友好度，key为偶像的id"/>
+				<variable name="idolawardclaiminfo" type="map" key="long" value="IdolAwardClaim" comment="偶像奖励的领取情况，key为偶像id，value为领取情况"/>
+				<variable name="relations" type="map" key="int" value="MMInfoList" commnet="伴侣的信息"/>
+				<variable name="allowfriendgetmm" type="int" comment="是否允许好友查看脉脉" />
+				<variable name="allowstrangergetmm" type="int" comment="是否允许陌生人查看脉脉" />
+				
+			</bean>
+			
+            <bean name="FlowerInfo" comment="花的信息">
+            	<variable name="flowerid" type="int" comment="花的Id"/>
+            	<variable name="flowernum" type="int" comment="花的数量"/>
+            </bean>
+			
+			<bean name="MMInfoList">
+				<variable name="mmlist" type="vector" value="RoleShowInfo"/>
+			</bean>
+			
+			<bean name="IdolInfo">
+				<variable name="charm" type="int"/>
+				<variable name="guardid" type="long"/>
+				<variable name="guardname" type="string"/>
+				<variable name="guardtime" type="long"/>
+				<variable name="guarddegree" type="long"/>
+			</bean>
+			
+			<protocol name="CGetFriendInfo" type="301"  comment="第一次打开好友列表时请求，之后不用再请求"/>
+			<protocol name="SGetFriendInfo" type="302" 
+                      comment="服务器不保存玩家是否查看过请求列表，所以如果要实现玩家查看过请求列表后，下次登陆好友按钮不要有小红点，请客户端保存">
+                <variable name="myinfo" type="RoleFriendInfo"/>
+				<variable name="friendinfo" type="map" key="long" value="FriendInfo"/>
+                <variable name="requestinginfo" type="map" key="long" value="RoleShowInfo"/>
+                <variable name="blackinfo" type="map" key="long" value="RoleShowInfo"/>
+                <variable name="enemyinfo" type="map" key="long" value="EnemyShowInfo"/>
+                <variable name="idolcharminfo" type="map" key="long" value="IdolInfo"/>
+            </protocol>
+            
+            <protocol name="CRequestFriend" type="303"  comment="申请好友">
+                <variable name="roleid" type="long"/>
+            </protocol>
+            <protocol name="SRequestFriend" type="304" >
+                <variable name="friend" type="RoleShowInfo"/>
+            </protocol>            
+            
+            <protocol name="CAcceptFriend" type="305"  comment="接受好友申请,全部接受也调用此协议">
+                <variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+            <protocol name="SAcceptFriend" type="306">
+                <variable name="friendlist" type="vector" value="FriendInfo"/>
+            </protocol>         
+
+            <protocol name="CRejectFriend" type="307"  comment="拒绝好友申请，全部拒绝也调用此协议">
+                <variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+            <protocol name="SRejectFriend" type="308" >
+                <variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+           
+            <protocol name="CDeleteFriend" type="309"  comment="删除好友">
+                <variable name="roleid" type="long"/>
+            </protocol>
+            <protocol name="SDeleteFriend" type="310" >
+                <variable name="roleid" type="long"/>
+            </protocol>            
+            
+            <protocol name="CSearchFriend" type="313"  comment="搜索好友,查找，刷新都调用此协议">
+            	<variable name="searchkey" type="string"/>            	
+            </protocol>
+             <protocol name="SSearchFriend" type="314" comment="搜索好友结果">
+            	<variable name="searchkey" type="string"/>
+            	<variable name="friendlist" type="vector" value="RoleShowInfo"/>            	
+            </protocol>
+            
+            <protocol name="CBlackFriend" type="315"  comment="屏蔽好友">
+            	<variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+            <protocol name="SBlackFriend" type="316" comment="屏蔽好友">
+            	<variable name="okroleidlist" type="vector" value="RoleShowInfo"/>
+            </protocol>
+            
+            <protocol name="CUnBlackFriend" type="317"  comment="解除屏蔽好友">
+            	<variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+            <protocol name="SUnBlackFriend" type="318"  comment="屏蔽好友">
+            	<variable name="okroleidlist" type="vector" value="long"/>
+            </protocol>
+            
+            <protocol name="SAddEnemyNotify" comment="增加仇人通知">
+            	<variable name="enemy" type="EnemyShowInfo"/>
+            </protocol>
+            
+            <protocol name="CDeleteEnemy" comment="移除仇人信息">
+            	<variable name="roleidlist" type="vector" value="long"/>
+            </protocol>
+            <protocol name="SDeleteEnemy" comment="移除仇人信息">
+            	<variable name="okroleidlist" type="vector" value="long"/>
+            </protocol>
+            
+            <protocol name="SRequestFriendNotify" type="326"  comment="别人申请加好友的通知">
+            	<variable name="friend" type="RoleShowInfo"/>            	
+            </protocol>            
+            <protocol name="SAcceptFriendNotify" type="327"  comment="别人接受我为好友的通知">
+            	<variable name="friend" type="FriendInfo"/>
+            </protocol>
+             <protocol name="SRejectFriendNotify" type="328"  comment="别人拒绝我的好友申请的通知">
+            	<variable name="friend" type="RoleShowInfo"/>
+            </protocol>
+            <protocol name="SDeleteFriendNotify" type="329"  comment="别人删除我为好友的通知">
+            	<variable name="friend" type="RoleShowInfo"/>
+            </protocol>
+            <protocol name="SBlackFriendNotify" type="330"  comment="别人屏蔽我，如果之前是好友关系，先会解除好友关系">
+            	<variable name="friend" type="RoleShowInfo"/>
+            </protocol>
+            <protocol name="SUnBlackFriendNotify" type="331"  comment="别人屏蔽我，如果之前是好友关系，先会解除好友关系">
+            	<variable name="friend" type="RoleShowInfo"/>
+            </protocol>    
+			
+			<protocol name="SFriendDegreeNotify"  comment="通知友好度变化">
+				<variable name="notifytype" type="int"/>
+				<variable name="roleid" type="long"/>
+            	<variable name="frienddegree" type="int"/>
+            </protocol>
+            
+			<protocol name="SRoleCharmNotify"  comment="通知角色魅力值变化">
+				<variable name="notifytype" type="int"/>
+				<variable name="roleid" type="long"/>
+            	<variable name="charm" type="int"/>
+            </protocol>
+			
+			<protocol name="SIdolGuardNotify"  comment="通知偶像守护者变化">
+				<variable name="idolid" type="long"/>
+				<variable name="oldguardid" type="long"/>
+				<variable name="guardid" type="long"/>
+				<variable name="guardname" type="string"/>
+            	<variable name="guardtime" type="long"/>
+            </protocol>
+			
+			<protocol name="SFriendOnlineNotify"  comment="通知好友状态变化">
+				<variable name="roleid" type="long"/>
+				<variable name="online" type="int"/>
+            </protocol>
+			
+			<protocol name="SGuardLoginNotify"  comment="偶像守护者上线通知">
+				<variable name="idolid" type="long"/>
+				<variable name="guardid" type="long"/>
+				<variable name="guardname" type="string"/>
+            </protocol>
+			
+			
+            <protocol name="CSendFlower" >
+            	<variable name="sendtype" type="int" comment="发送类型，给普通好友还是给偶像，通过enum值设定"/>
+            	<variable name="reveiverid" type="long" comment="接受者的角色id"/>
+            	<variable name="flowers" type="vector" value="FlowerInfo"/>
+            </protocol>  
+             <protocol name="SSendFlower" >
+            	<variable name="sendtype" type="int" comment="发送类型，给普通好友还是给偶像，通过enum值设定"/>
+            	<variable name="reveiverid" type="long" comment="接受者的角色id"/>
+            	<variable name="flowers" type="vector" value="FlowerInfo"/>
+            </protocol>
+             <protocol name="SSendFlowerNotify">
+            	<variable name="senderinfo" type="FriendInfo" comment="赠送者的信息"/>
+                <variable name="flowers" type="vector" value="FlowerInfo"/>            	
+            </protocol>       
+            
+            <protocol name="CClaimIdolAward" >
+            	<variable name="idolid" type="long" comment="偶像的id"/>
+            	<variable name="awardid" type="int" comment="奖励的id"/>
+            </protocol>
+            <protocol name="SClaimIdolAward" >
+            	<variable name="idolid" type="long" comment="偶像的id"/>
+            	<variable name="awardid" type="int" comment="奖励的id"/>
+            </protocol>
+			
+			<protocol name="CGetMaimaiInfo"  comment="">
+				<variable name="roleid" type="long"/>
+			</protocol>
+			<protocol name="SGetMaimaiInfo" comment="">
+				<variable name="result" type="int"/>
+				<variable name="roleid" type="long"/>
+                <variable name="mminfo" type="map" key="int" value="MMInfoList"/>
+            </protocol>
+			
+			<protocol name="CRequestMM"  comment="申请脉脉关系">
+                <variable name="roleid" type="long"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+            <protocol name="SRequestMM" >
+                <variable name="result" type="int"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>            
+            
+            <protocol name="CAcceptMM"  comment="接受脉脉关系">
+                <variable name="roleid" type="long"/>
+				<variable name="reqmmtype" type="int"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+            <protocol name="SAcceptMM" type="2981">
+                <variable name="result" type="int"/>
+				<variable name="mmtype" type="int"/>
+                <variable name="mmroleinfo" type="RoleShowInfo"/>
+            </protocol>         
+
+            <protocol name="CRejectMM"  comment="拒绝脉脉关系">
+                <variable name="roleid" type="long"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+            <protocol name="SRejectMM" >
+                <variable name="result" type="int"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+           
+            <protocol name="CDeleteMM"  comment="删除脉脉">
+                <variable name="roleid" type="long"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+            <protocol name="SDeleteMM" >
+				<variable name="result" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="mmtype" type="int"/>
+            </protocol>
+			<protocol name="SRequestMMNotify"  comment="别人申请加脉脉的通知">
+            	<variable name="reqmmtype" type="int"/>
+				<variable name="mmtype" type="int"/>
+				<variable name="mmroleinfo" type="RoleShowInfo"/>            	
+            </protocol>            
+            <protocol name="SAcceptMMNotify"  comment="别人接受我为脉脉关系的通知">
+            	<variable name="mmtype" type="int"/>
+				<variable name="mmroleinfo" type="RoleShowInfo"/> 
+            </protocol>
+             <protocol name="SRejectMMNotify"  comment="别人拒绝我的脉脉申请的通知">
+            	<variable name="mmtype" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/> 
+            </protocol>
+            <protocol name="SDeleteMMNotify"  comment="别人删除我脉脉的通知">
+				<variable name="mmtype" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/> 
+            </protocol>
+
+            <protocol name="SDeleteMMForProposeNotify" comment="由于结婚，可能需要删除已有的脉脉关系">
+            	<variable name="mmtype" type="int"/>
+				<variable name="roleid" type="long"/>
+            </protocol>
+			
+			<protocol name="CSetMMAuthorization"  comment="设置mm权限">
+                <variable name="allowfriendgetmm" type="int"/>
+				<variable name="allowstrangergetmm" type="int"/>
+            </protocol>
+            <protocol name="SSetMMAuthorization" >
+				<variable name="result" type="int"/>
+                <variable name="allowfriendgetmm" type="int"/>
+				<variable name="allowstrangergetmm" type="int"/>
+            </protocol>
+		</namespace></namespace>
+		<!--  好友模块结束 -->
+		
+		<!-- 婚姻模块开始 -->
+		<namespace name="marriage"><namespace name="msg">
+			
+			<protocol name="SMarriageInfo">
+			    <variable name="coupleroleid" type="long" comment="对象的roleid，暂时存放在这里，以后可能存在脉脉中"/>
+				<variable name="curproposeid" type="long" comment="当前正在求婚对象的id"/>
+				<variable name="startproposetime" type="long" comment="开始求婚的时间,如果一段时间后没有反应，那么可以向别的人求婚"/>
+			</protocol>
+
+			<protocol name="CAttemptPropose"  comment="判断是否满足结婚条件">
+				<variable name="beproposedroleid" type="long" comment="被求婚的id"/>
+			</protocol>
+			<protocol name="SAttemptPropose" >
+				<variable name="errcode" type="int" comment="判断结果"/>
+			</protocol>
+
+			<protocol name="CPropose" comment="开始求婚">
+				<variable name="beproposedroleid" type="long" comment="被求婚的id"/>
+				<variable name="proposeoath" type="string" comment="求婚宣言，只有豪华彩礼才能自定义誓词"/>
+			</protocol>
+			<protocol name="SPropose"  comment="求婚结果,通知求婚方">
+				<variable name="proposeid" type="long" comment="求婚者的id"/>
+				<variable name="beproposedroleid" type="long" comment="被求婚的id"/>
+				<variable name="proposetype" type="int" comment="求婚类型，0表示普通，1表示豪华"/>
+				<variable name="proposeresult" type="int" comment="0表示求婚失败，1表示求婚成功，对应之后不同的流程"/>
+			</protocol>
+			
+			<protocol name="CBeproposed" comment="被求婚者的答复信息,该结果要通知给求婚方">
+				<variable name="proposeroleid" type="long" comment="求婚者的id"/>
+				<variable name="proposeresult" type="int" comment="0表示拒绝求婚，1表示同意求婚"/>
+				<variable name="proposetype" type="int" comment="求婚类型，0表示普通，1表示豪华"/>
+				<variable name="proposeoath" type="string" comment="由于没有存储求婚宣言，这里再上传一次"/>
+			</protocol>
+			<protocol name="SBeproposed" comment="求婚者开始求婚后，服务器通知被求婚者有人向你求婚了">
+				<variable name="proposeroleid" type="long" comment="求婚者的id"/>
+				<variable name="proposerolename" type="string" comment="求婚者的姓名"/>
+				<variable name="proposetype" type="int" comment="求婚类型，0表示普通，1表示豪华"/>
+				<variable name="proposeoath" type="string" comment="求婚宣言"/>
+		    </protocol>
+			
+			<protocol name="CDivorceWithDiscuss"  comment="与对象协商离婚">
+				<variable name="bedivorceroleid" type="long" comment="被离婚对象的id"/>
+			</protocol>
+			<protocol name="SDivorceWithDiscuss"  comment="协商离婚的结果">
+				<variable name="bedivorceroleid" type="long" comment="被离婚对象的id"/>
+				<variable name="bedivorcerolename" type="string" comment="被离婚对象的名字"/>
+				<variable name="divorceresult" type="int" comment="0表示离婚失败，1表示离婚成功"/>
+			</protocol>
+
+			<protocol name="CBedivorceWithDiscuss"  comment="被离婚者的答复信息">
+				<variable name="divorceroleid" type="long" comment="发起离婚的id"/>
+				<variable name="divorceresult" type="int" comment="0表示拒绝离婚，1表示同意离婚"/>
+			</protocol>
+			<protocol name="SBedivorceWithDiscuss"  comment="服务器通知被离婚者">
+				<variable name="divorceroleid" type="long" comment="发起离婚的id"/>
+			</protocol>
+			
+			<protocol name="CDivorceWithBook" comment="使用休书与对象离婚">
+				<variable name="bedivorceroleid" type="long" comment="被离婚对象的id"/>
+				<variable name="bookcontent" type="string" comment="休书内容"/>
+			</protocol>
+			<protocol name="SDivorceWithBook" comment="使用休书与对象离婚">
+				<variable name="bedivorceroleid" type="long" comment="被离婚对象的id"/>
+				<variable name="bedivorcerolename" type="string" comment="被离婚对象的名字"/>
+			</protocol>
+			<protocol name="SBedivorcedNotify" comment="使用休书后通知被离婚者">
+				<variable name="divorceroleid" type="long" comment="发起离婚的id"/>
+				<variable name="divorcerolename" type="string" comment="发起离婚的姓名"/>
+				<variable name="divorcetime" type="long" comment="离婚的时间"/>
+				<variable name="bookcontent" type="string" comment="休书内容"/>
+			</protocol>
+			<protocol name="SAllSomePeopleMarryNotify" comment="通知全体人有人结婚">
+				<variable name="content" type="string" comment="要显示的内容"/>
+				<variable name="proposename" type="string" comment="求婚者的姓名"/>
+				<variable name="proposegender" type="int" comment="性别，见GenderType"/>
+				<variable name="beproposedname" type="string" comment="被求婚者的姓名"/>
+				<variable name="beproposegender" type="int" comment=""/>
+			</protocol>
+			<protocol name="SFriendMarryNotify" comment="通知双方所有好友结婚消息">
+				<variable name="proposeroleid" type="long"/>
+				<variable name="proposename" type="string" comment="求婚者的姓名"/>
+				<variable name="beproposeroleid" type="long"/>
+				<variable name="beproposedname" type="string" comment="被求婚者的姓名"/>
+				<variable name="proposetype" type="int" comment="求婚类型"/>
+			</protocol>
+
+			<protocol name="CBuyCaili"  comment="购买彩礼"> 这里的购买拿协议单独处理，不放到商城中
+				<variable name="cailitypeid" type="int" comment="购买的彩礼类型"/>
+			</protocol>
+			<protocol name="SBuyCaili" >
+				<variable name="cailitypeid" type="int" comment="购买的彩礼类型"/>
+			</protocol>
+
+			<protocol name="CBuyXiushu"  comment="购买休书">
+			</protocol>
+			<protocol name="SBuyXiushu"  comment="购买休书">
+			</protocol>
+
+			<protocol name="CFriendWish"  comment="好友祝福">
+				<variable name="proposeroleid" type="long"/>
+				<variable name="beproposeroleid" type="long"/>
+				<variable name="proposetype" type="int"/>
+			</protocol>
+			<protocol name="SFriendWish" >
+				<variable name="marrygift" type="map.msg.Bonus"/>
+			</protocol>
+			<protocol name="SFriendWishNotify" comment="朋友祝福后通知结婚双方得到了祝福">
+				<variable name="friendname" type="string" comment="祝福的朋友的名字"/>
+				<variable name="wishgift" type="map.msg.Bonus"/>
+			</protocol>
+		</namespace>
+		</namespace>
+		<!-- 婚姻模块结束 -->
+		
+		<!--聊天模块-->
+        <namespace name="chat"><namespace name="msg">
+			<bean name="Content">
+				<variable name="senderid" type="long"/>
+				<variable name="sendername" type="string"/>
+				<variable name="senderprofession" type="int"/>
+				<variable name="sendergender" type="int"/>
+				<variable name="receiverid" type="long"/>
+				<variable name="receivername" type="string"/>
+               	<variable name="text" type="string"/>
+				<variable name="bagtype" type="int"/>
+				<variable name="item" type="octets"/>
+               	<variable name="voiceid" type="int"/>
+               	<variable name="voiceduration" type="float"/>
+			</bean>
+			<protocol name="CChat" type="401" maxsize="120000">
+				<variable name="channel" type="int"/>
+				<variable name="receiver" type="long"/>
+				<variable name="text" type="string"/>
+				<variable name="bagtype" type="int"/>
+				<variable name="pos" type="int"/>
+				<variable name="invitechannel" type="int"/>
+				<variable name="voice" type="octets"/>
+				<variable name="voiceduration" type="float"/>
+			</protocol>
+
+			<protocol name="CBuyChatFace" >
+				<variable name="name" type="string"/>
+			</protocol>
+
+			<protocol name="SSyncChatFace">
+				<variable name="name" type="set" value="string"/>
+			</protocol>
+
+			<protocol name="SPrivateMessage" type="404" >
+				<variable name="content" type="Content"/>
+			</protocol>
+			<protocol name="STeamMessage" type="405" >
+				<variable name="content" type="Content"/>
+			</protocol>
+			<protocol name="SFamilyMessage" type="406" >
+				<variable name="content" type="Content"/>
+			</protocol>
+			<protocol name="SWorldMessage" type="407" >
+				<variable name="content" type="Content"/>
+			</protocol>
+			<protocol name="SSystemMessage" type="408" >
+				<variable name="content" type="octets"/>
+			</protocol>
+
+			<protocol name="STopMessage" >
+				<variable name="content" type="Content"/>
+			</protocol>
+
+			<protocol name="SInviteMsg" type="411" >
+				<variable name="roleid" type="long"/>
+				<variable name="name" type="string"/>
+				<variable name="channel" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			
+            <protocol name="CGetVoice" type="409" >
+                <variable name="voiceid" type="int"/>
+            </protocol>
+            <protocol name="SGetVoice" type="410" >
+                <variable name="voiceid" type="int" />
+                <variable name="voice" type="octets" />
+            </protocol>
+			
+			<protocol name="SChatMsg">
+				<variable name="lasttalktime" type="long" comment="上次发言时间"/>
+				<variable name="silentendtime" type="long" comment="禁言结束时间"/>
+				<variable name="leftreporttime" type="int" comment="剩余举报次数"/>
+			</protocol>
+
+			<protocol name="CReportPlayer">
+				<variable name="bereportid" type="long" comment="被举报的玩家的roleid"/>
+			</protocol>
+			<protocol name="SReportPlayer">
+				<variable name="bereportid" type="long" comment="被举报的玩家的roleid"/>
+			</protocol>
+			<protocol name="SBeSilentNotify" comment="被举报达到次数后通知玩家被禁言">
+				<variable name="silentendtime" type="long" comment="禁言结束时间"/>
+			</protocol>
+
+			<protocol name="CGetOnlineState" maxsize="500">
+				<variable name="roles" type="set" value="long" comment="查询玩家的在线状态，上线50个"/>
+			</protocol>
+			<protocol name="SGetOnlineState">
+				<variable name="onlineroles" type="set" value="long" comment="在线的玩家id"/>
+			</protocol>
+			<protocol name="CGetRoleChatShowInfos">
+				<variable name="roles" type="list" value="long"/>
+			</protocol>
+			
+			<bean name="RoleChatShowInfo">
+				<variable name="name" type="string"/>
+				<variable name="gender" type="int"/>
+				<variable name="profession" type="int"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="isonline" type="byte"/>
+			</bean>
+			<protocol name="SGetRoleChatShowInfos">
+				<variable name="roles" type="map" key="long" value="RoleChatShowInfo"/>
+			</protocol>
+
+        </namespace></namespace>
+		
+		<namespace name="notice"><namespace name="msg">
+			<bean name="Notice">
+				<variable name="content" type="octets"/>
+			</bean>
+			<protocol name="SNotice" type="3000" >
+				<variable name="notices" type="vector" value="Notice"/>
+			</protocol>
+		</namespace></namespace>
+
+        <namespace name="pay" >
+            <bean name="Product">
+                <variable name="productid" type="int" />
+                <variable name="rmb" type="int" />
+                <variable name="money" type="int" />
+                <variable name="firstpaymoney" type="int" />
+                <variable name="payreturnmoney" type="int" />
+            </bean>
+
+            <bean name="PayAward">
+                <enum name="STATUS_NOT_PAY" value="0"/>
+                <enum name="STATUS_NOT_GET_AWARD" value="1"/>
+                <enum name="STATUS_GET_AWARD" value="2"/>
+                <variable name="status" type="int" />
+                <variable name="awarditems" type="vector" value="Item" />
+            </bean>
+
+            <bean name="Item">
+                <variable name="itemcfgid" type="int" />
+                <variable name="count" type="int" />
+            </bean>
+
+            <protocol name="CGetPay" type="1801" />
+
+            <protocol name="SGetPay" type="1802" >
+                <variable name="products" type="vector" value="Product" />
+                <variable name="isfirstpayused" type="int" />
+                <variable name="firstpayaward" type="PayAward" />
+                <variable name="dailypayaward" type="PayAward" />
+                <variable name="dailytotalpayaward" type="PayAward" />
+            </protocol>
+	
+            <protocol name="CGetAppOrder" type="1803" >
+                <variable name="productid" type="int"/>
+            </protocol>
+
+            <protocol name="SGetAppOrder" type="1804" >
+                <enum name="OK" value="0"/>
+                <enum name="PRODUCT_NOT_FOUND" value="1"/>
+
+                <variable name="err" type="int"/>
+                <variable name="orderid" type="string"/>
+                <variable name="productid" type="int"/>
+            </protocol>
+
+            <protocol name="SPaySuccessNotify" type="1805"  >
+            	<variable name="productid" type="int"/>
+                <variable name="dailypaystatus" type="int" />
+                <variable name="dailytotalpaystatus" type="int" />
+                <variable name="yuanbao" type="int" comment="本次充值获得的元宝"/>
+                <variable name="bindyuanbao" type="int" comment="本次充值获得的绑定元宝"/>
+            </protocol>
+
+            <protocol name="SBuyMonthCardNotify">
+            	<variable name="buymonthcardtime" type="int"/>
+            	<variable name="monthcardleftdays" type="int"/>
+            </protocol>
+
+            <protocol name="SBuyGrowPlanNotify">
+            	<variable name="growplantype" type="int"/>
+            </protocol>
+
+            <protocol name="SVipLevelNotify">
+            	<variable name="newlevel" type="int"/>
+            	<variable name="totalcharge" type="long"/>
+            </protocol>
+
+            <protocol name="CBuyVipPackage">
+            	<variable name="index" type="int" comment="购买vip礼包，如果是领取首冲奖励，为-1"/>
+            </protocol>
+            <protocol name="SBuyVipPackage">
+             	<variable name="index" type="int"/>
+            </protocol>
+			<protocol name="SPayReturnInfo">
+				<variable name="hasgotpayreturn" type="byte"/>
+				<variable name="vipexp" type="long"/>
+				<variable name="yuanbao" type="long"/>
+				<variable name="bindyuanbao" type="long"/>
+			</protocol>
+			<protocol name="CGetPayReturn"/>
+			<protocol name="SGetPayReturn"/>
+		</namespace>
+		<!-- =========== 背包，装备，物品相关协议配置开始, 协议从2100-2200给装备模块，2201-2300给物品模块，2301-2400给碎片模块  ============= -->
+		<namespace name="equip" comment="装备">
+			<bean name="Equip">
+				<variable name="equipid" type="long" comment="装备id"/>
+				<variable name="modelid" type="int" comment="model id"/>
+				<variable name="position" type="int" comment="包裹中的位置"/>
+				<variable name="expiretime" type="long" comment="过期时间"/>
+				<variable name="isbind" type="int" comment="是否绑定"/>
+				<variable name="normalequip" type="NormalEquipProp" comment="普通装备的属性"/>
+				<variable name="accessory" type="AccessoryProp" comment="饰品类装备的属性"/>
+			</bean>
+
+			<bean name="NormalEquipProp" comment="衣服，帽子，鞋子，武器">
+				<variable name="anneallevel" type="int" comment="装备强化等级"/>
+				<variable name="perfuselevel" type="int" comment="装备灌注等级"/>
+			</bean>
+
+			<bean name="PropInfo" >
+				<variable name="key" type="int"  />
+				<variable name="val" type="float" />
+			</bean>
+
+			<bean name="AccessoryProp" comment="饰品类：戒指，项链，手镯">
+				<variable name="mainprop" type="vector" value="lx.gs.equip.PropInfo" comment="主属性,目前是2个"/>
+				<variable name="extraprop" type="vector" value="lx.gs.equip.PropInfo" comment="附加属性，目前是5个"/>
+			</bean>
+
+
+
+			<protocol name="CLoadEquip"  comment="从包裹装载装备到身上">
+				<variable name="pos" type="int" comment="格子号"/>
+			</protocol>
+
+			<protocol name="CUnloadEquip" comment="从身上卸载装备到包裹">
+				<variable name="pos" type="int" comment="格子号"/>
+			</protocol>
+
+			<protocol name="CRecommandEquip" type="2164">
+				<variable name="pos" type="int" comment="装备包裹里的格子号"/>
+			</protocol>
+
+			<protocol name="SRecommandEquip">
+				<variable name="result" type="int" comment="ErrorCode"/>
+			</protocol>
+
+			<namespace name="normalequip" comment="正常装备操作">
+				<protocol name="CPerfuseEquip" comment="装备灌注">
+					<variable name="bagtype" type="int" />
+					<variable name="pos" type="int" comment=""/>
+					<variable name="unbindonly" type="int" comment="是否只用非绑定的"/>
+				</protocol>
+				<protocol name="SPerfuseInfoUpdate" comment="装备灌注">
+					<variable name="bagtype" type="int" />
+					<variable name="pos" type="int"/>
+					<variable name="newlevel" type="int" comment="新的等级"/>
+				</protocol>
+
+				<protocol name="CAnnealEquip" comment="炼器强化装备">
+					<variable name="bagtype" type="int" />
+					<variable name="pos" type="int" comment=""/>
+					<variable name="unbindonly" type="int" comment="是否只用非绑定的"/>
+					<variable name="usewanbifu" type="int" comment="是否使用完毕符"/>
+					<variable name="helpitemmodelid" type="int" comment="辅助物品的mdoel id" />
+				</protocol>
+				<protocol name="SAnnealEquip"   comment="炼器强化装备">
+					<variable name="bagtype" type="int" />
+					<variable name="pos" type="int"/>
+					<variable name="newlevel" type="int" comment="炼器完成后的的新等级"/>
+				</protocol>
+
+				<protocol name="CSwapEquipProp" type="1832">
+					<variable name="bagtype1" type="int" />
+					<variable name="pos1" type="int" comment="装备1id"/>
+					<variable name="bagtype2" type="int" />
+					<variable name="pos2" type="int" comment="装备2id"/>
+					<variable name="isswapanneal" type="int" comment="是否交换炼器等级"/>
+					<variable name="isswapperfuse" type="int" comment="是否交换追加等级"/>
+				</protocol>
+
+				<protocol name="SSwapEquipProp">
+					<variable name="bagtype1" type="int" />
+					<variable name="pos1" type="int" comment="装备1id"/>
+					<variable name="bagtype2" type="int" />
+					<variable name="pos2" type="int" comment="装备2id"/>
+					<variable name="isswapanneal" type="int" comment="是否交换炼器等级"/>
+					<variable name="isswapperfuse" type="int" comment="是否交换追加等级"/>
+				</protocol>
+
+				<protocol name="CUpgradeEquip" comment="神器进阶">
+					<variable name="bagtype1" type="int" comment="包裹类型"/>
+					<variable name="pos1" type="int" comment="格子号"/>
+					<variable name="bagtype2" type="int" comment="包裹类型"/>
+					<variable name="pos2" type="int" comment="格子号"/>
+				</protocol>
+
+				<protocol name="SUpgradeEquip" comment="神器进阶">
+					<variable name="bagtype1" type="int" comment="包裹类型"/>
+					<variable name="pos1" type="int" comment="格子号"/>
+					<variable name="bagtype2" type="int" comment="包裹类型"/>
+					<variable name="pos2" type="int" comment="格子号"/>
+				</protocol>
+
+			</namespace>
+			<namespace name="accessory" comment="饰品操作">
+				<protocol name="CWashAccessory" comment="洗练饰品">
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+					<variable name="washpropindex" type="int" comment="主饰品要替换的副属性的index"/>
+					<variable name="materialpos" type="int" comment="材料所在位置,只从存储包裹中找"/>
+				</protocol>
+				<protocol name="SWashAccessory" >
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+					<variable name="oldpropindex" type="int" comment="原属性key"/>
+					<variable name="newprop" type="lx.gs.equip.PropInfo" comment="洗练后获得的属性"/>
+				</protocol>
+				<protocol name="CApplyAccessoryWashResult" comment="确定接受饰品洗练结果">
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+				</protocol>
+				<protocol name="SApplyAccessoryWashResult">
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+					<variable name="oldpropindex" type="int" comment="原属性key"/>
+					<variable name="newprop" type="lx.gs.equip.PropInfo" comment="洗练后获得的属性"/>
+				</protocol>
+				<protocol name="CRestoreAccessoryWashResult" comment="取消洗练结果">
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+				</protocol>
+				<protocol name="SRestoreAccessoryWashResult" type="2111">
+					<variable name="bagtype" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos" type="int" comment="饰品所在位置"/>
+				</protocol>
+
+				<protocol name="CSwapAccessoryProp" comment="饰品转移" >
+					<variable name="bagtype1" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos1" type="int" comment="饰品所在位置"/>
+					<variable name="bagtype2" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos2" type="int" comment="饰品所在位置"/>
+				</protocol>
+				<protocol name="SSwapAccessoryProp"  type="2158">
+					<variable name="bagtype1" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos1" type="int" comment="饰品所在位置"/>
+					<variable name="bagtype2" type="int" comment="饰品所在包裹类型"/>
+					<variable name="pos2" type="int" comment="饰品所在位置"/>
+				</protocol>
+			</namespace>
+		</namespace>
+
+		<!--  时装和坐骑模块，协议号从2170开始  -->
+		<namespace name="dress">
+			<bean name="Dress">
+				<variable name="dresskey" type="int" comment="时装的key"/>
+				<variable name="expiretime" type="long" comment="过期时间"/> 0则为永久
+			</bean>
+
+			<protocol name="CGetDressInfo" type="2170"  comment="获取">
+			</protocol>
+			<protocol name="SGetDressInfo" type="2171" >
+				<variable name="dresslist" type="vector" value="Dress"/>
+				<variable name="activedress" type="int" />
+			</protocol>
+
+			<protocol name="SDressExpired"  comment="时装过期">
+				<variable name="dresskey" type="int" />
+			</protocol>
+
+
+			<protocol name="CActiveDress"  type="2172" >
+				<variable name="dresskey" type="int" comment="要使用的dress的key"/>
+			</protocol>
+			<protocol name="SActiveDress" type="2173" >
+				<variable name="dresskey" type="int" comment="要使用的dress的key"/>
+			</protocol>
+
+			<protocol name="CDeActiveDress" comment="卸载时装">
+			</protocol>
+			<protocol name="SDeActiveDress" >
+			</protocol>
+
+			<protocol name="SDressGetNotify" type="2174" >
+				<variable name="dress" type="Dress"/>
+			</protocol>
+
+			<protocol name="CBuyDress" comment="购买Dress，购买后处于获得状态">
+				<variable name="dresskey" type="int" comment="购买的Dresskey"/>
+			</protocol>
+			<protocol name="SBuyDress" comment="购买dress，购买后处于获得状态">
+				<variable name="dresskey" type="int" comment="购买的Dresskey"/>
+			</protocol>
+
+		</namespace>
+		<!-- == 时装结束 == -->
+
+		<!-- == 坐骑开始 == -->
+		<namespace name="mount">
+			<bean name="Ride">
+				<variable name="ridekey" type="int" comment="坐骑的key"/>
+				<variable name="expiretime" type="long" comment="过期时间"/> 0则为永久
+			</bean>
+
+			<protocol name="CGetRideInfo" type="2180"  comment="获取">
+			</protocol>
+
+			<protocol name="SGetRideInfo" type="2181" >
+				<variable name="rideinfo" type="vector" value="Ride"/>
+				<variable name="activeride" type="int" />
+			</protocol>
+
+			<protocol name="CActiveRide"  type="2182" >
+				<variable name="ridekey" type="int" comment="要使用的坐骑的key"/>
+			</protocol>
+
+			<protocol name="SActiveRide" type="2183" >
+				<variable name="ridekey" type="int" comment="要使用的坐骑的key"/>
+			</protocol>
+
+			<protocol name="CDeActiveRide" comment="卸下坐骑">
+			</protocol>
+
+			<protocol name="SDeActiveRide" comment="卸下坐骑">
+			</protocol>
+
+			<protocol name="SRideGetNotify" type="2184" >
+				<variable name="ride" type="Ride"/>
+			</protocol>
+
+			<protocol name="SRideExpired" comment="过期">
+				<variable name="rideid" type="int"/>
+			</protocol>
+
+			<protocol name="CBuyRide" comment="购买坐骑，购买后处于获得状态">
+				<variable name="ridekey" type="int" comment="购买的坐骑key"/>
+			</protocol>
+			<protocol name="SBuyRide" comment="购买坐骑，购买后处于获得状态">
+				<variable name="ridekey" type="int" comment="购买的坐骑key"/>
+			</protocol>
+		</namespace>
+		<!-- == 坐骑结束 == -->
+
+		<!-- == 玉佩开始 == -->
+		<namespace name="jade">
+			<bean name="Jewelry">
+				<variable name="id" type="int" comment="宝珠id"/>
+				<variable name="level" type="int" comment="宝珠等级"/>
+				<variable name="exp" type="int" comment="宝珠经验"/>
+			</bean>
+
+			<bean name="Jade">
+				<variable name="level" type="int" comment="玉佩等级"/>
+				<variable name="bonus" type="int" comment="玉佩增加值"/>
+			</bean>
+
+			<bean name="RoleJadeInfo">
+				<variable name="jade" type="Jade" comment="玉佩等级"/>
+				<variable name="holenum" type="int" comment="打开的孔数量"/>
+				<variable name="jewelry" type="map" key="int" value="Jewelry"  comment="装备到玉佩上的宝珠"/>
+				<variable name="jewelrybag" type="vector" value="Jewelry"  comment="宝珠背包"/>
+				<variable name="jewelrygetlevel" type="int" comment="猎取师档位"/>
+			</bean>
+
+			<protocol name="CGetJadeInfo" comment="获取护符信息">
+			</protocol>
+			<protocol name="SGetJadeInfo" comment="获取护符信息">
+				<variable name="jadeinfo" type="RoleJadeInfo"/>
+			</protocol>
+
+			<protocol name="SJadeUnLockNotify" comment="玉佩开启通知">
+				<variable name="jade" type="Jade" comment="玉佩等级"/>
+				<variable name="holenum" type="int"/>
+			</protocol>
+
+			<protocol name="CEnhanceJade" comment="玉佩培养">
+				<variable name="enhancetypeid" type="int"/>
+				<variable name="num" type="int"/>
+			</protocol>
+			<protocol name="SEnhanceJade" comment="玉佩培养">
+				<variable name="enhancetypeid" type="int"/>
+				<variable name="num" type="int"/>
+				<variable name="addbonus" type="int"/>
+			</protocol>
+
+			<protocol name="CEvolveJade" comment="玉佩进阶">
+			</protocol>
+			<protocol name="SEvolveJade" comment="玉佩进阶">
+				<variable name="jade" type="Jade" comment="玉佩等级"/>
+			</protocol>
+
+			<protocol name="CUnloadJewelry" comment="卸载宝珠">
+				<variable name="position" type="int" comment="宝珠索引"/>
+			</protocol>
+			<protocol name="SUnloadJewelry">
+				<variable name="position" type="int" comment="宝珠索引"/>
+				<variable name="index" type="int" comment="放置到包裹后的编号"/>
+				<variable name="jewelry"  type="Jewelry" comment="宝珠信息"/>
+			</protocol>
+
+			<protocol name="CLoadJewelry" comment="装配宝珠">
+				<variable name="index" type="int" comment="宝珠在包裹中的编号"/>
+				<variable name="position" type="int" comment="宝珠玉佩上的位置"/>
+			</protocol>
+			<protocol name="SLoadJewelry">
+				<variable name="index" type="int" comment="宝珠在包裹中的编号"/>
+				<variable name="position" type="int" comment="宝珠玉佩上的位置"/>
+				<variable name="jewelry"  type="Jewelry" comment="宝珠信息"/>
+				<variable name="oldjewelry"  type="Jewelry" comment="宝珠信息"/>
+			</protocol>
+
+
+			<protocol name="CHuntJewelry" comment="猎取宝珠">
+				<variable name="num" type="int" comment="猎取次数"/>
+			</protocol>
+			<protocol name="SHuntJewelry">
+				<variable name="num" type="int" comment="猎取次数"/>
+				<variable name="jewelrygetlevel" type="int" comment="猎取师档位"/>
+				<variable name="jewelrylist" type="vector" value="Jewelry"  comment="宝珠背包"/>
+			</protocol>
+
+			<protocol name="CSummonRole" comment="召唤猎取师">
+				<variable name="role" type="int" comment="猎取师档位"/>
+			</protocol>
+			<protocol name="SSummonRole" comment="召唤猎取师">
+				<variable name="role" type="int" comment="猎取师档位"/>
+			</protocol>
+
+			<protocol name="CEnhanceJewelry" comment="宝珠升级">
+				<variable name="position" type="int" comment="要升级的装配上的宝珠位置"/>
+				<variable name="index" type="int" comment="要升级的背包里的宝珠索引"/>
+				<variable name="doglist" type="vector" value="int" comment=""/>
+			</protocol>
+			<protocol name="SEnhanceJewelry" comment="宝珠升级">
+				<variable name="position" type="int" comment="要升级的装配上的宝珠位置"/>
+				<variable name="index" type="int" comment="要升级的背包里的宝珠位置"/>
+				<variable name="jewelry" type="Jewelry" comment="要升级的装配上的宝珠"/>
+				<variable name="jewelrybag" type="vector" value="Jewelry"  comment="宝珠背包"/>
+			</protocol>
+		</namespace>
+		<!-- == 玉佩结束 == -->
+
+		<!-- == 护符开始 == -->
+		<namespace name="amulet">
+			<bean name="AmuletPropperty">
+				<variable name="propindex" type="int" comment="属性id"/>
+				<variable name="islock" type="int" comment="是否锁定，0为未锁定，1为锁定"/>
+				<variable name="skillid" type="int" comment="技能id"/>
+				<variable name="professionid" type="int" comment="职业id"/>
+				<variable name="addlevel" type="int" comment="技能增值"/>
+			</bean>
+			<bean name="AmuletPage">
+				<variable name="pageindex" type="int" comment="护符页的id"/>
+				<variable name="propmap" type="map" key="int" value="AmuletPropperty" comment="护符属性"/>
+			</bean>
+			<bean name="RoleAmuletInfo">
+				<variable name="pagemap" type="map" key="int" value="AmuletPage" comment="护符页信息"/>
+			</bean>
+
+			<protocol name="CGetAmuletInfo" comment="获取护符信息">
+			</protocol>
+			<protocol name="SGetAmuletInfo" comment="获取护符信息">
+				<variable name="amuletinfo" type="RoleAmuletInfo"/>
+			</protocol>
+
+			<protocol name="CWashAmulet" comment="洗练护符">
+				<variable name="pageid" type="int" comment="洗练页面"/>
+			</protocol>
+			<protocol name="SWashAmulet" comment="洗练护符" type="2188">
+				<variable name="pageid" type="int" comment="洗练页面"/>
+				<variable name="washresult" type="map" key="int" value="AmuletPropperty" comment="护符属性"/>
+			</protocol>
+
+			<protocol name="CApplyAmuletWashResult" comment="确认应用洗练结果">
+				<variable name="pageid" type="int"  comment="洗练页面"/>
+			</protocol>
+			<protocol name="SApplyAmuletWashResult" comment="确认应用洗练结果">
+				<variable name="pageid" type="int"  comment="洗练页面"/>
+				<variable name="changeprop" type="map" key="int" value="AmuletPropperty" comment="护符属性"/>
+			</protocol>
+
+			<protocol name="CCancelAmuletWashResult" comment="取消洗练结果">
+				<variable name="pageid" type="int"  comment="洗练页面"/>
+			</protocol>
+			<protocol name="SCancelAmuletWashResult" comment="取消洗练结果">
+				<variable name="pageid" type="int"  comment="洗练页面"/>
+			</protocol>
+
+			<protocol name="CLockAmulet" comment="锁定护符属性">
+				<variable name="pageid" type="int" comment="护符页面"/>
+				<variable name="amuletid" type="int" comment="护符id"/>
+			</protocol>
+			<protocol name="SLockAmulet" comment="锁定护符属性">
+				<variable name="pageid" type="int" comment="护符页面"/>
+				<variable name="amuletid" type="int" comment="护符id"/>
+			</protocol>
+
+			<protocol name="CUnLockAmulet" comment="解锁护符属性">
+				<variable name="pageid" type="int" comment="护符页面"/>
+				<variable name="amuletid" type="int" comment="护符id"/>
+			</protocol>
+
+			<protocol name="SUnLockAmulet" comment="解锁护符属性">
+				<variable name="pageid" type="int" comment="护符页面"/>
+				<variable name="amuletid" type="int" comment="护符id"/>
+			</protocol>
+
+			<protocol name="SAmuletPageOpenNotify" comment="护符页面开启通知,当玩家的级别达到一定的值">
+				<variable name="pageid" type="int" comment="护符页面"/>
+			</protocol>
+		</namespace>
+		<!-- == 护符结束 == -->
+
+		<!-- == 聚宝盆开始 == -->
+		<namespace name="treasurebowl" comment="聚宝盆">
+			<protocol name="CTreasureBowlBreak" comment="聚宝盆系统拆解装备，得到灵晶">
+				<variable name="posList" type="vector" value="int" comment=""/>
+			</protocol>
+
+			<protocol name="STreasureBowlBreak" comment="聚宝盆系统拆解装备，得到灵晶">
+				<variable name="receivedlingjing" type="long" comment="本次拆解获得的灵晶"/>
+			</protocol>
+		</namespace>
+		<!-- == 聚宝盆结束 == -->
+
+		<!-- == 物品开始 == -->
+		<namespace name="item" comment="物品">
+			<bean name="Item" comment="物品的数据结构">
+				<variable name="itemid" type="long" comment="物品唯一id"/>
+				<variable name="modelid" type="int" comment="物品model id"/>
+				<variable name="position" type="int" comment="物品在包裹中的位置，从0开始编号"/>
+				<variable name="count" type="int" comment="数量" />
+				<variable name="expiretime" type="long" comment="到期时间，如果为0，表示没有时间限制"/>
+				<variable name="isbind" type="int" comment="物品是否绑定"/>
+			</bean>
+			<protocol name="CUseItem" comment="使用物品">
+				<variable name="pos" type="int" />
+				<variable name="usenumber" type="int"/>
+			</protocol>
+		</namespace>
+		<!-- == 物品结束 == -->
+
+		<!-- =================碎片开始================== -->
+		<namespace name="fragment" comment="碎片">
+			<bean name="Fragment" comment="碎片数据结构">
+				<variable name="fragmentid" type="long" comment="物品唯一id"/>
+				<variable name="modelid" type="int" comment="物品model id"/>
+				<variable name="position" type="int" comment="物品在包裹中的位置，从0开始编号"/>
+				<variable name="count" type="int" comment="数量" />
+				<variable name="expiretime" type="long" comment="到期时间，如果为0，表示没有时间限制"/>
+				<variable name="isbind" type="int" comment="物品是否绑定"/>
+			</bean>
+
+			<protocol name="CCompoundFragment" type="2309"  comment="碎片合成">
+				<variable name="pos" type="int" comment="位置"/>
+			</protocol>
+		</namespace>
+		<!-- =================碎片结束================== -->
+
+		<!-- =========== 背包，装备，物品相关协议配置结束  协议从2100-2200给装备模块，2201-2300给物品模块，2301-2400给碎片模块 ============= -->
+
+
+		<!--法宝模块配置开始-->
+		<namespace name="talisman" comment="法宝">
+			<bean name="Talisman" comment="每个法宝的具体信息">
+				<variable  name="talismanid" type="long" />
+				<variable  name="modelid" type="int" comment="法宝的策划配置id"/>
+				<variable  name="pos" type= "int" comment="物品在包裹中的位置，从0开始编号"/>
+				<variable  name="isbind" type="int" comment="法宝绑定类型"/>
+				<variable  name="normalexp" type="long" comment="法宝普通经验"/>
+				<variable  name="normallevel" type="int" default="1" comment="法宝普通等级,开始为1"/>
+				<variable  name="starexp" type="int" comment="法宝星阶经验"/>
+				<variable  name="starlevel" type="int" default="1" comment="法宝星阶等级,开始为1"/>
+				<variable  name="wuxingtype" type="int" comment="法宝当前的五行属性类型"/>
+				<variable  name="wuxingvalue" type="int" comment="五行属性攻击值"/>
+				<variable  name="awakelevel" type="int" comment="法宝觉醒等级,觉醒后提升高级属性"/>
+				<variable  name="skills" type="map" key="int" value="int"/>
+				<variable  name="combatpower" type="int" comment="法宝战力"/>
+			</bean>
+
+			<protocol name="SLuckyInfo" >
+				<variable name="luckytype" type="int" comment=""/>
+				<variable name="washcount" type="int" comment=""/>
+			</protocol>
+
+			<protocol name="SSyncTalismanCombatPower">
+				<variable name="bagtype" type="int" />
+				<variable name="pos" type="int" />
+				<variable name="val" type="int" />
+			</protocol>
+
+			<protocol name="CEquipTalisman" >
+				<variable name="pos" type="int" comment=""/>
+			</protocol>
+
+			<protocol name="CUnEquipTalisman" >
+			</protocol>
+
+			<protocol name="CAddNormalExp" >提升法宝的普通等级
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="materialpos" type="int" comment=""/>
+				<variable name="materialnum" type="int" comment=""/>
+			</protocol>
+			<protocol name="SAddNormalExp" >
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="newlevel" type="int"/>
+				<variable name="newexp" type="long"/>
+			</protocol>
+
+			<protocol name="CAddStarExp" >提升法宝的星阶等级
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="costtalisman" type="set" value="int" comment="消耗的法宝"/>
+			</protocol>
+			<protocol name="SAddStarExp" >
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="newlevel" type="int"/>
+				<variable name="newexp" type="int"/>
+			</protocol>
+
+			<protocol name="CTalismanAwake" >法宝觉醒
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+			</protocol>
+			<protocol name="STalismanAwake" >
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="newlevel" type="int"/>
+			</protocol>
+
+			<protocol name="CChangeLuckType" >转运
+				<variable name="isbestlucky" type="int" comment="是否是必然大吉，0表示否，1表示是"/>
+			</protocol>
+
+			<protocol name="CChangeWuxingType" >转变五行类型
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+			</protocol>
+			<protocol name="SChangeWuxingType" >
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="wuxingtype" type="int" comment="转变五行之后的类型,由于只需更改一个，所以直接返回改变后的类型"/>
+			</protocol>
+
+			<protocol name="CWuxingWash" >五行洗练，改变属性攻击值
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+			</protocol>
+			<protocol name="SWuxingWash" >
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="criticaltimes" type="int" comment="洗练出现的暴击次数，如果为1表示没有"/>
+				<variable name="wuxingvalue" type="int" comment="洗练后的值"/>
+				<variable name="washtimes" type="int" comment="当前运势下洗练次数"/>
+			</protocol>
+
+			<protocol name="CTalismanRecycle" >法宝归元
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+			</protocol>
+			<protocol name="STalismanRecycle" > 归元后返还的物品
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="expitems" type="map" key="int" value="int"/> 经验丹itemkey-nums
+				<variable name="staritems" type="map" key="int" value="int"/>星阶丹和原始法宝
+			</protocol>
+
+			<protocol name="CUpgradeSkill">
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="skillid" type="int"/>
+			</protocol>
+			<protocol name="SUpgradeSkill">
+				<variable name="bagtype" type="int" comment=""/>
+				<variable name="pos" type="int" comment=""/>
+				<variable name="skillid" type="int"/>
+				<variable name="skilllevel" type="int"/>
+			</protocol>
+		</namespace>
+
+		<!--仓库模块配置开始-->
+		<namespace name="depot"><namespace name="msg">
+
+			<protocol name="CTransferItem" type="2356"  comment="转移物品，仓库 -> 包裹，包裹 -> 仓库">
+				<variable name="bagtype" type="int" comment="包裹类型"/>
+				<variable name="pos" type="int" comment="装备在包裹中的编号"/>
+			</protocol>
+
+			<protocol name="CSaveGoldCoin" type="2380" comment="把金币放入仓库">
+				<variable name="amount" type="long" comment="数量"/>
+			</protocol>
+			<protocol name="CTakeGoldCoin" type="2382"  comment="从仓库中取出金币">
+				<variable name="amount" type="long" comment="数量"/>
+			</protocol>
+			<protocol name="SSyncGoldCoin" type="2381" >
+				<variable name="depotgoldcoin" type="long" comment="数量"/>
+			</protocol>
+
+		</namespace></namespace>
+		<!--仓库模块配置结束-->
+
+		<!--福利系统配置开始-->
+		<namespace name="bonus"><namespace name="msg">
+			<bean name="GiftPackage"> 礼包中的内容
+                <variable name="currency" type="map" key="int" value="int"/> 货币
+                <variable name="items" type="map" key="int" value="int"/> 物品，包含装备,碎片和消耗性物品
+            </bean>
+
+            <protocol name="CNewGift" type="2505" >领取新手礼包              
+                <variable name="newgiftid" type="int"/>
+            </protocol>
+            <protocol name="SNewGift" type="2506" >
+                <variable name="newgiftid" type="int"/>
+            </protocol>
+             
+
+            <protocol name="CSign" type="2509" >签到
+                <variable name="signtype" type="int" comment="0，正常签到；1，补充签到"/>
+                <variable name="signdate" type="int"/>
+            </protocol>
+            <protocol name="SSign" type="2510" >签到及补签奖励
+            	<variable name="signtype" type="int"/>
+                <variable name="signdate" type="int"/>
+                <variable name="signgift" type="map.msg.Bonus"/>
+            </protocol>
+
+            
+
+            <protocol name="CContinueLoginGift" type="2512" >领取连续登录奖励
+                <variable name="boxid" type="int"/>
+            </protocol>
+            <protocol name="SContinueLoginGift" type="2513" >
+            	<variable name="boxid" type="int"/>
+                <variable name="logingift" type="map.msg.Bonus"/>
+                <variable name="lefttimes" type="int" comment="剩余连续登录奖励领取次数"/>
+            </protocol>
+
+
+            <protocol name="CGetOnlineGift" type="2516" >领取在线时长的奖励,可以一次领取多个
+                <variable name="gifttimetype" type="vector" value="int"/>
+            </protocol>
+            <protocol name="SGetOnlineGift" type="2517" >
+                <variable name="onlinegift" type="map" key="int" value="map.msg.Bonus"/>
+            </protocol>
+			
+
+            <protocol name="CGetMonthCardGift" type="2518" >领取当天超值月卡的礼包
+                <variable name="date" type="int"/>
+            </protocol>
+            <protocol name="SGetMonthCardGift" type="2519" >
+                <variable name="date" type="int"/>
+                <variable name="monthcardgift" type="map.msg.Bonus"/>
+            </protocol>
+			
+
+
+
+            <protocol name="CGetGrowPlanGift" type="2520" >领取成长计划礼包
+            	<variable name="growplantype" type="int"/>
+                <variable name="giftindx" type="int"/>
+            </protocol>
+            <protocol name="SGetGrwoPlanGift" type="2521" >
+                <variable name="growplantype" type="int"/>
+                <variable name="giftindx" type="int"/>
+            </protocol>
+            
+			
+
+            <protocol name="CGetPayGift" type="2524" >获取充值回馈礼包
+                <variable name="id" type="int" />
+            </protocol>
+            <protocol name="SGetPayGift" type="2525" >
+            	<variable name="id" type="int"/>
+                <variable name="paygift" type="map.msg.Bonus"/>
+            </protocol>
+			
+
+            <protocol name="CStartWish" type="2526" > 开始许愿
+                <variable name="petid" type="long" comment="放入的伙伴id"/>
+            </protocol>
+            <protocol name="SStartWish" type="2527" >
+                <variable name="petid" type="long"/>
+                <variable name="wishtimes" type="int"/>
+            </protocol>         
+            <protocol name="CGetWishGift" type="2541" > 领取许愿礼物
+            	<variable name="petid" type="long"/>
+            </protocol>
+            <protocol name="SGetWishGift" type="2542" >
+            	<variable name="wishgift" type="map.msg.Bonus"/>
+            </protocol>
+			
+			<protocol name="CBonusInfo">
+			</protocol>
+
+			<protocol name="SBonusInfo" comment="登录后发送的信息,小红点显示">
+
+                <variable name="receivednewgift" type="vector" value="int" comment="已经领取过的新手礼包列表"/>
+                <variable name="totallogindays" type="int" comment="总的登录天数"/>
+
+				<variable name="totaldays" type="int" comment="当月总计天数"/>
+                <variable name="signedlist" type="vector" value="int"/>
+                <variable name="hastodaysign" type="int"/>
+                <!-- <variable name="addsigntimes" type="int" comment="当月已补签次数"/> -->
+				
+				<variable name="continuedays" type="int"/>
+                <variable name="lefttimes" type="int"/>
+                <variable name="receivedconlogingift" type="vector" value="int" comment="已经领取过的连续登陆礼包列表"/>
+
+                <variable name="receivedtype" type="vector" value="int"/>
+                <variable name="dailyonlinetime" type="long"/>
+
+                <variable name="monthcardplayer" type="int" comment="0表示非月卡用户；1表示买过月卡"/>
+                <variable name="monthcardleftday" type="int" comment="月卡剩余天数"/>
+                <variable name="dates" type="vector" value="int"/>
+
+				<variable name="buygrowplantype" type="int" comment="1,2,3，如果为0，表示没有买过"/>
+				<variable name="buygrowplantypetwo" type="int" comment="是否购买过成长计划2，如果为0，表示没有买过"/>
+				<variable name="buygrowplantypethr" type="int" comment="是否购买过成长计划3，如果为0，表示没有买过"/>
+				<variable name="growplanonetime" type="int" comment="第几天登录购买的成长计划1"/>
+				<variable name="growplantwotime" type="int" comment="第几天登录购买的成长计划2"/>
+				<variable name="growplanthreetime" type="int" comment="第几天登录购买的成长计划3"/>
+                <variable name="threegifts" type="vector" value="int" comment="已经领取过的成长计划礼包id"/>
+                <variable name="fivegifts" type="vector" value="int" comment="已经领取过的成长计划礼包id"/>
+                <variable name="sevengifts" type="vector" value="int" comment="已经领取过的成长计划礼包id"/>
+
+                <variable name="isfirstpayused" type="byte" comment="是否领取过首冲奖励"/>
+                <variable name="dailytotalcharge" type="long" comment="每日累计充值"/>
+                <variable name="totalcharge" type="long" comment="累计充值,单位是人民币分"/>
+                <variable name="totalcost" type="long" comment="总的花费"/>  
+                <variable name="hasbuyproduct" type="vector" value="int" comment="已经购买过的产品"/>
+                <variable name="receivedchargegifts" type="vector" value="int" comment="已领取的奖励类型"/>
+                <variable name="isactivepay" type="int" comment="是否购买过每日超值购,0,没有；1,已购买"/>
+
+				<variable name="wishtimes" type="int" comment="已许愿的次数,为1时表示使用了免费许愿，此时需要消耗宝碟"/>
+				<variable name="lastwishtime" type="long" comment="上次许愿时间，如果为0表示当前没有许愿"/>
+				<variable name="lastwishpetid" type="long" comment="上次许愿的伙伴id"/>
+
+				<variable name="iseatlunch" type="int" comment="是否吃了中午的包子；0，否，1是"/>
+				<variable name="iseatdinner" type="int"/>
+			</protocol>
+
+			<protocol name="CEatBaozi" comment="吃包子或者补领">
+				<enum name="EAT_LUNCH" value="1"/>
+				<enum name="EAT_DINNER" value="2"/>
+				<enum name="RE_EAT_LUNCH" value="3"/>
+				<enum name="RE_EAT_DINNER" value="4"/>
+				<variable name="eattype" type="int" comment="吃包子的类型"/>
+			</protocol>
+
+			<protocol name="SEatBaozi">
+				<variable name="eattype" type="int"/>
+				<variable name="addtili" type="int"/>
+			</protocol>
+
+			<protocol name="CShakeMoneyTree">
+			</protocol>
+			<protocol name="SShakeMoneyTree"> 
+				<variable name="time" type="int" comment="当前第几次摇"/>
+				<variable name="receinexunibi" type="long" comment="获得的金币"/>
+				<variable name="criticalnum" type="float" comment="暴击倍数，没有暴击默认是0"/>
+			</protocol>
+
+		</namespace></namespace>
+		<!--福利系统配置结束-->
+
+		<!--抽卡系统配置开始,协议从2401开始-->
+		<namespace name="pickcard"><namespace name="msg">
+
+			<protocol name="SPickcardTimes">
+				<variable name="huobanhigh" type="int"/>剩余多少次必得
+				<variable name="huobanlow" type="int"/>
+				<variable name="fabaohigh" type="int"/>
+				<variable name="fabaolow" type="int"/>
+			</protocol>
+
+			<bean name="PickBonusInfo">
+				<variable name="issplit" type="int" comment="是否拆分，0：否，1:是"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+				<variable name="splitbonus" type="map.msg.Bonus"/>
+			</bean>
+
+			<protocol name="CPickCardByType">
+				<enum name="HUOBAN_HIGH_ONE" comment="伙伴高配额单抽" value="1"/> 
+        		<enum name="HUOBAN_HIGH_TEN" comment="伙伴高配额十连抽" value="2"/>
+        		<enum name="HUOBAN_HIGH_FREE_ONE" comment="伙伴高配额免费单抽,三天刷新一次免费机会，有抽卡券" value="3"/>
+        		<enum name="HUOBAN_HIGH_FREE_TEN" comment="伙伴高配额免费十抽，只能用抽卡券" value="12"/>
+        		<enum name="HUOBAN_LOW_ONE" comment="伙伴低配额单抽" value="4"/>
+        		<enum name="HUOBAN_LOW_TEN" comment="伙伴低配额十连抽" value="5"/>
+        		<enum name="HUOBAN_LOW_FREE" comment="伙伴低配额免费抽，每天刷新5次" value="6"/>
+        		<enum name="FABAO_ONE" comment="法宝元宝单抽" value="7"/>
+        		<enum name="FABAO_TEN" comment="法宝元宝十连抽" value="8"/>
+        		<enum name="FABAO_FREE_ONE" comment="法宝元宝免费单抽" value="9"/>
+        		<enum name="FABAO_FREE_TEN" comment="法宝元宝免费十抽,只能用抽卡券" value="13"/>
+        		<enum name="FABAO_XUNIBI_ONE" comment="法宝虚拟币抽" value="10"/>
+        		<enum name="FABAO_XUNIBI_TEN" comment="法宝虚拟币十抽" value="11"/>
+        		<variable name="picktype" type="int"/>
+			</protocol>
+			<protocol name="SPickCardByType">
+				<variable name="picktype" type="int"/>
+				<variable name="pickbonus" type="vector" value="PickBonusInfo"/>
+			</protocol>
+
+
+			<protocol name="CScoreExchange" type="2409" >
+				<variable name="exchangetyep" type="int" comment="兑换类型"/>
+				<variable name="id" type="int" comment="要兑换的物品id"/>
+			</protocol>
+			<protocol name="SScoreExchange" type="2410" >
+				<variable name="exchangetyep" type="int" comment="兑换类型"/>
+				<variable name="id" type="int" comment="要兑换的物品id"/>
+			</protocol>
+
+		</namespace></namespace>
+		<!--抽卡系统配置结束-->
+
+		<!--跑马灯-->
+		<namespace name="paomadeng"><namespace name="msg">
+ 			<protocol name="SPaomadengShow">
+ 				<enum name="ANNEAL" value="1" comment="装备洗练"/>
+ 				<enum name="PERFUSE" value="2" comment="装备灌注"/>
+ 				<enum name="EVOLVE" value="3" comment="神器进阶"/>
+ 				<enum name="PICKCARD" value="4" comment="抽卡"/>
+ 				<enum name="TALISMAN_STARTLEVEL" value="5" comment="法宝升星"/>
+ 				<enum name="PET_AWAKE" value="6" comment="伙伴觉醒"/>
+ 				<enum name="ROLE_LEVELUP" value="7" comment="玩家升级"/>
+ 				<enum name="IDOL_TITLE" value="8" comment="获得偶像称号"/>
+ 				<variable name="roleid" type="long"/>	
+ 				<variable name="rolename" type="string" comment="玩家名字"/>
+ 				<variable name="operatetype" type="int" comment="操作类型"/>
+ 				<variable name="id" type="int" comment="配置id"/> 
+				<variable name="lvl" type="int" comment="操作后的等级，获得物品，为0"/>
+			</protocol>	
+
+ 		</namespace></namespace>
+		
+
+
+		<namespace name="limit"><namespace name="msg">
+			<bean name="Limit">
+				<variable name="id" type="long"/>
+				<variable name="typenums" type="map" key="int" value="int"/>limittype -> num 每种限制类型相应的已达到的次数
+			</bean>
+			<bean name="CoolDown">
+				<variable name="id" type="long"/>
+				<variable name="expiretime" type="long"/>
+			</bean>
+			<protocol name="SLimit" type="2700" >
+				<variable name="limits" type="vector" value="Limit"/>
+				<variable name="cooldowns" type="vector" value="CoolDown"/>
+			</protocol>
+			<protocol name="SLimitChange" type="2701" >
+				<variable name="changelimits" type="vector" value="Limit"/>
+				<variable name="removelimits" type="vector" value="long"/>
+			</protocol>
+			<protocol name="SCoolDownChange">
+				<variable name="id" type="long"/>
+				<variable name="expiretime" type="long"/>
+			</protocol>
+		</namespace></namespace>
+		<!--  玩家日常活动模块 协议从2800开始 -->
+		<namespace name="dailyactivity">
+			<namespace name="msg">
+				<bean name="Undoactiveinfo"> 系统找回信息，包括未完成的活动次数，找回能得到的奖励
+					<variable name="eventtype" type="int"/>
+					<variable name="undotimes" type="int"/>
+					<variable name="costjinbi" type="long"/>
+					<variable name="costyuanbao" type="long"/>
+					<variable name="jinbifindbackbonus" type="map.msg.Bonus"/>
+					<variable name="yuanbaofindbackbonus" type="map.msg.Bonus"/>
+				</bean>
+				<bean name="Undoactiveinfos">
+					<variable name="undoactive" type="map" key="int" value="Undoactiveinfo"/>
+				</bean>
+				<bean name="Findbacktype">找回类型
+					<enum name="JINBI_FIND" value="1" comment="金币找回"/>
+					<enum name="YUANBAO_FIND" value="2" comment="元宝找回"/>
+					<enum name="JINBI_FINDALL" value="3" comment="金币一键找回所有"/>
+					<enum name="YUANBAO_FINDALL" value="4" comment="元宝一键找回所有"/>
+				</bean>
+				<protocol name="CGetActiveInfo" type="2831" >
+				</protocol>
+				<protocol name="SGetActiveInfo" type="2832" >
+					<variable name="scores" type="int"/>
+					<variable name="activetimes" type="map" key="int" value="int"/>
+					<variable name="receivedbonus" type="vector" value="int" comment="已领取的奖励"/>
+				</protocol>
+				
+				<protocol name="SActiveInfoChangeNotify">
+					<variable name="scores" type="int"/>
+					<variable name="changeactivetimes" type="map" key="int" value="int" />
+				</protocol>
+
+				<protocol name="CGetActiveBonus" type="2833" >
+					<variable name="bonustype" type="int"/>
+				</protocol>
+				<protocol name="SGetActiveBonus" type="2834" >
+					<variable name="bonustype" type="int"/>
+					<variable name="bonus" type="map.msg.Bonus"/>
+				</protocol>
+
+				<protocol name="CGetUndoActive" type="2835" > 获取未完成的活动情况
+				</protocol>
+				<protocol name="SGetUndoActive" type="2836" >
+					<variable name="undoactive" type="Undoactiveinfos"/>
+				</protocol>
+				<protocol name="CFindBack" type="2837" >
+					<variable name="findtype" type="int"/> 找回类型
+					<variable name="eventtype" type="int"/> 要找回的系统
+				</protocol>
+				<protocol name="SFindBack" type="2838" >
+					<variable name="findtype" type="int"/> 
+					<variable name="eventtype" type="int"/> 
+				</protocol>
+			</namespace>
+		</namespace>
+
+		
+		<namespace name="arena"><namespace name="msg">
+			<protocol name="SInfo">
+				<variable name="isopen" type="byte"/>
+				<variable name="rank" type="int"/>
+				<variable name="challengesuccnum" type="int"/>
+				<variable name="obtainrewards" type="vector" value="int"/>
+				<variable name="reports" type="vector" value="FightReport"/>
+				<variable name="bestrank" type="int"/>
+				<variable name="lastrewardrank" type="int"/>
+			</protocol>
+			
+			<bean name="ChallangeInfo">
+				<variable name="rank" type="int"/>
+				<variable name="roleinfo" type="lx.gs.role.msg.RoleShowInfo1"/>
+				<variable name="pets" type="vector" value="lx.gs.role.msg.PetBrief"/>
+			</bean>
+			
+			<protocol name="CChallenge">
+				<variable name="rank" type="int"/>
+			</protocol>
+			
+			<protocol name="SChallenge">
+				<variable name="newrank" type="int"/>
+				<variable name="challengesuccnum" type="int"/>
+				<variable name="challengeranks" type="vector" value="ChallangeInfo"/>
+			</protocol>
+			
+			<protocol name="CGetChallenge"/>
+			<protocol name="SGetChallenge">
+				<variable name="challengeranks" type="vector" value="ChallangeInfo"/>
+			</protocol>	
+			<protocol name="CRefreshChallenge"/>
+			<bean name="FightReport">
+				<variable name="fighttime" type="long"/>
+				<variable name="challengetype" type="int"/>
+				<variable name="succ" type="int"/>
+				<variable name="oldrank" type="int"/>
+				<variable name="newrank" type="int"/>
+				<variable name="opponentname" type="string"/>
+			</bean>
+			<protocol name="SNewFightReport">
+				<variable name="report" type="FightReport"/>
+			</protocol>
+			<protocol name="CObtainDailySuccReward">
+				<variable name="rewardid" type="int"/>
+			</protocol>
+			<protocol name="SObtainDailySuccReward">
+				<variable name="rewardid" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+		</namespace></namespace>
+		
+		
+		<namespace name="exchange"><namespace name="msg">
+			<bean name="ExchangeItem">
+				<variable name="id" type="long"/>
+				<variable name="itemid" type="int" />
+				<variable name="num" type="int"/>
+				<variable name="aprice" type="int"/>单价
+				<variable name="bindtype" type="int"/> 
+				<variable name="anneallevel" type="int" />
+				<variable name="perfuselevel" type="int" />
+				<variable name="prop" type="lx.gs.equip.AccessoryProp"/>
+			</bean>
+			<bean name="ExchangeLog">
+				<variable  name="seller" type="long"/>
+				<variable  name="buyer" type="long"/>
+				<variable  name="buyername" type="string"/>
+				<variable  name="item" type="ExchangeItem"/>
+				<variable  name="time" type="long"/>
+			</bean>
+			<protocol name="SInfo" type="4001" >
+				<variable name="items" type="vector" value="ExchangeItem"/>
+				<variable name="logs" type="vector" value="ExchangeLog"/>
+			</protocol>
+			
+			<protocol name="CAddItem" type="4002" > 上架
+				<variable name="bagtype" type="int"/> cfg.role.BagType
+				<variable name="pos" type="int"/>
+				<variable name="num" type="int"/>
+				<variable name="aprice" type="int"/>单价
+			</protocol>
+			<protocol name="SAddItem" type="4003" >
+				<variable  name="item" type="ExchangeItem"/>
+			</protocol>
+			
+			<protocol name="CDelItem" type="4004" > 下架
+				<variable name="exchangeid" type="long"/>
+			</protocol>
+			<protocol name="SDelItem" type="4005" >
+				<variable name="exchangeid" type="long"/>
+			</protocol>
+			
+			<protocol name="CBuy"> 购买
+				<variable name="exchangeid" type="long"/>
+				<variable name="num" type="int"/>
+			</protocol>
+			<protocol name="SBuy">
+				<variable name="exchangeid" type="long"/>
+				<variable name="num" type="int"/>
+			</protocol>
+			<protocol name="SBuyByOther" type="4012" >
+				<variable name="exchangeid" type="long"/>
+				<variable name="remainnum" type="int"/>
+			</protocol>
+			
+			<protocol name="SNewLog" type="4009" >
+				<variable name="log" type="ExchangeLog"/>
+			</protocol>	
+			
+			<protocol name="CQuery" type="4010" >
+				<variable name="name" type="string"/>
+				<variable name="category" type="int" />目录
+				<variable name="orderby" type="int"/>cfg.exchange.OrderByType
+				<variable name="sortorder" type="int"/> cfg.exchange.SortOrder
+				<variable name="startindex" type="int"/>
+				<variable name="endindex" type="int"/>
+			</protocol>
+			<bean name="QueryResult">
+				<variable name="totalnum" type="int"/>
+				<variable name="items" type="vector" value="ExchangeItem"/>
+			</bean>
+			<protocol name="SQuery" type="4011" >
+				<variable name="name" type="string"/>
+				<variable name="category" type="int"/>目录
+				<variable name="orderby" type="int"/>cfg.exchange.OrderByType
+				<variable name="sortorder" type="int"/>
+				<variable name="startindex" type="int"/>
+				<variable name="queryresult" type="QueryResult"/>
+			</protocol>
+		</namespace></namespace>
+		
+		<namespace name="skill"><namespace name="msg">
+			<bean name="SkillInfo">
+				<variable name="skillid" type="int"/>
+				<variable name="level" type="int"/>
+			</bean>
+			
+			<protocol name="SInfo" type="4101" >
+				<variable name="skills" type="vector" value="SkillInfo"/>
+				<variable name="equipskillpositions" type="map" key="int" value="int"/>
+			</protocol>
+			
+			<protocol name="CChangeEquipActiveSkill" type="4102" >
+				<variable name="equipskillpositions" type="map" key="int" value="int"/>
+			</protocol>
+			<protocol name="SChangeEquipActiveSkill" type="4103" >
+				<variable name="equipskillpositions" type="map" key="int" value="int"/>
+			</protocol>
+			
+			<protocol name="CUpgradeSkill" type="4104" >
+				<variable name="skillid" type="int"/>
+			</protocol>
+			<protocol name="SUpgradeSkill" type="4105" >
+				<variable name="skillid" type="int"/>
+				<variable name="newlevel" type="int"/>
+			</protocol>
+			
+			<protocol name="CEvolveSkill" type="4106" >
+				<variable name="skillid" type="int"/>
+			</protocol>
+			<protocol name="SEvolveSkill" type="4107" >
+				<variable name="oldskillid" type="int"/>
+				<variable name="newskillid" type="int"/>
+			</protocol>
+			
+		</namespace></namespace>
+		<!-- ========== 组队模块定义开始，协议从4200开始  =========== -->
+		<namespace name="team"><namespace name="msg">
+			<bean name="RoleTeamInfo">
+				<variable name="teamid" type="long"/>
+				<variable name="autoacceptrequest" type="int" comment="是否自动接收别人的入队申请"/>
+				<variable name="autoacceptinvite"  type="int" comment="是否自动接收别人的入队邀请"/>
+			</bean>
+			<bean name="TeamMember">
+				<variable name="roleid" type="long"/>
+				<variable name="jointime" type="long" comment="入队时间"/>
+				<variable name="follow" type="int" comment="是否跟随，1为跟随，0为不跟随"/>
+				<variable name="roleinfo" type="lx.gs.role.msg.RoleShowInfo4" comment="角色的其他信息"/>
+			</bean>
+			<bean name="Team">
+				<variable name="teamid" type="long"/>
+				<variable name="leaderid" type="long"/>
+				<variable name="createtime" type="long" comment="组队时间"/>
+				<variable name="members" type="map" key="long" value="TeamMember" comment="队友信息，key为角色id，value为角色信息"/>				
+			</bean>
+
+			<protocol name="SInitTeam" type="4206" >
+				<variable name="roleteaminfo" type="RoleTeamInfo" comment="角色队伍信息"/>
+				<variable name="team" type="Team" comment="队伍信息"/>
+			</protocol>
+			
+			<protocol name="CCreateTeam" type="4207"  comment="创建队伍">
+			</protocol>
+			<protocol name="SSyncTeam" type="4208" >
+				<variable name="team" type="Team"/>
+			</protocol>
+			
+			<protocol name="CInviteJoinTeam" type="4209"  comment="邀请入队">
+				<variable name="roleid" type="long" comment="邀请角色id,只发送邀请给角色，如果角色设置自动接收组队邀请，就自动成为队友"/>
+			</protocol>
+			<protocol name="SInviteJoinTeam" type="4210" >
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/>
+			</protocol>
+
+			<protocol name="CBreakupTeam" type="4212"  comment="只能队长解散，并且只能解散自己的队伍">
+			</protocol>
+			<protocol name="SBreakupTeam" type="4213"  comment="">
+			</protocol>
+
+			<protocol name="CAcceptInvite" type="4215"  comment="接收和拒绝入队申请，入队邀请，队长转移邀请，跟随邀请">
+				<variable name="inviteroleid" type="long"/>
+			</protocol>
+
+			<protocol name="CTransferLeader" type="4227"  comment="转移队长身份">
+				<variable name="memberid" type="long" comment="要转移给的队友id"/>
+			</protocol>
+			<protocol name="STransferLeader" type="4229" comment="队长身份转移通知">
+				<variable name="newleaderid" type="long"/>
+			</protocol>
+			
+			<protocol name="CRequestJoinTeam" type="4230"  comment="申请入队">
+				<variable name="teamid" type="long" comment="队伍id"/>
+			</protocol>
+			<protocol name="SRequestJoinTeam" type="4232"  comment="通知队长">
+				<variable name="requestrole" type="lx.gs.role.msg.RoleShowInfo4"/>
+			</protocol>
+
+			<protocol name="CAgreeJoin"  comment="同意入队">
+				<variable name="roleid" type="long" comment=""/>
+			</protocol>
+			
+			<protocol name="CKickoutMember" type="4233"  comment="踢出队伍">
+				<variable name="memberid" type="long" comment="要踢出队伍的角色id"/>
+			</protocol>
+			<protocol name="SKickoutMember" type="4234" >
+				<variable name="memberid" type="long" comment="要踢出队伍的角色id"/>
+			</protocol>
+
+			<protocol name="CQuitTeam" type="4236"  comment="离开队伍">
+			</protocol>
+			<protocol name="SQuitTeam" type="4237" >
+				<variable name="memberid" type="long"/>
+			</protocol>
+
+			<protocol name="CInviteFollow" type="4239"  comment="队长发送跟随邀请">
+				<variable name="roleid" type="long"/>
+			</protocol>
+			<protocol name="SInviteFollow" type="4240"  comment="队长发送跟随邀请">
+				<enum name="RES_OK" value="0"/>
+				<variable name="result" type="int"/>
+			</protocol>
+			<protocol name="SInviteFollowNotify" type="4241" comment="队长发送跟随邀请">
+				<variable name="leader" type="TeamMember"/>
+			</protocol>
+			
+			<protocol name="CFollowLeader" type="4242"  comment="跟随队长">
+				<variable name="teamid" type="long" />
+			</protocol>
+			<protocol name="SFollowLeader" type="4243"  comment="跟随队长">
+				<enum name="RES_OK" value="0"/>
+				<variable name="result" type="int"/>
+			</protocol>
+			
+			<protocol name="CUnFollowTeamMember" type="4244"  comment="队长解除队友的跟随状态">
+				<variable name="unfollowmemberid" type="long"/>
+			</protocol>
+			<protocol name="SUnFollowTeamMember" type="4245" >
+				<enum name="RES_OK" value="0"/>
+				<variable name="result" type="int"/>
+				<variable name="unfollowmemberid" type="long"/>
+			</protocol>
+			<protocol name="SUnFollowTeamMemberNotify" type="4246" >
+				<variable name="memberid" type="long"/>
+			</protocol>
+			<protocol name="SFollowTeamMemberNotify">
+				<variable name="followmemberid" type="long"/>
+			</protocol>
+			
+			<protocol name="CSetAutoSetting" type="4247" >
+				<enum name="AUTO_ACCEPT_INVITE" value="1"/>
+				<enum name="AUTO_ACCEPT_REQUEST" value="2"/>
+				<variable name="opttype" type="int" comment="操作类型，参考以上枚举定义"/>
+				<variable name="cfgvalue" type="int" comment="是否自动接收邀请"/>
+			</protocol>
+			<protocol name="SSetAutoSetting" type="4248" >
+				<variable name="opttype" type="int" comment="操作类型，参考以上枚举定义"/>
+				<variable name="cfgvalue" type="int" comment="是否自动接收邀请"/>
+			</protocol>
+			
+			<protocol name="SJoinTeamNotify" type="4249" >
+				<variable name="member" type="TeamMember"/>
+			</protocol>
+			
+			<protocol name="CUnFollowLeader" type="4250"  comment="队友主动解除跟随">
+				<variable name="teamid" type="long"/>
+			</protocol>
+			<protocol name="SUnFollowLeader" type="4251" >
+				<variable name="teamid" type="long"/>
+			</protocol>
+								
+			</namespace>
+		</namespace>
+		<!-- ========== 组队模块定义结束，协议从4200开始=========== -->
+		
+		<namespace name="cmd"><namespace name="msg">
+			<protocol name="CCommand" comment="">
+				<variable name="moduleid" type="int"/>
+				<variable name="cmdid" type="int"/>
+				<variable name="num" type="int"/>
+			</protocol>
+			
+			<protocol name="SCommand">
+				<variable name="errcode" type="int"/>
+				<variable name="errparam" type="int"/>
+				<variable name="moduleid" type="int"/>
+				<variable name="cmdid" type="int"/>
+				<variable name="num" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+		</namespace></namespace>
+		
+		<namespace name="achievement"><namespace name="msg">
+			<protocol name="SInfo">
+				<variable name="achievementstates" type="map" key="int" value="int"/>cfg.achievement.State
+				<variable name="counters" type="map" key="int" value="long"/>
+			</protocol>
+			
+			<protocol name="SCounterChange">
+				<variable name="countertype" type="int"/>
+				<variable name="value" type="long"/>
+			</protocol>
+			
+			<protocol name="SComplete">
+				<variable name="achievementid" type="int"/>
+			</protocol>
+			
+			<protocol name="CGetReward">
+				<variable name="achievementid" type="int"/>
+			</protocol>
+			
+			<protocol name="SGetReward">
+				<variable name="achievementid" type="int"/>
+			</protocol>
+			
+			<protocol name="CEvolveTitle">
+				<variable name="titleid" type="int"/>
+			</protocol>
+			
+			<protocol name="SEvolveTitle">
+				<variable name="titleid" type="int"/>
+			</protocol>
+			
+		</namespace></namespace>
+		
+		<!-- ================ 家族模块, 协议5000开始 ================= -->
+		<namespace name="family"><namespace name="msg">
+		<bean name="FamilyMember" comment="个人家族信息">
+			<variable name="roleid" type="long"/>
+			<variable name="jointime" type="long" comment="加入家族的时间，如果familyid为0，该时间为退出时间，如果为0表明未加入也未退出过"/>
+			<variable name="pcontribution" type="long" comment="个人帮贡，跟特定家族相关，如果离开家族要重新计算该值"/>
+			<variable name="dailybuild" type="long" comment="每日的帮贡"/>
+			<variable name="familyjob" type="int" comment="家族的职位，组长，青龙使，副组长等等"/> 
+			<variable name="rolename" type="string"/>
+			<variable name="lastonlinetime" type="long" comment="最近一次登录的时间"/>
+			<variable name="isonline" type="int" comment="是否在线，0否；1是"/>
+			<variable name="attackpower" type="int" comment="战斗力"/>
+			<variable name="level" type="int" comment="玩家等级"/>
+			<variable name="totalquitnum" type="int" comment="退出过家族的总次数"/>
+			<variable name="viplevel" type="int" comment="vip等级"/>
+			<variable name="professiontype" type="int" comment="职业信息"/>
+			<variable name="gender" type="int" comment="性别"/>
+		</bean>
+	
+		<bean name="FamilyGodAnimal" comment="家族神兽信息">
+			<variable name="animalid" type="int"/>
+			<variable name="animallevel" type="int" comment="神兽进化到的level" default="1"/>
+			<variable name="exp" type="long" comment="神兽的经验值"/>
+		</bean>
+		<bean name="FamilyActivity" comment="家族活动信息">
+			<variable name="godanimalinfo" type="map" key="int" value="FamilyGodAnimal" comment="家族神兽信息"/>
+		</bean>
+	
+		<bean name="FamilyLogReport" comment="家族日志记录">
+			<enum name="TYPE_JOIN_FAMILY" value="1"/>
+			<enum name="TYPE_PROMOTION" value="2"/>
+			<enum name="TYPE_QUIT_FAMILY" value="3"/>
+			<enum name="TYPE_CHIEF_TRANSFER" value="4"/>
+			<enum name="TYPE_UPLEVEL_FAMILY" value="5"/>
+			<enum name="TYPE_PRAY" value="6"/>
+			<enum name="TYPE_RAISE_ANIMAL" value="7"/>
+			<enum name="TYPE_CREATE_FAMILY" value="8"/>
+			<enum name="TYPE_UPLEVEL_MALL" value="9"/>
+			<enum name="TYPE_KICKOUT_MEMBER" value="10"/>
+			<variable name="actiontype" type="int" comment="家族日志类型，入帮，升职等等"/>
+			<variable name="roleid" type="long" comment="角色id"/>
+			<variable name="actiontime" type="long" comment="日志记录的时间"/> 
+			<variable name="rolename" type="string" comment="角色名字"/>
+			<variable name="number" type="int" 
+				comment="动作对应的数值，如果有的话,比如如果是promotion，那么对应promotion的职位id，如果是烧香，对应的是增加的帮贡，如果是升级，对应的升级到的level"/>
+		</bean>	
+		<bean name="FamilyJobStaffList">
+			<variable name="staffs" type="vector" value="long" comment="该职位对应的角色id列表"/>
+		</bean>	
+		<bean name="FamilyBasicInfo" comment="家族信息">
+			<variable name="familyid" type="long" comment="家族id"/>
+			<variable name="familyname" type="string" comment="家族名字"/>
+			<variable name="flevel" type="int" comment="家族等级"/>
+			<variable name="money" type="long" comment="家族资金"/>
+			<variable name="curlvlbuilddegree" type="int" comment="当前等级家族建设度"/>
+			<variable name="totalbuilddegree" type="int" comment="总的家族建设度"/>
+			<variable name="totaobanggong" type="long" comment="家族帮贡"/>
+			<variable name="declaration" type="string" comment="家族宣言"/>
+			<variable name="publicinfo" type="string" comment="家族公告"/>
+			<variable name="publictime" type="long" comment="公告时间"/>
+			<variable name="malllevel" type="int"  comment="家族商店级别" default="1"/>
+			<variable name="membernum" type="int" comment="家族成员数"/>			
+			<variable name="chiefid" type="long" comment="族长角色id"/>
+			<variable name="chiefname" type="string" comment="族长名字"/>
+			<variable name="chieflvl" type="int" comment="族长等级"/>
+			<variable name="rank" type="int" comment="家族排名，只有在榜内才会有值"/>
+			<variable name="godanimalstarttime" type="long" comment="家族神兽挑战开始时间"/>
+			<variable name="godanimalendtime" type="long" comment="家族神兽挑战结束的时间"/>
+			<variable name="familyrequestinfo" type="int" comment="是否有未处理的家族申请信息(家族小红点)，0：没有；1：有"/>
+			<variable name="familypartylastopentime" type="long" comment="上次开启家族聚宴的时间"/>
+			<variable name="familypartylastcalltime" type="long" comment="上次召集教众时间"/>
+		</bean>
+
+				
+		<protocol name="CGetFamilyMembersInfo" comment="获取家族成员信息">
+		</protocol>
+		<protocol name="SGetFamilyMembersInfo">
+			<variable name="jobinfo" type="map" key="int" value="FamilyJobStaffList" 
+				comment="家族职位信息，key为职位id，参考配置文件value为该职位对应的角色列表"/>
+			<variable name="members" type="map" key="long" value="FamilyMember" comment="家族成员信息"/>
+		</protocol>
+		
+		<protocol name="CGetFamilyActivityInfo" comment="获取家族活动信息，关于家族神兽">
+		</protocol>
+		<protocol name="SGetFamilyActivityInfo" comment="获取家族活动信息">
+			<variable name="activity" type="FamilyActivity" comment="家族活动中的信息"/>
+		</protocol>
+
+		<protocol name="CGetFamilyRequestingInfo" comment="获取请求加入家族信息">
+		</protocol>
+		<protocol name="SGetFamilyRequestingInfo" comment="获取请求加入家族的信息">
+			<variable name="requestinglist" type="map" key="long" value="lx.gs.role.msg.RoleShowInfo4" comment="申请成员列表,key为角色id"/>	
+		</protocol>
+		
+		<protocol name="CFindFamily"  type="2581" comment="查找家族">
+			<variable name="familyname" type="string" comment="查找家族，如果输入为空，返回所有的家族"/>
+			<variable name="startindex" type="int" comment="从第几个开始查找，每次找20个"/>
+		</protocol>
+		<protocol name="SFindFamily"  comment="结果">
+			<variable name="startindex" type="int"/>
+			<variable name="familyname" type="string"/>
+			<variable name="families" type="vector" value="FamilyBasicInfo" comment="家族列表"/>
+		</protocol>
+		
+		<protocol name="CCreateFamily"  comment="创建家族">
+			<variable name="familyname" type="string" comment="家族名称，需要进行敏感词匹配"/>
+		</protocol>
+		<protocol name="SCreateFamily"  comment="结果">
+			<variable name="family" type="FamilyBasicInfo"/>
+		</protocol>
+
+		<protocol name="CRequestJoinFamily"  comment="申请加入家族">
+			<variable name="familyid" type="long" comment="家族id"/>
+		</protocol>
+		<protocol name="SRequestJoinFamily"  comment="结果">
+			<variable name="familyid" type="long" comment="家族id"/>
+		</protocol>
+
+		<protocol name="CRequestJoinAllFamily" comment="一键申请加入家族">
+		</protocol>
+		<protocol name="SRequestJoinAllFamily">
+			<variable name="familyids" type="vector" value="long" comment="家族id"/>
+		</protocol>
+
+		<protocol name="SRequestJoinFamilyNotify"  comment="给族长和副族长发送申请通知">
+			<variable name="roleinfo" type="lx.gs.role.msg.RoleShowInfo4"/>
+		</protocol>
+		
+		<protocol name="CCancelRequestJoinF"  comment="取消申请">
+			<variable name="familyid" type="long" comment="家族id"/>
+		</protocol>
+		<protocol name="SCancelRequestJoinF"  comment="结果">
+			<variable name="familyid" type="long" comment="家族id"/>
+		</protocol>
+		<protocol name="SCancelRequestJoinFNotify"  comment="给族长和副族长发送取消申请通知">
+			<variable name="roleid" type="long" comment="取消申请的角色id"/>
+		</protocol>
+		
+		<protocol name="CAcceptRequestJoinF"  comment="同意申请">
+			<variable name="memberid" type="long" comment="同意申请的角色id"/>
+		</protocol>
+		<protocol name="SAcceptRequestJoinF" comment="同意申请">
+			<variable name="member" type="FamilyMember" comment="同意申请的角色id"/>
+		</protocol>
+		<protocol name="SAcceptFailNotify" comment="同意申请失败，该玩家已加入其他家族">
+			<variable name="acceptid" type="long"/>
+		</protocol>
+		<protocol name="SAcceptRequestJoinFNotify" comment="同意申请的通知，该通知会发给族长，副族长以及被同意申请的玩家">
+			<variable name="family" type="FamilyBasicInfo" comment="同意申请的家族信息"/>
+			<variable name="member" type="FamilyMember" comment="同意申请的角色id"/>
+		</protocol>
+		
+		<protocol name="CRejectRequestJoinF"  comment="拒绝申请">
+			<variable name="memberid" type="long" comment="拒绝申请的角色id"/>
+		</protocol>
+		<protocol name="SRejectRequestJoinF" comment="拒绝申请">
+			<variable name="memberid" type="long" comment="拒绝申请的角色id"/>
+		</protocol>
+		<protocol name="SRejectRequestJoinFNotify" comment="拒绝申请的通知，拒绝申请的通知，该通知会发给族长，副族长以及被拒绝申请的玩家">
+			<variable name="family" type="FamilyBasicInfo" comment="同意申请的家族信息"/>
+			<variable name="memberid" type="long" comment="拒绝申请的角色id"/>
+		</protocol>
+		
+		<protocol name="CGetFamilyInfo" comment="获取家族信息,此协议返回数据比较多">
+		</protocol>
+		<protocol name="SGetFamilyInfo"  comment="结果">
+			<variable name="family" type="FamilyBasicInfo"/>
+			<variable name="selfinfo" type="FamilyMember" comment="自己的家族信息"/>
+			<variable name="selfinitid" type="long" comment="自己发起众筹的id,为0表示没有"/>
+		</protocol>
+		
+		<protocol name="CUpdateDeclarationOrPublic"  comment="修改家族宣言或者公告信息">
+			<enum name="UPDATE_DECLARATION" value="1"/>
+			<enum name="UPDATE_PUBLIC" value="2"/>
+			<variable name="updatetype" type="int" comment="修改类型，0为修改公告，1为修改宣言"/>
+			<variable name="newtext" type="string" comment="修改后的文字"/>
+		</protocol>
+		<protocol name="SUpdateDeclarationOrPublic"  comment="修改家族宣言或者公告信息">
+			<variable name="updatetype" type="int" comment="修改类型，0为修改公告，1为修改宣言"/>
+			<variable name="newtext" type="string" comment="修改后的文字"/>
+		</protocol>
+		
+		<protocol name="CGetFamilyLog"  comment="获取家族日志">
+			<variable name="familyid" type="long"/>
+		</protocol>
+		<protocol name="SGetFamilyLog" comment="获取家族日志">
+			<variable name="familyid" type="long"/>
+			<variable name="logs" type="vector" value="FamilyLogReport" comment="家族日志信息"/>
+		</protocol>
+		
+		<protocol name="CGetFamilyMemberInfo"  comment="获取家族成员详细信息">
+			<variable name="memberid" type="long"/>
+		</protocol> 
+		<protocol name="SGetFamilyMemberInfo"  comment="获取家族成员详细信息">
+			<variable name="memberid" type="long"/>
+			<variable name="baseinfo" type="FamilyMember"/>
+			<variable name="publicinfo" type="lx.gs.role.msg.RoleShowInfo3"/>
+		</protocol> 
+		
+		<protocol name="CQuitFamily" comment="退出家族,如果是族长退出，自动让给家族建设贡献最高的成员，如果是最后一个人，自动解散">
+		</protocol>
+		<protocol name="SQuitFamily"  comment="退出家族结果">			
+		</protocol>
+		<protocol name="SQuitFamilyNotify"  comment="退出家族通知，该通知发给家族所有人">
+			<variable name="memberid" type="long" comment="退出家族的角色id"/>
+			<variable name="membername"  type="string" comment="退出家族的角色名称"/>
+		</protocol>
+		
+		<protocol name="CTransferChief" comment="转让族长职位">
+			<variable name="memberid" type="long" comment="要任命的角色的id"/>
+		</protocol>
+		<protocol name="STransferChief"  comment="转让族长职位">
+			<variable name="member" type="FamilyMember" comment="要任命的角色的id"/>
+		</protocol>
+		<protocol name="STransferChiefNotify"  comment="转让族长职位通知,任命成功后发给被任命者，也会发给全族人员">
+			<variable name="operator" type="FamilyMember" comment="操作者角色id"/>
+			<variable name="member" type="FamilyMember" comment="要任命的角色的id"/>
+			<variable name="jobid" type="int" comment="家族的职位id"/>
+		</protocol>
+		
+		<protocol name="CAppointJob" type="2580" comment="任命职位">
+			<variable name="memberid" type="long" comment="要任命的角色的id"/>
+			<variable name="jobid" type="int" comment="家族的职位id"/>
+		</protocol>
+		<protocol name="SAppointJob"  comment="任命职位">
+			<variable name="member" type="FamilyMember" comment="要任命的角色的id"/>
+			<variable name="jobid" type="int" comment="家族的职位id"/>
+		</protocol>
+		<protocol name="SAppointJobNotify" comment="职位任命通知,任命成功后发给被任命者">
+			<variable name="operator" type="FamilyMember" comment="操作者角色id"/>
+			<variable name="member" type="FamilyMember" comment="要任命的角色的id"/>
+			<variable name="jobid" type="int" comment="家族的职位id"/>
+		</protocol>
+		
+		<protocol name="CKickoutFamilyMember" comment="踢出家族">
+			<variable name="memberid" type="long" comment="要踢出家族的角色id"/>
+		</protocol>
+		<protocol name="SKickoutFamilyMember"  comment="">
+			<variable name="memberid" type="long" comment="要踢出家族的角色id"/>
+		</protocol>
+		<protocol name="SKickoutFamilyMemberNotify"  comment="踢出家族通知，通知发给被踢的人">
+			<variable name="memberid" type="long" comment="要踢出家族的角色id"/>
+			<variable name="family" type="FamilyBasicInfo" comment="家族基本信息"/>
+		</protocol>
+		
+		<protocol name="CUpLevelMall" comment="升级商店">
+		</protocol>
+		<protocol name="SUpLevelMall"  comment="升级商店">
+		</protocol>
+		<protocol name="SUpLevelMallNotify"  comment="升级商店通知，通知全族人员">
+			<variable name="family" type="FamilyBasicInfo"/>
+		</protocol>
+		
+		
+		<protocol name="CClaimFamilyBonus"  comment="领取家族奖励，领取过的级别不能再领，每周重置">
+			<variable name="claimlevel" type="int" comment="要领取的级别"/>
+		</protocol>
+		<protocol name="SClaimFamilyBonus"  comment="领取家族奖励，领取过的级别不能再领，每周重置">
+			<variable name="claimlevel" type="int" comment="要领取的级别"/>
+		</protocol>
+		
+		<!-- 家族活动相关 -->
+		<protocol name="CFamilyPray"  type="5001" comment="家族烧香">
+			<enum name="TYPE_COMMON" value="1" comment="普通香"/>
+			<enum name="TYPE_ADVANCE" value="2" comment="高级香"/>
+			<enum name="TYPE_SUPER" value="3" comment="至尊香"/>
+			<variable name="burntype" type="int" comment="烧香的类型，普通，高级还是至尊"/>
+		</protocol>
+		<protocol name="SFamilyPray"  comment="家族烧香">
+			<variable name="burntype" type="int" comment="烧香的类型，普通，高级还是至尊"/>
+		</protocol>
+		<protocol name="SFamilyInfoChangeNotify"  comment="家族信息更新通知，通知全族人员">
+			<variable name="declaration" type="string"/>
+			<variable name="publicinfo" type="string"/>
+			<variable name="money" type="long"/>
+			<variable name="curlvlbuilddegree" type="int"/>
+			<variable name="flevel" type="int"/>
+		</protocol>
+		
+		<protocol name="SLaunchGodAnimalActivityNotify"  comment="开始神兽挑战,每周两次，通知全族人员">
+			<variable name="launchroleid" type="long" comment="开启的角色id"/>
+			<variable name="starttime" type="long" comment="下一次神兽活动开始时间"/>
+		</protocol>
+		<protocol name="SGodAnimalActivityStartNotify"  comment="神兽挑战开始通知">
+			<variable name="countdowntime" type="long"/>
+		</protocol>
+		
+		<protocol name="CEvolveGodAnimal"  comment="进化神兽">
+			<variable name="animalid" type="int" comment="要进化的神兽id"/>
+		</protocol>
+		<protocol name="SEvolveGodAnimal"  comment="进化神兽">
+			<variable name="animal" type="FamilyGodAnimal" comment="要进化的神兽id"/>
+		</protocol>
+		
+		<protocol name="CRaiseGodAnimal"  comment="进化神兽">
+			<enum name="RAISE_TYPE_XUNIBI" value="1"/>
+			<enum name="RAISE_TYPE_YUANBAO" value="2"/>
+			<variable name="raisetype" type="int" comment="培养的类型，金币培养还是元宝培养"/>
+			<variable name="animalid" type="int" comment="要进化的神兽id"/>
+		</protocol>
+		<protocol name="SRaiseGodAnimal" comment="进化神兽">
+			<variable name="raisetype" type="int" comment="培养的类型，金币培养还是元宝培养" />
+			<variable name="animal" type="FamilyGodAnimal" comment="要进化的神兽id"/>
+		</protocol>
+		
+		<protocol name="CGetRequestedFamily" comment="获取申请过的家族id信息">
+		</protocol>
+		<protocol name="SGetRequestedFamily"  comment="获取申请过的家族id信息">
+			<variable name="ids" type="vector" value="long" comment="申请过的家族id信息"/>
+		</protocol>
+		
+		<!--仙府聚宴-->
+		<protocol name="COpenFamilyParty" comment="开启家族仙府聚会">
+		</protocol>
+		<protocol name="SOpenFamilyParty">
+		</protocol>
+
+		<protocol name="SPartyEndNotify">
+		</protocol>
+		
+		<protocol name="CCallAllFamilyMembers" commen="召集教众参加家族仙府聚宴">
+		</protocol>
+		<protocol name="SCallAllFamilyMembers" commen="">
+		</protocol>
+
+		<protocol name="SFamilyPartyOpenNotify" comment="通知帮众家族仙府开启了">
+			<variable name="openid" type="long" comment="召集人的id，客户端过滤用"/>
+		</protocol>
+
+		<protocol name="CEnterFamilyStation" comment="帮众进入家族仙府驻地">
+			<enum name="NORMAL_ENTER" value="0"/>
+			<enum name="OPEN_PARTY" value="1"/>
+			<enum name="BLACK_MARKET" value="2"/>
+			<enum name="FAMILY_MANAGER" value="3"/>
+			<enum name="GOD_ANIMAL" value="4"/>
+			<variable name="isopenparty" type="int" comment="是否是去开启家族仙府聚宴的,0 否；1 是"/>
+		</protocol>
+		<protocol name="SEnterFamilyStation">
+		</protocol>
+
+		<protocol name="SBlackMallList">黑市商人列表，由服务器发送
+			<variable name="lists" type="vector" value="int"/>
+		</protocol>
+
+		<protocol name="CInviteJoinFamily">邀请加入家族
+			<variable name="beinviteroieid" type="long"/>
+		</protocol>
+		<protocol name="SInviteJoinFamily">
+			<variable name="beinviteroieid" type="long"/>
+		</protocol>
+
+		<protocol name="SInviteJoinNotify">
+			<variable name="inviteroleid" type="long"/>
+			<variable name="inviterolename" type="string"/>
+			<variable name="familyid" type="long"/>
+			<variable name="familyname" type="string"/>
+		</protocol>
+
+		<protocol name="CResponseInvite">回复邀请信息
+			<variable name="result" type="int" comment="回复邀请，0拒绝；1同意"/>
+			<variable name="familyid" type="long"/>
+			<variable name="inviteroleid" type="long"/>
+		</protocol>
+
+		<protocol name="SResponseInvite">
+			<variable name="result" type="int" comment="回复邀请，0拒绝；1同意"/>
+			<variable name="familyname" type="string"/>
+		</protocol>
+
+		<protocol name="SResponseNotify">
+			<variable name="responseroleid" type="long"/>
+			<variable name="responserolename" type="string"/>
+			<variable name="result" type="int"/>
+		</protocol>
+		</namespace>
+		</namespace>
+		<!-- ================ 家族模块结束 ================= -->
+
+		<!-- ================ 抽象背包模块开始 ================= -->
+		<namespace name="bag"><namespace name="msg">
+			<protocol name="CSyncBag" comment="同步背包，包括容量和物品">
+				<variable name="bagtype" type="int"/>
+			</protocol>
+
+			<protocol name="CSyncItems" comment="同步背包物品">
+				<variable name="bagtype" type="int"/>
+			</protocol>
+
+			<protocol name="SSyncCapacity">
+				<variable name="bagtype" type="int"/>
+				<variable name="capacity" type="int"/>
+			</protocol>
+
+			<protocol name="SSyncItems">
+				<variable name="bagtype" type="int"/>
+				<variable name="iteminfo" type="map" key="int" value="octets" comment="key是位置, value是物品信息，空则没有物品，反序列化结构在具体模块中"/>
+			</protocol>
+
+			<protocol name="CSortBag">
+				<variable name="bagtype" type="int"/>
+			</protocol>
+
+			<protocol name="CSell" comment="出售物品">
+				<variable name="bagtype" type="int"/>
+				<variable name="pos" type="int" comment="位置"/>
+				<variable name="sellnum" type="int" comment="售出数量"/>
+			</protocol>
+
+			<protocol name="CBatchSell" comment="批量卖出">
+				<variable name="bagtype" type="int"/>
+				<variable name="posset" type="set" value="int" comment="位置集合"/>
+			</protocol>
+
+			<protocol name="CSplitItem" comment="拆分物品">
+				<variable name="bagtype" type="int"/>
+				<variable name="pos" type="int" comment="位置"/>
+				<variable name="splitnumber" type="int"/>
+			</protocol>
+
+			<protocol name="CUnlockGrid" >
+				<variable name="bagtype" type="int"/>
+				<variable name="unlocknum" type="int" comment="解锁的格子数"/>
+			</protocol>
+
+			<protocol name="SChange">
+				<variable name="bagtype" type="int"/>
+				<variable name="pos" type="int"/>
+				<variable name="newnum" type="int"/>
+			</protocol>
+
+			<protocol name="SItemBind">
+				<variable name="bagtype" type="int" />
+				<variable name="pos" type="int" />
+			</protocol>
+
+			<protocol name="SSwapByPos"> 表示将两个位置的物品互换
+				<variable name="bagtype1" type="int" />
+				<variable name="pos1" type="int" />
+				<variable name="bagtype2" type="int" />
+				<variable name="pos2" type="int" />
+			</protocol>
+
+			<protocol name="SMove"> 表示物品从源包裹移动到目标包裹
+				<variable name="srcbagtype" type="int" />
+				<variable name="srcpos" type="int" />
+				<variable name="destbagtype" type="int" />
+				<variable name="destpos" type="int" />
+			</protocol>
+
+			<protocol name="SSort"> 整理包裹返回协议
+				<variable name="bagtype" type="int" />
+				<variable name="itempos" type="map" key="int" value="int" /> key = 旧位置， value = 新位置
+			</protocol>
+
+		</namespace></namespace>
+		<!-- ================ 抽象层背包模块结束 ================= -->
+
+		<!-- ================ 伙伴模块开始 ,协议从5300开始================= -->
+		<namespace name="pet">
+			<bean name="Pet" comment="伙伴信息">
+				<variable name="modelid" type="int"/>
+				<variable name="activeskinid" type="int"/>
+				<variable name="skinidlist" type="vector" value="int"/>
+				<variable name="level" type="int" comment="伙伴的级别"/>
+				<variable name="exp" type="long" comment="伙伴的经验值"/>
+				<variable name="starlevel" type="int" comment="星阶"/>
+				<variable name="skills" type="map" key="int" value="int" comment="伙伴的技能信息"/>
+				<variable name="awakelevel" type="int" comment="觉醒的等级"/>
+				<variable name="attrs" type="map" key="int" value="float"/>
+				<variable name="combatpower" type="long"/>
+			</bean>
+
+			<namespace name="msg">
+
+				<protocol name="SPetInfo">
+					<variable name="petfragment" type="map" key="int" value="int" comment="伙伴碎片，key为伙伴ModelId"/>
+					<variable name="petmap" type="map" key="int" value="lx.gs.pet.Pet"/>
+					<variable name="fightpets" type="vector" value="int"/>
+					<variable name="activemodelid" type="int"/>
+				</protocol>
+
+				<protocol name="SSyncPetCombatPower">
+					<variable name="modelid" type="int"/>
+					<variable name="combatpower" type="int"/>
+				</protocol>
+
+				<protocol name="SSyncPetFragment"> 暂定为全量同步
+					<variable name="petfragment" type="map" key="int" value="int" comment="伙伴碎片，key为伙伴ModelId"/>
+				</protocol>
+
+				<protocol name="CCallPet"> 召唤宠物
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="SCallPet">
+					<variable name="addpet" type="lx.gs.pet.Pet"/>
+				</protocol>
+
+				<protocol name="CLoadPet">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="CUnloadPet">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="SSyncFightPets"> 同步出战伙伴的id,按先后顺序
+					<variable name="fightpets" type="vector" value="int"/>
+				</protocol>
+
+				<protocol name="CActivePet">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="SActivePet">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="CUnActivePet">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="SUnActivePet">
+				</protocol>
+
+				<protocol name="CUpgradePetLevel">
+					<variable name="modelid" type="int"/>
+					<variable name="materialpos" type="int" comment=""/>
+					<variable name="materialnum" type="int" comment=""/>
+				</protocol>
+				<protocol name="SSyncPetLevel">
+					<variable name="modelid" type="int"/>
+					<variable name="level" type="int"/>
+					<variable name="exp" type="long"/>
+				</protocol>
+
+				<protocol name="CUpgradePetStar">
+					<variable name="modelid" type="int"/>
+				</protocol>
+				<protocol name="SUpgradePetStar">
+					<variable name="modelid" type="int"/>
+					<variable name="starlevel" type="int"/>
+				</protocol>
+
+				<protocol name="CUpgradePetAwake">
+					<variable name="modelid" type="int"/>
+				</protocol>
+				<protocol name="SUpgradePetAwake">
+					<variable name="modelid" type="int"/>
+					<variable name="awakelevel" type="int"/>
+				</protocol>
+				<protocol name="CWashPet" type="5301">
+					<variable name="modelid" type="int"/>
+					<variable name="washid" type="int"/>
+					<variable name="isten" type="int"/>
+				</protocol>
+				<protocol name="SWashPet">
+					<variable name="modelid" type="int"/>
+					<variable name="deltavalues" type="map" key="int" value="float"/> 7个增量值
+				</protocol>
+
+				<protocol name="CWashMaxValue">
+					<variable name="modelid" type="int"/>
+				</protocol>
+				<protocol name="SWashMaxValue">
+					<variable name="modelid" type="int"/>
+					<variable name="currvalues" type="map" key="int" value="float"/>
+					<variable name="maxvalues" type="map" key="int" value="float"/>
+				</protocol>
+
+				<protocol name="CWashPetCancel">
+					<variable name="modelid" type="int"/>
+				</protocol>
+				<protocol name="SWashPetCancel">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="CWashPetConfirm">
+					<variable name="modelid" type="int"/>
+				</protocol>
+
+				<protocol name="SSyncPetAttrs"> 全量同步
+					<variable name="modelid" type="int"/>
+					<variable name="attrs" type="map" key="int" value="float"/>
+				</protocol>
+
+				<protocol name="CBuyPetSkin">
+					<variable name="modelid" type="int"/>
+					<variable name="skinid" type="int"/>
+				</protocol>
+				<protocol name="SBuyPetSkin">
+					<variable name="modelid" type="int"/>
+					<variable name="addskinid" type="int"/>
+				</protocol>
+				<protocol name="CEquipPetSkin">
+					<variable name="modelid" type="int"/>
+					<variable name="skinid" type="int"/>
+				</protocol>
+				<protocol name="CUnEquipPetSkin">
+					<variable name="modelid" type="int"/>
+				</protocol>
+				<protocol name="SSyncPetSkin">
+					<variable name="modelid" type="int"/>
+					<variable name="skinid" type="int"/>
+				</protocol>
+				<protocol name="CUpgradePetSkill">
+					<variable name="modelid" type="int"/>
+					<variable name="skillid" type="int"/>
+				</protocol>
+				<protocol name="CEvolvePetSkill">
+					<variable name="modelid" type="int"/>123
+					<variable name="skillid" type="int"/>
+				</protocol>
+				<protocol name="SEvolvePetSkill">
+					<variable name="modelid" type="int"/>
+					<variable name="oldskillid" type="int"/>
+					<variable name="newskillid" type="int"/>
+					<variable name="level" type="int"/>
+				</protocol>
+				<protocol name="SSyncPetSkill">
+					<variable name="modelid" type="int"/>
+					<variable name="skillid" type="int"/>
+					<variable name="level" type="int"/>
+				</protocol>
+
+			</namespace></namespace>
+
+		<!-- ================ 伙伴模块结束 ================= -->
+		
+		<namespace name="activity">
+			<namespace name="msg">
+				<bean name="ActivityInfo">
+					<variable name="id" type="int"/>
+					<variable name="isopen" type="byte"/>
+					<variable name="opentime" type="long"/>
+					<variable name="closetime" type="long"/>
+					<!-- other data -->
+					<variable name="status" type="int"/>当前活动状态，完成或者已领取，如果是未完成，客户端自己就能判断了					
+				</bean>
+				<protocol name="SActivity">
+					<variable name="activityinfos" type="map" key="int" value="ActivityInfo"/>
+				</protocol>
+
+				<protocol name="CReceiveActivityBonus" comment="领取奖励,">
+					<variable name="id" type="int" comment="运营活动id"/>
+					<variable name="cmdid" type="int" comment="具体的配置条目id"/>
+				</protocol>
+				<protocol name="SReceiveActivityBonus">
+					<variable name="id" type="int" />
+					<variable name="cmdid" type="int"/>
+				</protocol>
+
+				<protocol name="SActivityChangeNotify">活动状态改变协议
+					<variable name="id" type="int"/> 活动type
+					<variable name="cmdid" type="int"/> 活动具体条目的id
+					<variable name="status" type="int"/>状态
+				</protocol>
+
+			</namespace>
+			
+			<namespace name="worldmonster"><namespace name="msg">
+			<protocol name="SKillExpMonsterNums">
+				<variable name="nums" type="int"/>
+				<variable name="receivedbonus" type="vector" value="int"/>
+			</protocol>
+
+			<protocol name="CGetKillExpMonBonus">
+				<variable name="num" type="int" comment="领取击杀多少只经验怪的奖励"/> 
+			</protocol>
+
+			<protocol name="SGetKillExpMonBonus">
+				<variable name="num" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</protocol>
+
+			<protocol name="CGetExpMonsterPosition">
+			</protocol>
+			<protocol name="SGetExpMonsterPosition">
+				<variable name="mapid" type="int"/>
+				<variable name="xposition" type="float"/>
+				<variable name="zposition" type="float"/>
+			</protocol>
+
+			<protocol name="ExpMonsterNotify">
+				<enum name="START" value="1"/>
+				<enum name="END" value="2"/>
+				<variable name="eventtype" type="int"/>
+				<variable name="msg" type="string"/>
+			</protocol>
+
+			</namespace></namespace>
+		
+			<namespace name="worldboss"><namespace name="msg">
+				<protocol name="CGetWorldBossList"/>
+				<bean name="WorldBossInfo">
+					<variable name="bossid" type="int"/>
+					<variable name="opentime" type="long"/>
+					<variable name="isopen" type="int"/>
+				</bean>
+				<protocol name="SGetWorldBossList">
+					<variable name="bosses" type="vector" value="WorldBossInfo"/>
+				</protocol>
+				<protocol name="CGetWorldBossLineStatus">
+					<variable name="bossid" type="int"/>
+				</protocol>
+				<protocol name="SGetWorldBossLineStatus">
+					<variable name="bossid" type="int"/>
+					<variable name="lines" type="map" key="int" value="int"/> key : lineid   value-> cfg.ectype.WorldBossStateType 
+				</protocol>
+				<protocol name="SWorldBossNotice">
+					<variable name="msg" type="string"/>
+				</protocol>
+				<protocol name="SWorldBossKillNotice">
+					<variable name="killername" type="string"/>
+					<variable name="msg" type="string"/>
+				</protocol>
+			</namespace></namespace>
+			<namespace name="huiwu"><namespace name="msg">
+				<protocol name="CEnroll"/>
+				<protocol name="SEnroll">
+					<variable name="bonus" type="map.msg.Bonus"/>
+				</protocol>
+				<protocol name="CWorship">
+					<variable name="termid" type="int"/>
+					<variable name="profession" type="int"/>
+				</protocol>
+				<protocol name="SWorship">
+					<variable name="worshipnum" type="int"/>膜拜对象当前被膜拜次数
+					<variable name="bonus" type="map.msg.Bonus"/>
+				</protocol>
+				<bean name="PreselectionRole">
+					<variable name="roleid" type="long"/>
+					<variable name="name" type="string"/>
+					<variable name="combatpower" type="int"/>
+					<variable name="beguessnum" type="int"/>
+				</bean>
+				<protocol name="CGetPreselectionRoleList">
+					<variable name="profession" type="int"/>
+				</protocol>
+				<protocol name="SGetPreselectionRoleList">
+					<variable name="profession" type="int"/>
+					<variable name="roles" type="vector" value="PreselectionRole"/>
+				</protocol>
+				<protocol name="CGuess">
+					<variable name="profession" type="int"/>
+					<variable name="target" type="long"/>
+				</protocol>
+				<protocol name="SGuess">
+					<variable name="profession" type="int"/>
+					<variable name="target" type="long"/>
+					<variable name="beguessnum" type="int"/>
+				</protocol>			
+				<bean name="ChampionInfo">
+					<variable name="showinfo" type="lx.gs.role.msg.RoleShowInfo1"/>
+					<variable name="awardword" type="string"/>
+					<variable name="worshipnum" type="int"/>
+					<variable name="createtime" type="long"/>
+				</bean>
+				<protocol name="CGetChampion">
+					<variable name="termid" type="int"/>
+					<variable name="profession" type="int"/>
+					<variable name="ctx" type="int"/>
+				</protocol>
+				<protocol name="SGetChampion">
+					<variable name="termid" type="int"/>
+					<variable name="profession" type="int"/>
+					<variable name="ctx" type="int"/>
+					<variable name="championinfo" type="ChampionInfo"/>
+				</protocol>
+				<protocol name="CGetBattleRound">取某轮对战信息
+					<variable name="round" type="int"/>
+					<variable name="profession" type="int"/>
+				</protocol>
+				<bean name="BattleRole">
+					<variable name="name" type="string"/>
+				</bean>
+				<bean name="BattlePair">
+					<variable name="role1" type="BattleRole"/>
+					<variable name="role2" type="BattleRole"/>
+					<variable name="state" type="int"/> cfg.huiwu.BattleState
+				</bean>
+				<protocol name="SGetBattleRound">
+					<variable name="round" type="int"/>
+					<variable name="profession" type="int"/>
+					<variable name="battles" type="vector" value="BattlePair"/>
+				</protocol>
+				
+				<protocol name="SAttendNextBattle"> 参与下一轮的玩家在战斗准备阶段前会收到这个协议
+					<variable name="round" type="int"/>
+					<variable name="battlebegintime" type="long"/>
+					<variable name="opponent" type="string"/>
+					<variable name="opponentcombatpower" type="int"/>
+				</protocol>
+				
+				<protocol name="SBattleResult"> 战斗结果通知
+					<variable name="opponentname" type="string"/>
+					<variable name="win" type="int"/> 0 输, 1赢
+				</protocol>
+				
+				<protocol name="CEnterBattleEctype"> 进入 战斗副本
+					
+				</protocol>
+				
+				<protocol name="STermInfo">
+					<variable name="termid" type="int"/>
+					<variable name="stage" type="int"/>
+					<variable name="roundindex" type="int"/>
+					<variable name="roundstage" type="int"/>
+					<variable name="opentime" type="long"/>
+					<variable name="guessendtime" type="long"/>
+					<variable name="guessroleid" type="long"/>猜测冠军玩家
+					<variable name="hasenroll" type="int"/>是否报名
+				</protocol>
+				<protocol name="STermStageChange"> 活动阶段发生变化有通知
+					<variable name="termid" type="int"/>
+					<variable name="stage" type="int"/>
+				</protocol>
+				
+				<protocol name="SRoundStage">
+					<variable name="termid" type="int"/>
+					<variable name="round" type="int"/>
+					<variable name="roundstage" type="int"/>
+				</protocol>
+			</namespace></namespace>
+		</namespace>
+		<namespace name="storynote"><namespace name="msg">
+			<bean name="Chapter">
+				<variable name="notes" type="vector" value="int"/>
+			</bean>
+			<protocol name="CInfo"/>
+			<protocol name="SInfo">
+				<variable name="chapters" type="map" key="int" value="Chapter"/>
+			</protocol>
+			<protocol name="CActiveNote">
+				<variable name="chapterid" type="int"/>
+				<variable name="noteid" type="int"/>
+			</protocol>
+			<protocol name="SActiveNote">
+				<variable name="chapterid" type="int"/>
+				<variable name="noteid" type="int"/>
+			</protocol>
+		</namespace></namespace>
+    </provider>
+	
+	<provider name="matcher" pvid="101">
+
+		<protocol name="GAddMultiMatch">
+			<variable name="gid" type="long"/>
+			<variable name="members" type="vector" value="lx.gs.map.msg.MatchMultiStroyInfo"/>
+		</protocol>
+
+		<protocol name="MAddMultiMatch">
+			<variable name="err" type="int"/>
+			<variable name="ectypeid" type="int"/>
+ 			<variable name="members" type="vector" value="long"/>
+		</protocol>
+
+		<protocol name="GCancelMultiMatch">
+			<variable name="roleid" type="long"/>
+		</protocol>
+		<protocol name="MCancelMultiMatch">
+			<variable name="err" type="int"/>
+			<variable name="members" type="vector" value="long"/>
+		</protocol>
+		<protocol name="MMatchMultiSuccess">
+			<variable name="mapid" type="long"/>
+			<variable name="ectypeid" type="int"/>
+            <variable name="members" type="vector" value="lx.gs.map.msg.EnrollBriefInfo"/>		
+        </protocol>
+
+
+		<protocol name="GEndTeamFight">
+
+		</protocol>
+		
+		<protocol name="GAddTeamFightMatch">
+			<variable name="gid" type="long"/>
+			<variable name="viplevel" type="int"/>
+			<variable name="team" type="lx.gs.map.msg.MatchTeamInfo"/>
+		</protocol>
+		
+		<protocol name="MAddTeamFightMatch">
+			<variable name="err" type="int"/>
+			<variable name="members" type="vector" value="long"/>
+		</protocol>
+		
+		<protocol name="GCancelTeamFightMatch">
+			<variable name="roleid" type="long"/>
+		</protocol>
+
+		<protocol name="MCancelTeamFightMatch">
+			<variable name="err" type="int"/>
+			<variable name="members" type="vector" value="long"/>
+		</protocol>
+		
+		<protocol name="MTeamFightMatchSucc">
+			<variable name="mapid" type="long"/>
+			<variable name="myteammembers" type="vector" value="long"/>
+			<variable name="team1" type="lx.gs.map.msg.MatchTeamInfo"/>
+			<variable name="team2" type="lx.gs.map.msg.MatchTeamInfo"/>			
+		</protocol>
+
+		<namespace name="guardtower">
+			<protocol name="GEndGuardTower">
+			</protocol>
+
+			<protocol name="GAddGuardTowerMatch">
+				<variable name="gid" type="long"/>
+				<variable name="minpower" type="int"/>
+				<variable name="selfpower" type="int"/>
+				<variable name="team" type="lx.gs.map.msg.MatchTeamInfo"/>
+			</protocol>
+
+			<protocol name="MAddGuardTowerMatch">
+				<variable name="err" type="int"/>
+				<variable name="members" type="vector" value="long"/>
+			</protocol>
+
+			<protocol name="GCancelGuardTowerMatch">
+				<variable name="roleid" type="long"/>
+			</protocol>
+
+			<protocol name="MCancelGuardTowerMatch">
+				<variable name="err" type="int"/>
+				<variable name="teammembers" type="vector" value="long"/>
+				<variable name="cancelmembers" type="vector" value="long"/>
+			</protocol>
+
+			<protocol name="MGuardTowerMatchSucc">
+				<variable name="mapid" type="long"/>
+				<variable name="myteammembers" type="vector" value="long"/>
+				<variable name="team" type="lx.gs.map.msg.MatchTeamInfo"/>
+			</protocol>
+		</namespace>
+	</provider>
+
+    <state name="GsProvider">
+        <provider ref="gnet.link"/>
+        <provider ref="gs"/>
+		<provider ref="map.msg"/>		
+    </state>
+	
+	<state name="MapProvider">
+		<provider ref="map.msg"/>
+		<protocol ref="gnet.AnnounceGsd"/>
+		<protocol ref="gnet.ForwardClient"/>
+		<protocol ref="gnet.ForwardMultiClients"/>		
+	</state>
+	
+	<state name="ServiceProvider">
+		<protocol ref="gnet.AnnounceGsds"/>
+		<protocol ref="gnet.AnnounceGsd"/>
+		<protocol ref="gnet.AnnounceServiced"/>
+		
+		<protocol ref="map.msg.ServicedRefs"/>
+		<protocol ref="map.msg.XRpc"/>
+		<protocol ref="map.msg.MRpc"/>
+		<protocol ref="map.msg.XCreateTeamFight"/>
+		<protocol ref="map.msg.MCreateMap"/>
+		<protocol ref="map.msg.XCreateEctypeMultiStory"/>
+		<provider ref="matcher"/>
+	</state>
+
+	<state name="DeliverClient">
+		<protocol ref="gnet.NotifyOrderInfo"/>
+		<protocol ref="gnet.NotifyUseActivationCode"/>
+		<protocol ref="gnet.NotifyOrderInfoAck"/>
+		<protocol ref="gnet.UseActivationCode"/>
+		<protocol ref="gnet.ConfirmUseActivationCode"/>
+		<protocol ref="gnet.GsToAuany"/>
+		<protocol ref="gnet.AuanyToGs"/>
+		<protocol ref="gnet.GGetPayReturn"/>
+		<protocol ref="gnet.AGetPayReturn"/>
+		<protocol ref="gnet.AGetPayReturnInfo"/>
+		<protocol ref="gnet.GGetPayReturnInfo"/>
+		<protocol ref="gnet.AGetRoleInfo"/>
+		<protocol ref="gnet.GGetRoleInfo"/>
+	</state>
+
+    <service name="gsd">
+        <manager name="Provider" type="provider" bind="gs,msg" initstate="GsProvider"/>
+        <manager name="DeliverClient" type="client" initstate="DeliverClient">
+            <state ref="DeliverClient"/>
+        </manager>
+		<manager name="MapClient" type="dynamicclient" initstate="MapProvider"/>
+		<manager name="MapServer" type="server" initstate="MapProvider"/>
+		<manager name="ServiceClient" type="client" initstate="ServiceProvider"/>
+    </service>
+</application>

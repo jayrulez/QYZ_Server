@@ -1,0 +1,31 @@
+package cfg.exchange;
+public final class Category {
+	public final static int NULL = -1;
+	public final static int ALL = 0;
+	public final static int WEAPON = 1;
+	public final static int QINGYUNMENG_WEAPON = 2;
+	public final static int GUIWANGZONG_WEAPON = 3;
+	public final static int TIANYINSI_WEAPON = 4;
+	public final static int CLOTH = 5;
+	public final static int QINGYUNMENG_CLOTH = 6;
+	public final static int GUIWANGZONG_CLOTH = 7;
+	public final static int TIANYINSI_CLOTH = 8;
+	public final static int HAT = 9;
+	public final static int QINGYUNMENG_HAT = 10;
+	public final static int GUIWANGZONG_HAT = 11;
+	public final static int TIANYINSI_HAT = 12;
+	public final static int SHOE = 13;
+	public final static int QINGYUNMENG_SHOE = 14;
+	public final static int GUIWANGZONG_SHOE = 15;
+	public final static int TIANYINSI_SHOE = 16;
+	public final static int ACCESSORY = 17;
+	public final static int BANGLE = 18;
+	public final static int NECKLACE = 19;
+	public final static int RING = 20;
+	public final static int MATERIAL = 21;
+	public final static int TALISMAN = 22;
+	public final static int AMULET = 23;
+	public final static int PET = 24;
+	public final static int TYPE_NUM = 25;
+	public final static java.util.List<Integer> enums = java.util.Arrays.asList(0 ,1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12 ,13 ,14 ,15 ,16 ,17 ,18 ,19 ,20 ,21 ,22 ,23 ,24 ,25);
+}

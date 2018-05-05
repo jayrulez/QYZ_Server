@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><XioConf xmlns:xi="http://www.w3.org/2001/XInclude" name="gsd">
+        <Manager bind="100,102" class="gnet.link.Onlines" name="Provider">
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT1" sendBufferSize="16384" tcpNoDelay="false"/>
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT2" sendBufferSize="16384" tcpNoDelay="false"/>
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT3" sendBufferSize="16384" tcpNoDelay="false"/>
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT4" sendBufferSize="16384" tcpNoDelay="false"/>
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT5" sendBufferSize="16384" tcpNoDelay="false"/>
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="PROVIDER_PORT6" sendBufferSize="16384" tcpNoDelay="false"/>
+                <xi:include href="coder.Provider.xml"/>
+        </Manager>
+        <Manager class="gnet.DeliverClient" name="DeliverClient">
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="127.0.0.1" remotePort="DELIVER_GS_PORT" sendBufferSize="16384" tcpNoDelay="false"/>
+                <xi:include href="coder.DeliverClient.xml"/>
+        </Manager>
+
+        <Manager class="gnet.MapClient" name="MapClient">
+		<DynamicMultiConnector inputBufferSize="16384000" name="MapClient" outputBufferSize="16384000" receiveBufferSize="16384" sendBufferSize="16384" tcpNoDelay="true"/>
+		<xi:include href="coder.MapClient.xml"/>
+        </Manager>
+
+        <Manager class="gnet.ServiceClient" name="ServiceClient">
+                <Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="SERVICED_IP" remotePort="SERVICED_PORT" sendBufferSize="16384" tcpNoDelay="false"/>
+                <xi:include href="coder.ServiceClient.xml"/>
+        </Manager>
+		<Manager class="gnet.MapServer" name="MapServer">
+			<Acceptor backlog="32" inputBufferSize="1048576" localIp="0.0.0.0" localPort="GSD_PORT" outputBufferSize="1048576" receiveBufferSize="65536" sendBufferSize="65536" tcpNoDelay="false"/>
+			<xi:include href="coder.MapServer.xml"/>
+		</Manager>		
+</XioConf>

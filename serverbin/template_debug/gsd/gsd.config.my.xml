@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gsd 
+	debug="true"
+
+	serverid="$serverid"
+	
+	trace.level="DEBUG"
+	trace.protocol="true"
+	
+	xdb.xml="gsd.xdb.xml"
+	
+	xio.xml="gsd.xio.my.xml"
+	
+	config.dir="config"
+	config.encoding="utf8"
+	
+	rmi.host="$gs_rmi_addr"
+	rmi.port="$gs_rmi_port"
+	
+	gm.fromchat="true"
+	gm.telnetport="$gs_gm_port"
+	gm.csport="$gs_cs_port"
+	gm.httpport="$gs_http_port"
+	gm.password="rsdyxjh"
+   
+    >
+</gsd>

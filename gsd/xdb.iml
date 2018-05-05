@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="file://../bin/jio.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/../xdb/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../xdb/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../xdb">
+      <sourceFolder url="file://$MODULE_DIR$/../xdb/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="jio.jar">
+        <CLASSES>
+          <root url="file://../bin/jio.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://C:/Users/lch/Desktop/repos/share/jio/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="jio">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/jio.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

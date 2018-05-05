@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<auany 
+	debug="false"
+	serverid="1"
+	xio.xml = "xauany.xio.my.xml"
+	xdb.xml = "xauany.xdb.xml"
+		
+	jmx.rmiport = "30100"
+	jmx.serverport = "30101"
+	http.server.ip="0.0.0.0"
+	http.server.port="10001"
+	xio.output.security="oyvxyskVhnydfl8vgasqTuzee3bnbopl"
+	xio.input.security="khSrmjpjrsarmks3aAfrvldn5zafuzdd"
+		
+	activecode.open="true"
+	activecode.login="false"
+	activecode.includeplatforms=""
+	activecode.excludeplatforms="2,9"
+	
+	gm.port="30110"
+	gm.password="rsdyxjh"
+    >
+    
+   	<plat 
+        class="xauany.plats.Test"
+        type="0"
+        name="test"
+        orderCallbackPath="/test"
+        appid="1085" 
+        appkey="haha" 
+        appsecret="hehe"
+        >
+        <httpconfig  connecttimeout="15000" readtimeout="5000"/>
+    </plat>
+    
+  	<plat 
+        class="xauany.plats.Onesdk"
+        type="1"
+        name="onesdk"
+        orderCallbackPath="/onesdk"
+        appid="1217" 
+        appkey="apez5gl5xjbqcbephvqodpdkth9bewju" 
+        appsecret="mkssxggjy3rzmwxkvkgvhyiwofjqjj8e"
+        checkTokenUrl="https://apidev.laohu.com/user/sdkCheckToken"
+        >
+        <httpconfig  connecttimeout="15000" readtimeout="5000"/>
+    </plat>
+  
+</auany>

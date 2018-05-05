@@ -1,0 +1,31 @@
+package cfg.item;
+public final class EItemType {
+	public final static int NULL = -1;
+	public final static int COMMON = 1;
+	public final static int MEDICINE = 2;
+	public final static int CURRENCY = 3;
+	public final static int GIFTPACK = 4;
+	public final static int ENHANCE = 5;
+	public final static int OTHER = 6;
+	public final static int QUEST = 7;
+	public final static int FLOWER = 8;
+	public final static int JEWELRY = 9;
+	public final static int FASHION = 10;
+	public final static int RIDING = 11;
+	public final static int EXPITEM = 12;
+	public final static int TITLE = 13;
+	public final static int FRAGMENT = 14;
+	public final static int PETFRAGMENT = 15;
+	public final static int PET = 16;
+	public final static int TALISMAN = 17;
+	public final static int BANGLE = 18;
+	public final static int NECKLACE = 19;
+	public final static int RING = 20;
+	public final static int WEAPON = 21;
+	public final static int CLOTH = 22;
+	public final static int HAT = 23;
+	public final static int SHOE = 24;
+	public final static int SKIN = 25;
+	public final static int REDPACKET = 26;
+	public final static java.util.List<Integer> enums = java.util.Arrays.asList(1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12 ,13 ,14 ,15 ,16 ,17 ,18 ,19 ,20 ,21 ,22 ,23 ,24 ,25 ,26);
+}

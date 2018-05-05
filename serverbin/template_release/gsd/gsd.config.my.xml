@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gsd
+        debug="false"
+
+        serverid="SERVER_ID"
+
+        trace.level="INFO"
+        trace.protocol="false"
+
+        xdb.xml="gsd.xdb.xml"
+
+        xio.xml="gsd.xio.my.xml"
+	xio.mapserver.ip="GSD_IP"
+	xio.mapserver.port="GSD_PORT"
+	
+        config.dir="config"
+        config.encoding="utf8"
+
+        rmi.host="127.0.0.1"
+        rmi.port="30400"
+
+        gm.fromchat="false"
+	gm.telnetport="3350"
+        gm.csport="33551"
+        gm.httpport="3352"
+        gm.password="tswcbyy"
+	server.maxonline="GSD_MAX_ONLINE"		
+    >
+</gsd>

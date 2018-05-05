@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<application name="gnet" shareHome="../../../share" pvids="0-10">
+
+    <bean name="ServerLoad">
+        <enum name="GREEN" value="1" comment="(0-0.8)"/>
+        <enum name="YELLOW" value="2" comment="(0.8-0.95)"/>
+        <enum name="RED" value="3" comment="(0.95-1)"/>
+		<enum name="UNAVAILABLE" value="4" comment="服务器不可用"/>
+        <variable name="load" type="byte"/>
+    </bean>
+
+    <bean name="ErrCode">
+        <enum name="ERR_SUCCESS" value="0" comment="成功"/>
+        <enum name="ERR_PASSWD_INVALID" value="1" comment="用户名或密码错误"/>
+        <enum name="ERR_PASSWD_TRY_EXCEED" value="2" comment="输错密码的频率超过了deliver中的配置"/>
+        <enum name="ERR_LOGINIP_TRY_EXCEED" value="3" comment="ip登陆频率超过了deliver的配置"/>
+        <enum name="ERR_KICK_BY_ANOTHER_USER" value="4" comment="因账号强制登录被踢下线"/>
+        <enum name="ERR_MULTILOGIN" value="5" comment="多次重复登录，且用户选择自动下线"/>
+        <enum name="ERR_AUANY_LOGIN_EXCEPTION" value="6" comment="AuAny参数异常或平台异常，登录失败"/>
+        <enum name="ERR_AUANY_LOGIN_NET_ERROR" value="7" comment="deliver和AuAny 之间网络通信错误，登录失败"/>
+        <enum name="ERR_SERVER_OVERLOAD" value="8" comment="服务器人数已达上限"/>
+        <enum name="ERR_LINK_NOT_CONNECT_DELIVER" value="9" comment="link没连上deliver"/>
+        <enum name="ERR_LINK_NOT_CONNECT_GS" value="10" comment="link没连上gs"/>
+		<enum name="ERR_ROLEFORBID" value="11" comment="角色被GM封杀，不允许登录游戏"/>
+        
+        <variable name="code" type="int"/>
+    </bean>
+    
+    <bean name="ActivationCodeErr">
+        <enum name="ERR_SUCCESS" value="0" comment="成功"/>
+        <enum name="ERR_FORMATE_INVALID" value="1" comment="激活码格式错误"/>
+        <enum name="ERR_INVALID" value="2" comment="激活码无效"/>
+        <enum name="ERR_TYPE_NOT_MATCH" value="3" comment="激活码类型不匹配"/>
+        <enum name="ERR_CODE_IS_USED" value="4" comment="激活码已使用"/>
+        <enum name="ERR_CODE_IS_EXPIRATED" value="5" comment="激活码已过期"/>
+        <enum name="ERR_CODE_IS_NOT_OPEN" value="6" comment="激活码未到使用时间"/>
+        <enum name="ERR_FUNCTION_IS_CLOSED" value="7" comment="激活码功能已关闭"/>
+        <enum name="ERR_PLATFORM_NOT_MATCH" value="8" comment="激活码平台不匹配"/>
+        <enum name="ERR_HAS_ALEADY_ACTIVATED" value="9" comment="已经使用过同一类型的激活码"/>
+        <enum name="ERR_NETWORK" value="10" comment="deliver和au通讯异常"/>
+		<enum name="ERR_EXCEED_DAY_USENUM" value="11" comment="超出每日使用次数"/>
+		<enum name="ERR_EXCEED_ALL_USENUM" value="12" comment="超出累计使用次数"/>
+		<enum name="ERR_INTERNAL" value="13" comment="服务器内部错误"/>
+		<enum name="ERR_LEVEL_TOO_LOWE" value="15" comment="等级太低,无法使用"/>
+		<enum name="ERR_LEVEL_TOO_HIGH" value="16" comment="等级太高,无法使用"/>
+        <variable name="code" type="int"/>
+    </bean>
+    
+
+    <bean name="ServiceType">
+        <enum name="DELIVER" value="0"/>
+        <enum name="RANK" value="1" comment="排行榜"/>
+        <enum name="SHOW" value="2" comment="穿衣秀，杂志"/>
+        <enum name="MARKET" value="3" comment="市场"/>
+        <enum name="PARTY" value="4" comment="派对"/>
+        <variable name="service" type="byte"/>
+    </bean>
+
+    <bean name="PlatType">
+        <enum name="TEST" value="0"/>
+        <enum name="ONESDK" value="1"/>
+        <variable name="plat" type="int"/>
+    </bean>
+
+    <!-- client和xlink之间的协议 协议号范围[100,110)-->
+    <protocol name="KeepAlive" type="100" maxsize="16">
+        <variable name="code" type="long"/>
+    </protocol>
+
+    <protocol name="Challenge" type="101" maxsize="64">
+        <variable name="version" type="int" comment="0代表不检查版本"/>
+        <variable name="plattype" type="PlatType"/>
+        <variable name="serverid" type="int"/>
+        <variable name="serverload" type="ServerLoad"/>
+    </protocol>
+
+    <protocol name="ErrorInfo" type="102" maxsize="256">
+        <variable name="errcode" type="ErrCode"/>
+        <variable name="info" type="octets" attr="ref"/>
+    </protocol>
+
+    <protocol name="Response" type="103" maxsize="1024">
+        <variable name="user_identity" type="octets"/>
+        <variable name="token" type="octets"/>
+        <variable name="plattype" type="PlatType" comment="在混合平台时plattype用来区分具体平台"/>
+        <variable name="deviceid" type="octets" />
+        <variable name="os" type="octets" />
+        <variable name="platform" type="octets" />
+    </protocol>
+
+    <protocol name="KeyExchange" type="104" maxsize="32">
+        <variable name="nonce" type="octets" attr="ref"/>
+        <variable name="kick_olduser" type="byte" comment="客户端发给link使用这个字段"/>
+    </protocol>
+
+    <protocol name="OnlineAnnounce" type="105" maxsize="64">
+        <variable name="userid" type="long"/>
+    </protocol>
+
+    <protocol name="DispatchByUserid" type="106" maxsize="131072">client -> link
+        <variable name="userid" type="long"/>
+        <variable name="ptype" type="int"/>
+        <variable name="pdata" type="octets"/>
+    </protocol>
+    
+    <!-- END client和xlink之间的协议 -->
+
+    <!-- xlink和xdeliver之间的协议,协议号范围[110,130) -->
+    <protocol name="SessionLoginRequest" type="110" maxsize="512">
+        <variable name="localsid" type="int"/>
+        <variable name="user_identity" type="octets"/>
+        <variable name="token" type="octets"/>
+        <variable name="plattype" type="PlatType"/>
+        <variable name="loginip" type="int"/>
+    </protocol>
+
+    <protocol name="SessionErrorInfo" type="111" maxsize="256">
+        <variable name="localsid" type="int"/>
+        <variable name="errcode" type="ErrCode"/>
+        <variable name="info" type="octets" attr="ref"/>
+    </protocol>
+
+    <protocol name="SessionLogin" type="112" maxsize="512">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+    </protocol>
+
+    <protocol name="SessionUserReady" type="113" maxsize="512" comment="xlink和client KeyExchanged.链接ok了">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+        <variable name="kick_olduser" type="byte"/>
+    </protocol>
+
+    <protocol name="AnnounceSessionOnline" type="114" maxsize="64">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+    </protocol>
+
+    <protocol name="KickByAnotherLogin" type="115" maxsize="32">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+    </protocol>
+
+    <protocol name="SessionBroken" type="116" maxsize="32">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+    </protocol>
+
+    <protocol name="NotifyServerLoad" type="117" maxsize="1024">
+        <variable name="serverload" type="ServerLoad"/>
+    </protocol>
+
+    <protocol name="LimitIpForAMoment" type="118" maxsize="64">
+        <variable name="ip" type="int"/>
+    </protocol>
+
+    <protocol name="AnnounceServerInfo" type="119" maxsize="256" comment="如果发给auany，auany不认识plattype就直接踢掉。">
+        <variable name="plattype" type="PlatType"/>
+        <variable name="serverid" type="int"/>
+    </protocol>
+    
+    <protocol name="RequireLoginActivationCode" type="120" maxsize="64" comment="需要输入激活码才能登陆（或者激活码错误需重新输入） deliver - link - client">
+        <variable name="err" type="ActivationCodeErr"/>
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+    </protocol>
+    
+    <protocol name="InputLoginActivationCode" type="121" maxsize="64" comment="输入登陆激活码 client - link - deliver">
+        <variable name="localsid" type="int"/>
+        <variable name="userid" type="long"/>
+        <variable name="code" type="octets"/>
+    </protocol>
+    
+    <!-- END xlink和xdeliver之间的协议 -->
+
+    <!-- gs和xdeliver之间的协议,协议号范围[130,140)-->
+    <bean name="SetMaxOnlineNumArg">
+        <variable name="maxnum" type="int"/>
+        <variable name="fake_maxnum" type="int"/>
+    </bean>
+    <bean name="SetMaxOnlineNumRes">
+        <variable name="retcode" type="int"/>
+    </bean>
+    <rpc name="SetMaxOnlineNum" type="130" argument="SetMaxOnlineNumArg" result="SetMaxOnlineNumRes" maxsize="32"
+         timeout="20"/>
+
+    <bean name="GetMaxOnlineNumArg">
+        <variable name="padding" type="int"/>
+    </bean>
+    <bean name="GetMaxOnlineNumRes">
+        <variable name="retcode" type="int"/>
+        <variable name="maxnum" type="int"/>
+        <variable name="fake_maxnum" type="int"/>
+        <variable name="online_num" type="int"/>
+    </bean>
+    <rpc name="GetMaxOnlineNum" type="131" argument="GetMaxOnlineNumArg" result="GetMaxOnlineNumRes" maxsize="64"
+         timeout="20"/>
+
+    <protocol name="AnnounceServiceType" type="132" maxsize="256" comment="这个只在xdeliver主动链接gs的情况下使用">
+        <variable name="servicetype" type="ServiceType"/>
+    </protocol>
+    <!-- END gs和xdeliver之间的协议 -->
+
+
+    <!-- auany 手机平台使用 protocol type[140, 150)-->
+    <!-- 登录-->
+    <bean name="AuAnyLoginArg">
+        <variable name="user_identity" type="octets"/>
+        <variable name="token" type="octets"/>
+        <variable name="plattype" type="PlatType" comment="在混合平台时plattype用来区分具体平台"/>
+        <variable name="loginip" type="int"/>
+    </bean>
+
+    <bean name="AuAnyLoginRes">
+        <enum name="ERR_SUCCEED" value="0"/>
+        <enum name="ERR_INVALID" value="1" comment="失败，token/sessionid无效"/>
+        <enum name="ERR_PLAT_EXCEPTION" value="2" comment="与平台相关的访问异常"/>
+        <enum name="ERR_STORE" value="3" comment="xdb存储异常"/>
+        <enum name="ERR_NEED_ACTIVATE" value="4" comment="需要激活码激活才能登陆"/>
+        <variable name="errcode" type="int"/>
+        <variable name="userid" type="long" default="-1"/>
+    </bean>
+    <rpc name="AuAnyLogin" type="140" argument="AuAnyLoginArg" result="AuAnyLoginRes" maxsize="4096"
+         timeout="20"/>
+
+
+    <!-- 支付通知 -->
+    <protocol name="NotifyOrderInfo" type="141" maxsize="65536">
+        <variable name="plattype" type="PlatType" comment="平台唯一标识"/>
+        <variable name="platorderid" type="string" comment="平台用的订单号"/>
+        <variable name="gsorderid" type="string" comment="游戏内自己用的订单号"/>
+        <variable name="userid" type="long" default="-1"/>
+        <variable name="vars" type="octets"/>
+    </protocol>
+
+    <!-- gs 说反馈说是否收到 -->
+    <protocol name="NotifyOrderInfoAck" type="142" maxsize="2048">
+        <enum name="ERR_SUCCEED" value="0"/>
+        <enum name="ERR_ORDER_UNKNOWN" value="1"/>
+        <enum name="ERR_USER_UNKNOWN" value="2"/>
+        <enum name="ERR_VARS_INVALID" value="3"/>
+
+        <variable name="errcode" type="int"/>
+        <variable name="plattype" type="PlatType"/>
+        <variable name="platorderid" type="string" comment="平台用的订单号"/>
+        <variable name="gsorderid" type="string" comment="游戏内自己用的订单号"/>
+        <variable name="userid" type="long" default="-1"/>
+    </protocol>
+    
+    <bean name="VerifyLoginActivationCodeArg">
+        <variable name="userid" type="long"/>
+        <variable name="code" type="octets"/>
+    </bean>
+
+    <bean name="VerifyLoginActivationCodeRes">
+        <variable name="err" type="ActivationCodeErr"/>
+        <variable name="userid" type="long"/>
+    </bean>
+    <rpc name="VerifyLoginActivationCode" type="143" argument="VerifyLoginActivationCodeArg" result="VerifyLoginActivationCodeRes" maxsize="4096"
+         timeout="20"/>
+    
+    <!-- gs 向au请求使用激活码 -->
+    <protocol name="UseActivationCode" type="144" maxsize="128" comment="gs - deliver - auany">
+        <variable name="userid" type="long"/>
+        <variable name="roleid" type="long"/>
+        <variable name="code" type="string"/>
+    </protocol>
+
+    <protocol name="NotifyUseActivationCode" type="145" maxsize="128" comment="auany - deliver - gs">
+        <variable name="err" type="ActivationCodeErr"/>
+        <variable name="userid" type="long"/>
+        <variable name="roleid" type="long"/>
+        <variable name="code" type="string"/>
+        <variable name="codetype" type="int"/>
+    </protocol>
+    
+    <!-- gs 确认使用激活码 -->
+    <protocol name="ConfirmUseActivationCode" type="146" maxsize="128">
+        <variable name="code" type="string"/>
+        <variable name="isconfirm" type="byte"/>
+    </protocol>
+	
+	<protocol name="GsToAuany" type="147" maxsize="100000">
+		<variable name="userid" type="long"/>
+		<variable name="roleid" type="long"/>
+		<variable name="ptype" type="int"/>
+		<variable name="pdata" type="octets"/>
+	</protocol>
+	<protocol name="AuanyToGs" type="148" maxsize="100000">
+		<variable name="userid" type="long"/>
+		<variable name="roleid" type="long"/>
+		<variable name="ptype" type="int"/>
+		<variable name="pdata" type="octets"/>
+	</protocol>
+	<protocol name="GGetPayReturn" type="149" maxsize="1000"/>
+	<protocol name="AGetPayReturn" type="150" maxsize="1000">
+		<enum name="OK" value="0"/>
+		<enum name="HAS_GOT_RETURN" value="1"/>
+		<enum name="HAS_NOT_RETURN" value="2"/>
+		<variable name="err" type="int"/>
+		<variable name="getreturnroleid" type="long"/>
+		<variable name="totalpay" type="long"/>
+		<variable name="totalyuanbao" type="long"/>
+		<variable name="totalbindyuanbao" type="long"/>
+		<variable name="totalvipexp" type="long"/>
+	</protocol>
+	<protocol name="GGetPayReturnInfo" type="152" maxsize="1000"/>
+	<protocol name="AGetPayReturnInfo" type="153" maxsize="100000">
+		<variable name="hasgotpayreturn" type="byte"/>
+		<variable name="getreturnroleid" type="long"/>
+		<variable name="totalpay" type="long"/>
+		<variable name="totalyuanbao" type="long"/>
+		<variable name="totalbindyuanbao" type="long"/>
+		<variable name="totalvipexp" type="long"/>
+	</protocol>
+
+    <protocol name="AGetRoleInfo" type="154" maxsize="1000">
+        <enum name="LEVEL" value="1"/>
+        <variable name="xid" type="long"/>
+        <variable name="rolename" type="string"/>
+        <variable name="info" type="list" value="int" comment="查询信息"/>
+    </protocol>
+    <protocol name="GGetRoleInfo" type="155" maxsize="1000">
+        <enum name="OK" value="0"/>
+        <enum name="NO_ROLE" value="1"/>
+        <variable name="xid" type="long"/>
+        <variable name="err" type="int"/>
+        <variable name="info" type="map" key="int" value="int" comment="查询信息:数值"/>
+    </protocol>
+    <!-- END xdeliver和auany -->
+
+    <!-- xlink和gs之间的协议，这里的provider是一个协议组 -->
+    <provider name="link" pvid="1">
+        <!-- gs to link -->
+        <protocol name="Bind" type="1" maxsize="1024">
+            <variable name="pvid" type="int"/>
+            <variable name="linksids" type="set" value="int"/>
+        </protocol>
+
+        <protocol name="UnBind" type="2" maxsize="1024">
+            <variable name="pvid" type="int"/>
+            provider id
+            <variable name="linksids" type="set" value="int"/>
+        </protocol>
+
+        <protocol name="Kick" type="3" maxsize="32">
+            <enum name="E_PROTOCOL_UNKOWN" value="1"/>
+            <enum name="E_MARSHAL_EXCEPTION" value="2"/>
+            <enum name="E_PROTOCOL_EXCEPTION" value="3"/>
+
+            <enum name="A_QUICK_CLOSE" value="1"/>
+            <enum name="A_DELAY_CLOSE" value="2"/>
+            <enum name="A_ACKICKOUT" value="3"/>
+
+            <variable name="linksid" type="int"/>
+            <variable name="action" type="int"/>
+            <variable name="error" type="int"/>
+        </protocol>
+
+        <protocol name="Send" type="4" maxsize="2048000">
+            <variable name="linksids" type="set" value="int"/>
+            <variable name="ptype" type="int"/>
+            <variable name="pdata" type="octets"/>
+        </protocol>
+
+        <protocol name="Broadcast" type="6" maxsize="1310720">
+            <variable name="ptype" type="int"/>
+            <variable name="pdata" type="octets"/>
+            <variable name="time" type="int"/>
+        </protocol>
+
+        <protocol name="SetLogin" type="7" maxsize="128">
+            <enum name="eLogout" value="0"/>
+            <enum name="eLogin" value="1"/>
+            <variable name="linksid" type="int"/>
+            <variable name="login" type="int"/>
+            <variable name="roleid" type="long"/>
+            for debug
+        </protocol>
+
+        <!-- 正式服link启动时默认对client的端口未监听，由gs通知其开始监听，gs关闭时通知link关闭端口监听 -->
+        <protocol name="LinkServerControl" type="8" maxsize="32">
+            <enum name="E_START_LISTEN" value="0"/>
+            <enum name="E_STOP_LISTEN" value="1"/>
+            <variable name="ptype" type="int"/>
+        </protocol>
+
+        <!-- link to gs -->
+        <protocol name="Dispatch" type="5" maxsize="131072">
+            <variable name="linksid" type="int"/>
+            <variable name="userid" type="long"/>
+            <variable name="ptype" type="int"/>
+            <variable name="pdata" type="octets"/>
+        </protocol>
+
+        <protocol name="DispatchServer" type="107" maxsize="131072">
+            <variable name="ptype" type="int"/>
+            <variable name="pdata" type="octets"/>
+        </protocol>
+
+        <protocol name="LinkBroken" type="10" maxsize="32">
+            <enum name="REASON_PEERCLOSE" value="0"/>
+            <variable name="userid" type="long"/>
+            <variable name="linksid" type="int"/>
+            <variable name="reason" type="int"/>
+        </protocol>
+
+        <protocol name="AnnounceLinkId" type="11" maxsize="32">
+            <variable name="linkid" type="int"/>
+        </protocol>
+
+        <protocol name="AnnounceUserOnline" type="12" maxsize="1024">
+            <variable name="userid" type="long"/>
+            <variable name="username" type="octets"/>
+            <variable name="plattype" type="gnet.PlatType"/>
+            <variable name="deviceid" type="octets"/>
+            <variable name="os" type="octets"/>
+            <variable name="peer" type="octets"/>
+            <variable name="platform" type="octets"/>
+        </protocol>
+    </provider>
+    <!-- END xlink和gs之间的协议 -->
+
+	      
+	<!--  BEGIN mapd 与 gsd 与 serviced 之间的协议 -->
+	<bean name="ProtocolData">
+		<variable name="ptype" type="int"/>
+		<variable name="pdata" type="octets"/>
+	</bean>
+	<protocol name="ForwardClient" type="172">
+		<variable name="roleid" type="long"/>
+		<variable name="proto" type="ProtocolData"/>
+	</protocol>
+	<protocol name="ForwardMultiClients" type="173">
+		<variable name="roleids" type="set" value="long"/>
+		<variable name="proto" type="ProtocolData"/>
+	</protocol>
+	<protocol name="AnnounceGsd" type="174">
+		<variable name="serverid" type="int"/>
+		<variable name="ip" type="string"/>
+		<variable name="port" type="int"/>		
+	</protocol>	
+	<bean name="GsdInfo">
+		<variable name="serverid" type="int"/>
+		<variable name="ip" type="string"/>
+		<variable name="port" type="int"/>
+	</bean>
+	<protocol name="AnnounceGsds" type="176" maxsize="100000">
+		<variable name="gsds" type="vector" value="GsdInfo"/>
+	</protocol>
+	<protocol name="AnnounceServiced" type="175">
+		<variable name="serverid" type="int"/>
+	</protocol>	
+	<!--protocol name="ForwardRoleProtocols" type="174">
+		<variable name="roleid" type="long"/>
+		<variable name="proto" type="ProtocolData"/>
+	</protocol>
+	<protocol name="ForwardMultiRoleProtocols" type="175">
+		<variable name="roleids" type="set" value="long"/>
+		<variable name="proto" type="ProtocolData"/>
+	</protocol-->
+	<!--  END mapd 与 gsd 与 serviced 之间的协议 -->
+</application>
+

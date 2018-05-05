@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="gbk"?>
+
+<application name="auany" shareHome="../../../share" pvids="">
+
+	<import file="lib/gnet.xml"/>
+
+	<state name="AuthServer">
+		<protocol ref="gnet.AnnounceServerInfo"/>
+		<rpc ref="gnet.AuAnyLogin"/>
+		<protocol ref="gnet.NotifyOrderInfoAck"/>
+		<protocol ref="gnet.KeepAlive"/>
+		<rpc ref="gnet.VerifyLoginActivationCode"/>
+		<protocol ref="gnet.UseActivationCode"/>
+		<protocol ref="gnet.ConfirmUseActivationCode"/>
+	</state>
+
+	<state name="AuthImport" timeout="0">
+		<protocol ref="gnet.NotifyOrderInfo"/>
+        <protocol ref="gnet.NotifyUseActivationCode"/>
+		<protocol ref="gnet.GsToAuany"/>
+		<protocol ref="gnet.AuanyToGs"/>
+		<protocol ref="gnet.AGetPayReturn"/>
+		<protocol ref="gnet.GGetPayReturn"/>
+		<protocol ref="gnet.AGetPayReturnInfo"/>
+		<protocol ref="gnet.GGetPayReturnInfo"/>
+		<protocol ref="gnet.AGetRoleInfo"/>
+		<protocol ref="gnet.GGetRoleInfo"/>
+	</state>
+
+	<service name="xauany">
+		<manager name="AuthServer" type="server" initstate="AuthServer" port="29200">
+			<state ref="AuthServer"/>
+			<state ref="AuthImport"/>
+		</manager>
+	</service>
+</application>
+

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><XioConf xmlns:xi="http://www.w3.org/2001/XInclude" name="serviced">
+	<Manager class="gnet.ServiceServer" name="ServiceServer">
+		<Acceptor backlog="32" inputBufferSize="16384000" localIp="0.0.0.0" localPort="$serviced_port" outputBufferSize="16384000" receiveBufferSize="16384" sendBufferSize="16384" tcpNoDelay="true"/>
+		<xi:include href="coder.ServiceServer.xml"/>
+	</Manager>
+</XioConf>

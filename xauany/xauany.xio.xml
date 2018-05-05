@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><XioConf xmlns:xi="http://www.w3.org/2001/XInclude" name="xauany">
+	<Manager class="xauany.XioManager" name="AuthServer">
+		<Acceptor backlog="32" inputBufferSize="131072" localIp="0.0.0.0" localPort="10000" outputBufferSize="131072" receiveBufferSize="16384" sendBufferSize="16384" tcpNoDelay="true"/>
+		
+	
+		<xi:include href="coder.AuthServer.xml"/>
+	</Manager>
+</XioConf>

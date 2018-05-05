@@ -1,0 +1,85 @@
+package cfg.map;
+public final class WorldMap extends cfg.CfgObject {
+	public final static int TYPEID = 5764646;
+	final public int getTypeId() { return TYPEID; }
+	public static final int MAX_PLAYER_NUM = 10;
+	public static final String WORLDMAP_PATH = "BG_WorldMap";
+	public static final int DEFAULT_MAPID = 100;
+	public static final int FIGHT_STATE_DURATION = 10;
+	public static final int LINE_IDLE_TIME = 30;
+	public final int id;
+	public final String scenename;
+	public final String mapname;
+	public final int landscapeid;
+	public final boolean collisiondetect;
+	public final boolean isdungeon;
+	public final int suggestplayernum;
+	public final int maxlineplayernum;
+	public final int initlinenum;
+	public final int maxlinenum;
+	public final float SurfaceHeightList;
+	public final int MapBgAudioEffect;
+	public final int CameraId;
+	public final float WorldFlyInX;
+	public final float WorldFlyInY;
+	public final int pksafezoneradius;
+	public final float RangeMinX;
+	public final float RangeMaxX;
+	public final boolean iscity;
+	public final String footprint;
+	public final int MaterialType;
+	public final int AmbientLightR;
+	public final int AmbientLightG;
+	public final int AmbientLightB;
+	public final int AmbientLightA;
+	public final float RotateX;
+	public final boolean allowpk;
+	public final boolean allowride;
+	public final boolean allowtrade;
+	public final int openlevel;
+	public final String mappath;
+	public final int regionsetid;
+	public final int circleregionsetid;
+	public final java.util.List<cfg.map.Portal> portals = new java.util.ArrayList<>();
+	public final java.util.Map<Integer, cfg.map.Portal> portals_srcregionid= new java.util.HashMap<>();
+	public WorldMap(cfg.DataStream fs) {
+		this.id = fs.getInt();
+		this.scenename = fs.getString();
+		this.mapname = fs.getString();
+		this.landscapeid = fs.getInt();
+		this.collisiondetect = fs.getBool();
+		this.isdungeon = fs.getBool();
+		this.suggestplayernum = fs.getInt();
+		this.maxlineplayernum = fs.getInt();
+		this.initlinenum = fs.getInt();
+		this.maxlinenum = fs.getInt();
+		this.SurfaceHeightList = fs.getFloat();
+		this.MapBgAudioEffect = fs.getInt();
+		this.CameraId = fs.getInt();
+		this.WorldFlyInX = fs.getFloat();
+		this.WorldFlyInY = fs.getFloat();
+		this.pksafezoneradius = fs.getInt();
+		this.RangeMinX = fs.getFloat();
+		this.RangeMaxX = fs.getFloat();
+		this.iscity = fs.getBool();
+		this.footprint = fs.getString();
+		this.MaterialType = fs.getInt();
+		this.AmbientLightR = fs.getInt();
+		this.AmbientLightG = fs.getInt();
+		this.AmbientLightB = fs.getInt();
+		this.AmbientLightA = fs.getInt();
+		this.RotateX = fs.getFloat();
+		this.allowpk = fs.getBool();
+		this.allowride = fs.getBool();
+		this.allowtrade = fs.getBool();
+		this.openlevel = fs.getInt();
+		this.mappath = fs.getString();
+		this.regionsetid = fs.getInt();
+		this.circleregionsetid = fs.getInt();
+		for(int n = fs.getInt(); n-- > 0 ; ) {
+			final cfg.map.Portal _v = new cfg.map.Portal(fs);
+			this.portals.add(_v);
+			this.portals_srcregionid.put(_v.srcregionid, _v);
+		}
+	}
+}

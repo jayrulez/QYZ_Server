@@ -1,0 +1,1499 @@
+<?xml version="1.0" encoding="utf8"?>
+
+<application name="map" shareHome="../../../share" pvids="102">
+	<provider name="msg" pvid="102">
+			<!--
+				只在服务器内部使用的地图协议 开始
+
+				以 X开头的是    xdb -> gamemap 的协议
+				以 M开头的是	gamemap -> xdb 的协议
+
+			-->
+			<protocol name="XRpc">
+				<variable name="ctxid" type="long"/>
+				<variable name="ptype" type="int"/>
+				<variable name="argument" type="octets"/>
+			</protocol>
+			
+			<protocol name="MRpc">
+				<variable name="ctxid" type="long"/>
+				<variable name="ptype" type="int"/>
+				<variable name="result" type="octets"/>
+			</protocol>
+			
+			<protocol name="MapProtocol">
+				<variable name="mapid" type="long"/>
+				<variable name="proto" type="gnet.ProtocolData"/>
+			</protocol>
+			
+			<protocol name="RoleMapProtocol">
+				<variable name="roleid" type="long"/>
+				<variable name="proto" type="gnet.ProtocolData"/>
+			</protocol>
+			
+			<protocol name="RoleXdbProtocol">
+				<variable name="roleid" type="long"/>
+				<variable name="proto" type="gnet.ProtocolData"/>
+			</protocol>
+			
+			<bean name="PetMapContext">
+				<variable name="hp" type="int"/>
+				<variable name="mp" type="int"/>
+				<variable name="deathtime" type="int"/>
+				<variable name="skills" type="map" key="int" value="long"/> skillid -> activetime
+			</bean>
+			<bean name="RoleMapContext">
+				<variable name="isnew" type="byte"/>
+				<variable name="info1" type="RoleMapInfo1"/>
+				<variable name="info2" type="RoleMapInfo2"/>
+			</bean>
+			<bean name="RoleMapInfo1">
+				<variable name="mapid" type="long"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+				<variable name="ridestatus" type="int"/>
+			</bean>
+			<bean name="RoleMapInfo2">
+				<variable name="hp" type="int"/>
+				<variable name="mp" type="int"/>
+				<variable name="deathtime" type="long"/>
+				<variable name="pets" type="map" key="int" value="PetMapContext"/>
+				<variable name="skills" type="map" key="int" value="long"/> skillid -> activetime, BABAO_ID = 0 reserve for fabao skill
+			</bean>
+			
+			<!-- 进出地图的协议 -->
+			<protocol name="XEnterMap">
+				<variable name="ctxid" type="int"/>
+				<variable name="mapid" type="long"/>
+				<variable name="player" type="PlayerBuilder"/>
+			</protocol>
+			
+			<protocol name="MEnterMap">
+				<variable name="ctxid" type="int"/>
+				<variable name="retcode" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="cur" type="RoleMapContext"/>
+				<variable name="rolenum" type="int"/>
+			</protocol>
+			
+			<protocol name="XLeaveMap">
+				<variable name="ctxid" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="mapid" type="long"/>
+				<variable name="reserve" type="byte"/>
+				<variable name="reason" type="int"/>
+			</protocol>	
+			<protocol name="MLeaveMap">
+				<variable name="ctxid" type="int"/>
+				<variable name="retcode" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="reserve" type="byte"/>
+				<variable name="reason" type="int"/>
+				<variable name="cur" type="RoleMapContext"/>
+				<variable name="news" type="vector" value="RoleMapContext"/>
+				<variable name="rolenum" type="int"/>
+			</protocol>
+			
+			
+			<protocol name="XOffline">
+			</protocol>
+			
+			<protocol name="ServicedRefs">
+				<variable name="bonus" type="Bonus"/>
+				<variable name="vector3" type="Vector3"/>
+			</protocol>
+			
+			<protocol name="CTestNetwork"/>
+			<protocol name="STestNetWork">
+				<variable name="datas" type="vector" value="int"/>
+			</protocol>
+
+			<!--  创建地图的协议 -->
+			<protocol name="MCreateMap">
+				<variable name="retcode" type="int"/>
+				<variable name="mapid" type="long"/>
+			</protocol>
+
+			<bean name="WorldMapBuilder">
+				<variable name="serverid" type="int"/>
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+			</bean>
+			<protocol name="XCreateWorldMap">
+				<variable name="serverid" type="int"/>
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+			</protocol>
+			
+			<protocol name="MCloseWorldMap">
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+			</protocol>
+
+			<protocol name="XCreateEcypeOnePlayer">
+				<variable name="ectypeid" type="int"/>
+				<variable name="istaskectype" type="byte"/>
+				<variable name="serverid" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="profession" type="int"/>
+				<variable name="param1" type="int"/>
+				<variable name="param2" type="int"/>
+			</protocol>
+
+            <protocol name="XCreateEctypeMultiStory">
+				<variable name="ectypeid" type="int"/>
+				<variable name="istaskectype" type="byte"/>
+				<variable name="serverid" type="int"/>
+                <variable name="roles" type="map" key="long" value="int"/>
+                <variable name="rolesstar" type="map" key="long" value="int"/>
+                <variable name="roleusedtimes" type="map" key="long" value="int"/>
+            </protocol>
+			
+			<protocol name="XCreateFamilyStation">
+				<variable name="familyid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="members" type="vector" value="long"/>
+				<variable name="godanimallvl" type="map" key="int" value="int"/>
+			</protocol>
+
+			<protocol name="XLeaveOrKickFamily">
+				<variable name="roleid" type="long"/>
+				<variable name="familyid" type="long"/>
+				<variable name="reason" type="int"/>
+			</protocol>
+
+			<protocol name="XCreateArenaEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="roleid" type="long"/>
+				<variable name="profession" type="int"/>
+				<variable name="opponent" type="PlayerBuilder"/>
+			</protocol>
+
+			<protocol name="XCreateGuardTowerEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="roles" type="map" key="long" value="int"/>
+				<variable name="zoneid" type="int"/>
+			</protocol>
+			
+			<bean name="TeamFightMember">
+				<variable name="roleid" type="long"/>
+				<variable name="profession" type="int"/>
+			</bean>
+			<protocol name="XCreateTeamFight">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="levelgroupid" type="int"/>
+				<variable name="team1" type="vector" value="TeamFightMember"/>
+				<variable name="team2" type="vector" value="TeamFightMember"/>
+			</protocol>
+
+			<protocol name="XCreateHuiWu">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="profession" type="int"/>
+				<variable name="roundindex" type="int"/>
+				<variable name="battleindex" type="int"/>
+				<variable name="player1" type="PlayerBuilder"/>
+				<variable name="player2" type="PlayerBuilder"/>
+			</protocol>
+			
+			<protocol name="XCreateAttackCity">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="levelsectionid" type="int"/>
+				<variable name="roleids" type="set" value="long"/>
+			</protocol>
+			<bean name="FamilyTeamMember">
+				<variable name="roleid" type="long"/>
+				<variable name="hasbonus" type="byte"/>
+			</bean>
+			<protocol name="XCreateFamilyTeam">
+				<variable name="serverid" type="int"/>
+				<variable name="level" type="int"/>
+				<variable name="members" type="vector" value="FamilyTeamMember"/>
+			</protocol>
+			<!--   地图内部协议  -->
+			<protocol name="XKeepAlive"/>
+			<protocol name="CSetMessgeMode">
+				<variable name="mode" type="int"/>
+			</protocol>
+			<protocol name="XGetPlayerLocation">
+				<variable name="queryroleid" type="long"/>谁查询
+			</protocol>
+			<protocol name="MGetPlayerLocation">
+				<variable name="queryroleid" type="long"/>
+				<variable name="maptype" type="int"/>
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+				<variable name="position" type="map.msg.Vector3" />
+			</protocol>
+			<protocol name="XChangeTalisman">
+				<variable name="talismanmodelid" type="int"/>
+				<variable name="skills" type="map" key="int" value="int"/>
+				<variable name="buffs" type="vector" value="int"/>
+			</protocol>
+			<protocol name="XChangeAmulet">
+				<variable name="amulets" type="map" key="int" value="int"/>
+			</protocol>
+			<protocol name="XCreateMonsterAtPlayerPosition">
+				<variable name="monsterid" type="int"/>
+				<variable name="num" type="int"/>
+			</protocol>
+			<protocol name="XChangeTeam">
+				<variable name="team" type="Team"/>
+			</protocol>
+			
+			<protocol name="XUpgradeSkill">
+				<variable name="skillid" type="int"/>
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="XEvolveSkill">
+				<variable name="oldskillid" type="int"/>
+				<variable name="newskillid" type="int"/>
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="XNewSkill">
+				<variable name="skillid" type="int"/>
+				<variable name="level" type="int"/>
+			</protocol>
+			
+			<protocol name="XUseMedicine">
+				<variable name="itemid" type="int"/>
+			</protocol>
+			
+			<protocol name="XChangePKState">
+				<variable name="worldid" type="int"/>
+				<variable name="pkstate" type="int"/>
+			</protocol>
+			<protocol name="XChangeRide">
+				<variable name="rideid" type="int"/>
+			</protocol>
+			<protocol name="XUseItem">
+				<variable name="pos" type="int" />
+				<variable name="usenumber" type="int"/>
+			</protocol>
+			<protocol name="MUseItem">
+				<variable name="pos" type="int" />
+				<variable name="usenumber" type="int"/>
+			</protocol>
+
+			<protocol name="MSaveLocation">
+				<variable name="id" type="long"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+
+			<protocol name="MTransferWorld">
+				<variable name="worldid" type="int"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			
+			<protocol name="XTransfer">
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			
+			<protocol name="MCollect">
+				<variable name="mineid" type="int"/>
+			</protocol>
+			
+			<protocol name="MPlayerKillMonster">
+				<variable name="monsters" type="map" key="int" value="int"/>
+				
+				<variable name="inworld" type="byte"/>
+				<variable name="baseexp" type="vector" value="int"/>
+				<variable name="expbonusrate" type="float"/>
+				<variable name="currency" type="vector" value="int"/>
+				<variable name="pets" type="vector" value="int"/>
+				<variable name="bonuss" type="vector" value="Bonus"/>
+			</protocol>
+			
+			<protocol name="MAddEnemy">
+				<variable name="enemyid" type="long"/>
+			</protocol>
+			
+			<protocol name="MAddBonus">
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<protocol name="XCreateWorldBoss">
+				<variable name="bossid" type="int"/>
+				<variable name="monsterid" type="int"/>
+				<variable name="position" type="map.msg.Vector3"/>
+				<variable name="orient" type="map.msg.Vector3"/>
+			</protocol>
+			<protocol name="XEndWorldBoss">
+				<variable name="bossid" type="int"/>
+			</protocol>
+			<protocol name="MKillWorldBoss">
+				<variable name="lineid" type="int"/>
+				<variable name="killer" type="long"/>
+				<variable name="bossid" type="int"/>
+			</protocol>
+			
+			<protocol name="MCheckWorldRevive">
+				<variable name="revivetype" type="int"/>
+			</protocol>
+			
+			<protocol name="XCheckWorldRevive">
+				<variable name="revivetype" type="int"/>
+			</protocol>
+				
+			<protocol name="MEndStoryEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="star" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<protocol name="MEndPlainStoryEctype">
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			
+            <protocol name="MEndMultiStoryEctype">
+            	<variable name="result" type="int"/>
+                <variable name="ectypeid" type="int"/>
+                <variable name="star" type="int"/>
+                <variable name="bonus" type="Bonus"/>
+            </protocol>
+
+			<protocol name="MEndDailyEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="costtime" type="int"/> seconds
+				<variable name="bonuss" type="vector" value="Bonus"/>
+			</protocol>
+			
+			<protocol name="MEndPersonalBossEctype">
+				<variable name="ectypeid" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<protocol name="MEndClimbTowerEctype">
+				<variable name="retcode" type="int"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="newfloorid" type="int"/>
+				<variable name="lastfloorcosttime" type="int"/>
+				<variable name="firstbonus" type="Bonus"/>
+				<variable name="normalbonus" type="Bonus"/>
+			</protocol>
+
+			<protocol name="MEndArenaEctype">
+				<variable name="retcode" type="int"/>
+				<variable name="opponentid" type="long"/>
+			</protocol>
+			
+			<protocol name="MEndTeamFight">
+				<variable name="result" type="int"/> 负输,0平,正赢
+				<variable name="quit" type="byte"/>
+				<variable name="bonus" type="Bonus"/>
+				<variable name="evaluates" type="vector" value="int"/>
+			</protocol>
+						
+			<protocol name="MEndHuiWu">
+				<variable name="result" type="int"/>负输,正赢
+				<variable name="profession" type="int"/>
+				<variable name="roundindex" type="int"/>
+				<variable name="battleindex" type="int"/>
+			</protocol>
+			<!--     只在服务器内部使用的地图协议   结束-->
+			
+			
+			<!-- 导航相关bean定义 -->
+			<bean name="Vector3">
+				<variable name="x" type="float"/>
+				<variable name="y" type="float"/>
+				<variable name="z" type="float"/>
+			</bean>	
+			<protocol name="RoleProtocols" type="113" maxsize="1000000">
+				<variable name="roleid" type="long"/>
+				<variable name="ptype" type="int"/>
+				<variable name="data" type="octets"/>
+			</protocol>
+			
+						
+			<protocol name="RolePetProtocol">
+				<variable name="petkey" type="int"/>
+				<variable name="proto" type="gnet.ProtocolData"/>
+			</protocol>
+			
+			<protocol name="MapContexProtocol">
+				<variable name="index" type="int"/>从0开始
+				<variable name="data" type="octets"/>
+			</protocol>
+			
+			<protocol name="MapContexProtocols">
+				<variable name="count" type="int"/>
+				<variable name="data" type="octets"/>
+			</protocol>			
+			
+			<bean name="EquipBrief">
+        		<variable name="equipkey" type="int" comment="装备的策划配置id"/>
+    			<variable name="anneallevel" type="int" comment="装备炼器强化等级"/>
+				<variable name="perfuselevel" type="int" comment="灌注等级"/>
+		   </bean>
+		   <bean name="TeamMember">
+			   <variable name="info" type="lx.gs.role.msg.RoleShowInfo4"/>
+		   </bean>
+		   	<bean name="Team">
+				<variable name="teamid" type="long"/>
+				<variable name="members" type="vector" value="long"/>				
+			</bean>
+			<bean name="Bonus">
+				<variable name="bindtype" type="int"/>
+				<variable name="items" type="map" key="int" value="int"/> 物品，包含装备,碎片和消耗性物品
+			</bean>
+			<bean name="AgentBuilder">
+				<variable name="agentid" type="long"/>
+				<variable name="atype" type="int"/>
+				<variable name="subtype" type="int"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+				<variable name="bodyheight" type="float"/>
+				<variable name="bodyradius" type="float"/>
+			</bean>
+			
+			<bean name="FighterBuilder">
+				<variable name="basic" type="AgentBuilder"/>
+				<variable name="camp" type="int"/>
+				<variable name="appeartype" type="int"/> revive,born,dead 见cfg.fight.AppearType
+			</bean>
+			
+			<bean name="PlayerBuilder">
+				<variable name="basic" type="FighterBuilder"/>
+				<variable name="serverid" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="profession" type="int"/>
+				
+				<variable name="name" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="familyname" type="string"/>
+				<variable name="iscantakeparty" type="int"/>
+				<variable name="taskmonsters" type="set" value="int"/>
+				
+				<variable name="dressid" type="int"/>
+				<variable name="rideid" type="int"/>坐骑id
+				<variable name="ridestatus" type="int"/>见cfg.MountType. 0表示无,1 骑行 2飞行
+				<variable name="titleid" type="int"/>
+				<variable name="fabaoid" type="int"/>
+				<variable name="fabaoskills" type="map" key="int" value="int"/>
+				<variable name="fabaobuffs" type="vector" value="int"/>
+				
+				<variable name="roleskills" type="map" key="int" value="int"/>
+				<variable name="amulets" type="map" key="int" value="int"/>
+				<variable name="equips" type="vector" value="EquipBrief"/>
+				
+				<variable name="attrs" type="vector" value="float"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="pkstate" type="int"/>cfg.fight.PKState
+			
+				<variable name="team" type="Team"/>
+				
+				<variable name="pets" type="vector" value="PetBuilder"/>
+
+				<variable name="last" type="vector" value="RoleMapContext"/>
+				<variable name="cur" type="RoleMapContext"/>
+				<variable name="ready" type="byte"/>
+			</bean>
+
+			<bean name="PetBuilder">
+				<variable name="basic" type="FighterBuilder"/>
+				<variable name="ownerid" type="long"/>
+				<variable name="level" type="int"/>
+				<variable name="starlevel" type="int"/>
+				<variable name="awakelevel" type="int"/>
+				<variable name="skinid" type="int"/>
+				<variable name="skills" type="map" key="int" value="int"/>
+				
+				<variable name="hp" type="int"/>
+				<variable name="mp" type="int"/>
+				<variable name="attrs" type="vector" value="float"/>
+				<variable name="buffs" type="vector" value="int"/>
+				
+				<variable name="defaultrelateownerposition" type="Vector3"/>
+				
+				<variable name="serverai" type="byte"/>
+			</bean>
+
+			<bean name="FighterCommon">
+				<variable name="isdead" type="int"/>
+				<variable name="isrevive" type="int"/>
+				<variable name="isborn" type="int"/>
+				<variable name="camp" type="int"/>	
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+				<variable name="targetposition" type="Vector3"/>
+				<variable name="skills" type="map" key="int" value="int"/>
+				<variable name="attrs" type="map" key="int" value="float"/>
+			</bean>
+			
+			<!-- 进出玩家视野 -->
+			<protocol name="SNearbyPlayerEnter" type="170" maxsize="10000">
+				<variable name="playerid" type="long" />进入视野的物体(玩家或怪物或道具等等)
+				<variable name="serverid" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="profession" type="int"/>
+				
+				<variable name="name" type="string"/>
+				<variable name="level" type="int"/>
+				<variable name="viplevel" type="int"/>
+				<variable name="familyname" type="string"/>
+				
+				<variable name="dressid" type="int"/>
+				<variable name="rideid" type="int"/>坐骑id
+				<variable name="ridestatus" type="int"/>见cfg.MountType. 0表示无,1 骑行 2飞行
+				<variable name="titleid" type="int"/>
+				<variable name="fabaoid" type="int"/>
+				
+				<variable name="equips" type="vector" value="EquipBrief"/>
+				<variable name="effects" type="vector" value="EffectInfo"/>	
+				
+				<variable name="pkstate" type="int"/>
+				
+				<variable name="fightercommon" type="FighterCommon"/>
+			</protocol>
+			<protocol name="SNearbyNPCEnter" type="171" maxsize="10000">
+				<variable name="agentid" type="long" />进入视野的物体(玩家或怪物或道具等等)
+				<variable name="npcid" type="int"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="SNearbyMonsterEnter" type="172" maxsize="10000">
+				<variable name="agentid" type="long" />进入视野的物体(玩家或怪物或道具等等)
+				<variable name="monsterid" type="int"/>
+				<variable name="fightercommon" type="FighterCommon"/>
+			</protocol>
+			<protocol name="SNearbyPetEnter">
+				<variable name="agentid" type="long" />进入视野的物体(玩家或怪物或道具等等)
+				<variable name="petkey" type="int"/>
+				<variable name="owenrid" type="long"/>
+				<variable name="level" type="int"/>
+				<variable name="starlevel" type="int"/>
+				<variable name="awakelevel" type="int"/>
+				<variable name="skinid" type="int"/>
+				<variable name="fightercommon" type="FighterCommon"/>
+			</protocol>
+			<protocol name="SNearbyMineEnter" type="173" maxsize="10000">
+				<variable name="agentid" type="long" />进入视野的物体(玩家或怪物或道具等等)
+				<variable name="mineid" type="int"/>
+				<variable name="digger" type="long"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+				<variable name="state" type="int"/>
+			</protocol>	
+			<protocol name="SNearbyRuneEnter" type="175" maxsize="10000">
+				<variable name="agentid" type="long"/>进入视野的物体(符咒)
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+				<variable name="runeid" type="int"/>
+			</protocol>
+			<protocol name="SNearbyAgentLeave" type="121" maxsize="10000">
+				<variable name="agentids" type="vector" value="long"/>
+			</protocol>	
+			
+			<protocol name="SChangeRawAttrs">
+				<variable name="resethpmp" type="int"/>
+				<variable name="combatpower" type="int"/>
+				<variable name="attrs" type="vector" value="float"/>
+			</protocol>
+			<protocol name="SChangeName">
+				<variable name="name" type="string"/>
+			</protocol>
+			<protocol name="SChangeLevel">
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="SChangeVipLevel">
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="SChangeFamily">
+				<variable name="name" type="string"/>
+			</protocol>
+			<protocol name="SChangeDress">
+				<variable name="dressid" type="int"/>
+			</protocol>
+			<protocol name="CChangeRide">
+				<variable name="ridetype" type="int"/>
+			</protocol>
+			<protocol name="SChangeRide">
+				<variable name="rideid" type="int"/>
+				<variable name="ridetype" type="int"/>
+			</protocol>
+			<protocol name="SChangeTitle">
+				<variable name="titleid" type="int"/>
+			</protocol>
+			
+			<protocol name="SChangeEquip">
+				<variable name="equips" type="vector" value="EquipBrief"/>
+			</protocol>
+			
+
+			<protocol name="SChangeFabao">
+				<variable name="fabaokey" type="int"/>
+			</protocol>
+			
+			<protocol  name="SChangeAttrs" type="507" maxsize="1000">
+				<variable name="attrs" type="map" key="int" value="float"/>
+			</protocol>
+			<protocol name="SChangeHp">
+				<variable name="hp" type="int"/>
+			</protocol>
+			
+			<protocol name="SChangePKState">
+				<variable name="pkstate" type="int"/>
+			</protocol>
+			
+			<bean name="StateInfo">
+				<variable name="id" type="int"/>
+				<variable name="endtime" type="long"/>
+			</bean>
+			
+			<bean name="EffectInfo">
+				<variable name="id" type="int"/>
+				<variable name="overlaynum" type="int"/>
+				<variable name="level" type="int"/>
+			</bean>
+			
+			<protocol name="SAddEffect" type="504" maxsize="1000">
+				<variable name="effect" type="EffectInfo"/>
+			</protocol>
+			<protocol name="SRemoveEffect">
+				<variable name="id" type="int"/>
+			</protocol>
+			
+			<protocol name="SUnequipPet">
+				<variable name="petmodelid" type="int"/>
+			</protocol>
+			<protocol name="SEquipPet">
+				<variable name="pet" type="PetBuilder"/>
+			</protocol>
+			<protocol name="XChangePetLevel">
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="SChangePetStarLevel">
+				<variable name="level" type="int"/>
+			</protocol>
+			<protocol name="SChangePetAwakeLevel">
+				<variable name="level" type="int"/>
+			</protocol>
+			
+			<protocol name="SChangePetSkin">
+				<variable name="skinid" type="int"/>
+			</protocol>
+
+			<protocol name="XChangePetSkill" type="505">
+				<variable name="skillid" type="int"/>
+				<variable name="skilllevel" type="int"/>
+			</protocol>
+
+			<protocol name="XChangePetAttr">
+				<variable name="attr" type="vector" value="float"/>
+			</protocol>
+
+			<protocol name="XAddPetBuff">
+				<variable name="buffid" type="int"/>
+			</protocol>
+			<!-- 地图移动 -->
+			<protocol name="CTransferWorld">
+				<variable name="portalid" type="int"/>
+			</protocol>
+			<protocol name="CMoveToDefaultPosition">
+			
+			</protocol>
+			<protocol name="CFindPath">
+				<variable name="src" type="Vector3"/>
+				<variable name="dst" type="Vector3"/>
+			</protocol>
+			<protocol name="SFindPath">
+				<variable name="path" type="vector" value="Vector3"/>
+			</protocol>
+			<protocol name="CMove" type="103" maxsize="100">
+				<variable name="position" type="Vector3" />
+				<variable name="target" type="Vector3"/>
+			</protocol>
+			<protocol name="SMove" type="104" maxsize="1000">
+				<variable name="position" type="Vector3" />
+				<variable name="target" type="Vector3"/>
+			</protocol>
+			<protocol name="COrient">
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="SOrient">
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="CJump"/>
+			<protocol name="SJump"/>
+			
+			<protocol name="CCurveFlyBegin">
+				<variable name="portalid" type="int"/>
+				<variable name="curposition" type="Vector3"/>
+				<variable name="dstposition" type="Vector3"/>
+				<variable name="curveid" type="int"/>
+			</protocol>
+			<protocol name="SCurveFlyBegin">
+				<variable name="portalid" type="int"/>
+				<variable name="curposition" type="Vector3"/>
+				<variable name="dstposition" type="Vector3"/>
+				<variable name="curveid" type="int"/>
+			</protocol>	
+			<protocol name="CCurveFlyEnd">
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="SCurveFlyEnd">
+				
+			</protocol>				
+			
+			<protocol name="CStop" type="110" maxsize="100">
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="SStop" type="102" maxsize="100">
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+		
+			<protocol name="CPetMove" maxsize="100">
+				<variable name="petid" type="long"/>
+				<variable name="position" type="Vector3" />
+				<variable name="target" type="Vector3"/>
+			</protocol>	
+			<protocol name="CPetStop" maxsize="100">
+				<variable name="petid" type="long"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="CPetSkillPerform">
+				<variable name="petid" type="long"/>
+				<variable name="skillid" type="int"/>
+				<variable name="targetid" type="long"/>
+				<variable name="direction" type="Vector3"/>
+			</protocol>
+			
+			<protocol name="CFindAgent" type="132" maxsize="100">
+				<variable name="agenttemplateid" type="int"/>
+			</protocol>
+			<protocol name="SFindAgent" type="133" maxsize="100">
+				<variable name="errcode" type="int"/> 比较特殊,S里带错误码
+				<variable name="agenttemplateid" type="int"/>
+				<variable name="position" type="Vector3"/>
+			</protocol>
+			<protocol name="CFindAgentByType">
+				<variable name="agenttype" type="int"/>见cfg.fight.AgentType
+			</protocol>
+			<protocol name="SFindAgentByType">
+				<variable name="errcode" type="int"/> 比较特殊,S里带错误码
+				<variable name="agenttype" type="int"/>
+				<variable name="position" type="Vector3"/>
+			</protocol>
+			<bean name="NearbyRoleShowInfo">
+				<variable name="roleid" type="long"/>
+				<variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="level" type="int" comment="级别"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="combatpower" type="int"/>
+			</bean>
+			<protocol name="CFindNearbyRole">
+			</protocol>
+			<protocol name="SFindNearbyRole">
+				<variable name="rolelist" type="vector" value="NearbyRoleShowInfo"/>
+			</protocol>
+			
+			<protocol name="CFindNearbyTeam">
+			</protocol>
+			<protocol name="MFindNearbyTeam">
+				<variable name="teamlist" type="set" value="long"/>
+			</protocol>
+			<bean name="MemberInfo">
+				<variable name="roleid" type="long"/>
+			    <variable name="serverid" type="int"/>
+				<variable name="name" type="string"/>
+				<variable name="profession" type="int"/>
+				<variable name="viplevel" type="int" comment="vip等级"/>
+				<variable name="level" type="int"/>
+				<variable name="gender" type="int"/>
+				<variable name="combatpower" type="int"/>
+			</bean>
+			<bean name="TeamInfo">
+				<variable name="teamid" type="long"/>
+				<variable name="membernum" type="int"/>
+				<variable name="leader" type="MemberInfo"/>
+			</bean>
+			<protocol name="SFindNearbyTeam">
+				<variable name="teamlist" type="vector" value="TeamInfo"/>
+			</protocol>	
+			<protocol name="CDigMineBegin" type="151" maxsize="100">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="SDigMineBegin" type="152" maxsize="100">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="CDigMineEnd" type="153" maxsize="100">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="SDigMineEnd" type="154" maxsize="100">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="SMineChange" type="155" maxsize="100">
+				<variable name="state" type="int"/>
+			</protocol>
+			<protocol name="CDigMineCancel">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="SDigMineCancel">
+				<variable name="mineagentid" type="long"/>
+			</protocol>
+			<protocol name="SMonsterDrop">
+				<variable name="owner" type="long"/>
+				<variable name="bonus" type="Bonus"/>
+				<variable name="position" type="Vector3"/>
+				<variable name="orient" type="Vector3"/>
+			</protocol>
+			<protocol name="CEatRune">
+				<variable name="runeagentid" type="long"/>
+			</protocol>
+			<protocol name="SEatRune">
+				<variable name="runeid" type="int"/>
+				<variable name="runeagentid" type="long"/>
+				<variable name="result" type="int"/>0 失败 1成功
+			</protocol>
+			
+			<protocol name="SDead" type="506" maxsize="100">
+				<variable name="attacker" type="long"/>
+			</protocol>
+			
+			<bean name="AttackResult">
+				<variable name="defencerid" type="long"/>
+				<variable name="ismiss" type="byte"/>
+				<variable name="iscrit" type="byte" />
+				<variable name="isexcellent" type="byte"/>
+				<variable name="islucky" type="byte"/>
+				<variable name="attack" type="int" />
+				<variable name="hp" type="int"/>
+			</bean>
+
+			<bean name="HealResult">
+				<variable name="defencerid" type="long"/>
+				<variable name="heal" type="int" />
+				<variable name="hp" type="int"/>
+			</bean>
+			
+			<protocol name="SSkillAttack" type="516" maxsize="10000">
+				<variable name="skillid" type="int"/> 技能id
+				<variable name="attackerid" type="long" />攻击者id
+				<variable name="attackid" type="int"/>打击事件id
+				<variable name="target" type="long"/>技能目标id(如果技能needtarget,在最初目标死亡或者离开攻击范围后会重新选定目标)
+				<variable name="direction" type="Vector3"/>技能方向(对于needtarget的技能,这个参数无用)
+				<variable name="attacks" type="vector" value="AttackResult"/>
+				<variable name="heals" type="vector" value="HealResult"/>
+			</protocol>
+			
+			<bean name="BeAttackResult">
+				<variable name="ismiss" type="byte"/>
+				<variable name="iscrit" type="byte" />
+				<variable name="isexcellent" type="byte"/>
+				<variable name="islucky" type="byte"/>
+				<variable name="attack" type="int" />
+			</bean>
+
+			<bean name="BeHealResult">
+				<variable name="heal" type="int" />
+			</bean>
+			<protocol name="SBeSkillAttack">
+				<variable name="attacks" type="vector" value="BeAttackResult"/>
+				<variable name="heals" type="vector" value="BeHealResult"/>
+				<variable name="hp" type="int"/>
+			</protocol>
+			
+			<protocol name="SFlyWeaponAttack">
+				<variable name="skillid" type="int"/> 技能id
+				<variable name="attackerid" type="long" />攻击者id
+				<variable name="objectid" type="int"/>打击事件id
+				<variable name="attacks" type="vector" value="AttackResult"/>
+			</protocol>
+			
+			<protocol name="SSkillCastFlyWeapon">
+				<variable name="skillid" type="int"/> 技能id
+				<variable name="attackerid" type="long" />攻击者id
+				<variable name="objectid" type="int"/>子弹id
+				<variable name="direction" type="Vector3"/>
+			</protocol>
+			<protocol name="SSkillCastBomb">
+				<variable name="skillid" type="int"/> 技能id
+				<variable name="attackerid" type="long" />攻击者id
+				<variable name="objectid" type="int"/>
+				<variable name="direction" type="Vector3"/>
+				<variable name="position" type="Vector3"/>
+			</protocol>	
+			<protocol name="CSkillPerform" type="517">
+				<variable name="skillid" type="int"/>
+				<variable name="targetid" type="long"/>
+				<variable name="direction" type="Vector3"/>
+			</protocol>
+			
+			<protocol name="SSkillPerform" type="518">
+				<variable name="retcode" type="int"/>
+				<variable name="skillid" type="int"/>
+				<variable name="attackerid" type="long"/>
+				<variable name="targetid" type="long"/>
+				<variable name="direction" type="Vector3"/>
+				<variable name="mp" type="int"/>
+			</protocol>
+			
+			<protocol name="SSkillInterrupt" type="519">
+				<variable name="skillid" type="int"/>
+			</protocol>		
+
+			
+			<protocol name="CRevive">
+				<variable name="revivetype" type="int"/> 见 cfg.map.ReviveType
+			</protocol>
+			<protocol name="SRevive">
+			</protocol>
+			
+
+			<protocol name="SCountDown">
+				<variable name="endtime" type="long"/>
+			</protocol>
+			
+			<protocol name="SDeadCount">
+				<variable name="count" type="int"/>
+			</protocol>
+			
+			<protocol name="SEnterWorld">
+				<variable name="mapid" type="long"/>
+				<variable name="worldid" type="int"/>
+				<variable name="lineid" type="int"/>
+			</protocol>
+			
+			<bean name="LayoutInfo">
+				<variable name="id" type="int"/>
+				<variable name="completed" type="int"/>
+				<variable name="openentryids" type="vector" value="int"/>
+				<variable name="openexitids" type="vector" value="int"/>
+				<variable name="showglobaltips" type="byte"/>
+			</bean>
+			
+			<protocol name="SEnterStoryEctype" type="137">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="remaintime" type="long"/>
+				<variable name="remainrevivecount" type="int"/>剩余复活次数
+				<variable name="enviroments" type="map" key="int" value="int"/>
+				<variable name="openlayouts" type="vector" value="LayoutInfo"/>
+				<variable name="activeactions" type="vector" value="int"/>
+			</protocol>
+
+			<protocol name="SEnterPlainStoryEctype">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="remaintime" type="long"/>
+				<variable name="remainrevivecount" type="int"/>剩余复活次数
+				<variable name="enviroments" type="map" key="int" value="int"/>
+				<variable name="openlayouts" type="vector" value="LayoutInfo"/>
+				<variable name="activeactions" type="vector" value="int"/>
+			</protocol>
+
+			<protocol name="COpenLayout">
+				<variable name="layoutid" type="int"/>
+			</protocol>
+			<protocol name="SOpenLayout">
+				<variable name="layout" type="LayoutInfo"/>
+			</protocol>
+			<protocol name="CCloseLayout" type="150" maxsize="100">
+				<variable name="layoutid" type="int"/>
+			</protocol>
+			<protocol name="SCloseLayout" type="143" maxsize="100">
+				<variable name="layoutid" type="int"/>
+			</protocol>
+			<protocol name="SChangeEntry" type="144" maxsize="1000">
+				<variable name="layoutid" type="int"/>
+				<variable name="entryid" type="int"/>
+				<variable name="open" type="int"/>
+			</protocol>
+			<protocol name="SChangeExit" type="145" maxsize="1000">
+				<variable name="layoutid" type="int"/>
+				<variable name="exitid" type="int"/>
+				<variable name="open" type="int"/>
+			</protocol>
+			<protocol name="SChangeEnviroment" type="146" maxsize="10000">
+				<variable name="envname" type="int"/>
+				<variable name="value" type="int"/>
+			</protocol>
+			
+			<protocol name="SCompleteLayout" type="147" maxsize="100">
+				<variable name="layoutid" type="int"/>
+			</protocol>
+			
+			<protocol name="SActionBegin">
+				<variable name="actionid" type="int"/>
+			</protocol>
+			<protocol name="SActionEnd">
+				<variable name="actionid" type="int"/>
+			</protocol>
+			
+			<protocol name="CClientActionEnd">
+				<variable name="actionid" type="int"/>
+			</protocol>
+			
+			<protocol name="SEndStoryEctype">
+				<variable name="errcode" type="int"/>
+				<variable name="isfirst3star"  type="int"/>是否首次三星
+				<variable name="star" type="int"/>评价星级
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<protocol name="SEndPlainStoryEctype">
+				<variable name="errcode" type="int"/>
+			</protocol>
+			
+			<protocol name="SEnterMultiStoryEctype" comment="进入组队剧情副本">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="remaintime" type="long"/>
+				<variable name="remainrevivecount" type="int"/>剩余复活次数
+				<variable name="enviroments" type="map" key="int" value="int"/>
+				<variable name="openlayouts" type="vector" value="LayoutInfo"/>
+				<variable name="activeactions" type="vector" value="int"/>
+            </protocol>
+            <protocol name="SEndMultiStoryEctype" comment="组队剧情副本结束">
+                <variable name="errcode" type="int"/>
+                <variable name="ectypeid" type="int"/>
+                <variable name="star" type="int"/>
+                <variable name="bonus" type="Bonus"/>
+            </protocol>
+
+			<!--家族仙府聚会，刷怪，吃符咒的方式-->
+			<protocol name="SAfterEnterFamilyStation">
+				<variable name="remaintime" type="int"/>
+				<variable name="godanimalremaintime" type="int"/>
+			</protocol>
+
+			<protocol name="XToOpenFamilyParty">
+				<variable name="roleid" type="long"/>
+				<variable name="eventid" type="int" comment="根据不同事件，传到不同出生点"/>
+			</protocol>
+
+			<protocol name="SStartFamilyParty">
+				<variable name="remaintime" type="int" comment="剩余时间"/>
+			</protocol>
+
+			<protocol name="SAutoStartParty">
+				<variable name="remaintime" type="int"/>
+			</protocol>
+
+			<protocol name="MEndFamilyParty">
+				<variable name="joinroles" type="vector" value="long" comment="参加了挑战的角色id"/>
+			</protocol>
+
+			<protocol name="MEatFamilyParty">
+			</protocol>
+
+			<protocol name="XResetRoleParty">
+			</protocol>
+
+			<protocol name="SLaunchFamilyGodAnimal">
+				<variable name="familymapid" type="long" comment="家族的地图id"/>
+				<variable name="starttime" type="long" comment="开始时间"/>
+				<variable name="endtime" type="long"  comment="结束时间"/>
+			</protocol>	
+
+
+			<protocol name="SGodAnimalLvlup">
+				<variable name="familymapid" type="long" comment="家族的地图id"/>
+				<variable name="bossid" type="int"/>
+				<variable name="bosslvl" type="int"/>
+			</protocol>
+
+			<protocol name="SKillGodAnimal" comment="发放击杀神兽奖励">
+				<variable name="bossid" type="int"/>
+				<variable name="isover" type="int" comment="是否结束了"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+
+
+			<bean name="SingleRoleBonus">
+				<variable name="roleid" type="long"/>
+				<variable name="rolename" type="string"/>	
+				<variable name="rolebonus" type="Bonus"/>
+			</bean>
+			<protocol name="MKillGodAnimal">发送到xdb，添加奖励
+				<variable name="familyid" type="long"/>
+				<variable name="bossid" type="int"/>
+				<variable name="bosslvl" type="int"/>
+				<variable name="membersbonus" type="vector" value="SingleRoleBonus"/>
+				<variable name="lasthitbonus" type="vector" value="SingleRoleBonus"/>
+				<variable name="luckybonus" type="vector" value="SingleRoleBonus"/>
+			</protocol>
+			<protocol name="SKillGodAnimalNotify">击杀神兽后发送系统通知消息
+				<variable name="membersbonus" type="vector" value="SingleRoleBonus"/>
+				<variable name="lasthitbonus" type="vector" value="SingleRoleBonus"/>
+				<variable name="luckybonus" type="vector" value="SingleRoleBonus"/>
+			</protocol>
+
+			<protocol name="MGodAnimalActEnd">
+				<variable name="familyid" type="long"/>
+			</protocol>
+
+			<protocol name="SEnterClimbTower">
+				<!--variable name="result" type="int"/-->
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="buffbuynums" type="map" key="int" value="int"/>
+				<variable name="totalscore" type="int"/>
+				<variable name="curfloorid" type="int"/>
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			<protocol name="CBuyBuff">
+				<variable name="buffid" type="int"/>
+			</protocol>
+			<protocol name="SBuyBuff">
+				<variable name="buffid" type="int"/>
+				<variable name="buynum" type="int"/>
+				<variable name="totalscore" type="int"/>
+			</protocol>
+			<protocol name="SScoreChange">
+				<variable name="totalscore" type="int"/>
+			</protocol>
+			<protocol name="SNewFloorOpen">
+				<variable name="floorid" type="int"/>
+			</protocol>
+			<protocol name="CEndClimbTowerEctype"/>
+			<protocol name="SEndClimbTowerEctype">
+				<variable name="errcode" type="int"/>
+				<variable name="oldmaxfloorid" type="int"/>
+				<variable name="newmaxfloorid" type="int"/>
+				<variable name="firstbonus" type="Bonus"/>
+				<variable name="normalbonus" type="Bonus"/>
+				<variable name="lastfloorcosttime" type="int"/>
+			</protocol>
+
+
+			<protocol name="SEnterDailyEctype">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="waveindex" type="int"/>当前是第几波怪, 从0开始
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			
+			<protocol name="SNewMonsterWave">
+				<variable name="waveindex" type="int"/>
+			</protocol>
+			<protocol name="SEndDailyEctype">
+				<variable name="errcode" type="int"/>
+				<variable name="totalbonus" type="Bonus"/>
+				<variable name="bonuss" type="vector" value="Bonus"/>
+			</protocol>
+			<protocol name="SCurrencyGet">
+				<variable name="total" type="int"/>
+			</protocol>
+			
+			<!-- 个人boss副本 -->
+			<protocol name="SEnterPersonalBossEctype">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="remaintime" type="long"/>
+			</protocol>	
+			<protocol name="SEndPersonalBossEctype">
+				<variable name="errcode" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<!-- 竞技场 -->
+			<protocol name="SEnterArenaEctype">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="state" type="int"/>
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			<protocol name="CReady"/>
+			<protocol name="SReady"/>
+			<protocol name="SBeginFight">
+				<variable name="state" type="int"/>
+			</protocol>
+			<protocol name="SEndArenaEctype">
+				<variable name="errcode" type="int"/>
+				<variable name="newrank" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+
+			<!-- 血战青云 -->
+			<protocol name="SEnterGuardTower">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="curWaveId" type="int"/>
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			<protocol name="SEndGuardTower">
+				<variable name="errcode" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+				<variable name="maxkill" type="Bonus"/>
+			</protocol>
+
+			<protocol name="MEndGuardTower">
+				<variable name="ectypeid" type="int"/>
+				<variable name="errcode" type="int"/>
+			</protocol>
+
+			<protocol name="SNewWaveOpen">
+				<variable name="waveid" type="int"/>
+			</protocol>
+
+			<!-- 青云英雄录 -->
+			<protocol name="SEnterHeroes">
+				<variable name="id" type="long"/>
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<bean name="HeroesAwardInfo">
+				<variable name="leftrefreshcount" type="int" comment="剩余可刷新次数"/>
+				<variable name="refreshcost" type="int" comment="刷新奖励消耗元宝"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="bonus" type="map.msg.Bonus"/>
+			</bean>
+			<protocol name="SEndHeroes">
+				<variable name="retcode" type="int"/>
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="awardinfo" type="HeroesAwardInfo"/>
+			</protocol>
+			<protocol name="MEndHeroes">
+				<variable name="retcode" type="int"/>
+				<variable name="groupid" type="int"/>
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			
+			<!--  天下会武  -->
+			<protocol name="SEnterTeamFight">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="state" type="int"/> 见 cfg.ectype.EctypeState
+				<variable name="remaintime" type="long"/>
+				<variable name="mycamp" type="int"/>
+				<variable name="teamkillnums" type="map" key="int" value="int"/>
+			</protocol>
+			<protocol name="SChangeTeamKillNum">
+				<variable name="camp" type="int"/>
+				<variable name="killnum" type="int"/>
+			</protocol>
+			
+			<bean name="PlayerEvaluate">
+				<variable name="name" type="string"/>
+				<variable name="camp" type="int"/>
+				<variable name="damage" type="int"/>
+				<variable name="continuekill" type="int"/>
+				<variable name="kill" type="int"/>
+				<variable name="evaluates" type="vector" value="int"/>
+			</bean>
+			<protocol name="SEndTeamFight">
+				<variable name="result" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+				<variable name="evaluate" type="vector" value="PlayerEvaluate"/>
+			</protocol>
+			
+			<protocol name="CEctypeStatistic"/>
+
+			<protocol name="SEctypeMemberEnter">
+				<variable name="id" type="long"/>
+				<variable name="name" type="string"/>
+				<variable name="gender" type="int"/>
+				<variable name="profession" type="int"/>
+				<variable name="level" type="int"/>
+				<variable name="familyname" type="string"/>
+				<variable name="serverid" type="int"/>
+				<variable name="viplevel" type="int"/>
+			</protocol>
+
+			<protocol name="CPraiseMember" >
+				<variable name="member" type="long" />
+			</protocol>
+			<protocol name="SPraiseMember" >
+				<variable name="from" type="long" />
+				<variable name="to" type="long" />
+			</protocol>
+
+		<bean name="MemberStatistic">
+				<variable name="name" type="string"/>
+				<variable name="ownername" type="string"/>
+				<variable name="damage" type="int"/>
+				<variable name="kill" type="int"/>
+				<variable name="rune" type="int"/>
+			</bean>
+			<bean name="TeamStatistic">
+				<variable name="members" type="vector" value="MemberStatistic"/>
+			</bean>
+			<protocol name="SEctypeStatistic">
+				<variable name="teams" type="vector" value="TeamStatistic"/>
+			</protocol>
+			
+			<protocol name="CEctypeDamageStatistic"/>
+			<protocol name="SEctypeDamageStatistic">
+				<variable name="agentdamages" type="map" key="long" value="long"/>
+			</protocol>
+
+			
+			<protocol name="SKillEvent">
+				<variable name="attackername" type="string"/>
+				<variable name="attackercamp" type="int"/>
+				<variable name="defencer" type="string"/>
+				<variable name="defencercamp" type="int"/>
+				<variable name="petkey" type="int"/>
+			</protocol>
+		<!--  鸿蒙争霸开始  -->
+
+			<!--<protocol name="SSyncEctypeState">-->
+				<!--<variable name="state" type="int"/>-->
+			<!--</protocol>-->
+
+			<protocol name="XCreateTeamSpeed">
+				<variable name="ectypeid" type="int"/>
+				<variable name="serverid" type="int"/>
+				<variable name="levelgroupid" type="int"/>
+				<variable name="team1" type="vector" value="long"/>
+				<variable name="team2" type="vector" value="long"/>
+				<variable name="rewardrole" type="vector" value="long"/>
+			</protocol>
+
+			<protocol name="SEnterTeamSpeed">
+				<variable name="levelindex" type="int"/> 按等级分段的索引，获取对应等级的副本信息
+				<variable name="teamid" type="int"/> 队伍
+				<variable name="remaintime" type="long"/>
+				<variable name="teamScore" type="map" key="int" value="int"/>
+			</protocol>
+
+			<protocol name="SSyncTeamSpeedScore"> 同步副本得分
+				<variable name="teamscore" type="map" key="int" value="int"/>
+			</protocol>
+
+			<protocol name="SSyncTeamSpeedBossDamage"> 同步BOSS伤害百分比，取值区间[0,100]
+				<variable name="bossdamage" type="map" key="int" value="float"/>
+			</protocol>
+
+			<protocol name="SEndTeamSpeed">
+				<variable name="result" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+
+			<protocol name="MEndTeamSpeed">
+				<variable name="iswin" type="int"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="bonus" type="Bonus" />
+			</protocol>
+		<!-- 鸿蒙争霸结束 -->
+
+			<!-- 七脉会武 -->
+			<protocol name="SEnterHuiWu">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="state" type="int"/>cfg.ectype.EctypeState
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			
+			<protocol name="SEndHuiWu">
+				<variable name="result" type="int"/>
+				<variable name="roundindex" type="int"/>
+				<variable name="battleindex" type="int"/>
+			</protocol>
+			
+			<protocol name="SEnterAttackCity">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="state" type="int"/>cfg.ectype.EctypeState
+				<variable name="remaintime" type="long"/>
+			</protocol>
+			<protocol name="SNewAttackCityMonster">
+				<variable name="sectionindex" type="int"/>所属大区
+				<variable name="monsterbatchindex" type="int"/>怪物波次
+			</protocol>
+			<protocol name="SEndAttackCity">
+			
+			</protocol>
+			
+			<protocol name="SEnterPrologue">
+				<variable name="id" type="long"/>
+				<variable name="ectypeid" type="int"/>
+				<variable name="remaintime" type="long"/>
+				<variable name="remainrevivecount" type="int"/>剩余复活次数
+				<variable name="enviroments" type="map" key="int" value="int"/>
+				<variable name="openlayouts" type="vector" value="LayoutInfo"/>
+				<variable name="activeactions" type="vector" value="int"/>
+			</protocol>
+			<protocol name="SEndPrologue">
+				<variable name="errcode" type="int"/>
+			</protocol>
+			<protocol name="MEndPrologue">
+				<variable name="errcode" type="int"/>
+			</protocol>
+
+			<!--日志记录相关-->
+			<protocol name="MEnterEctypeLogger">进入副本日志
+				<variable name="ectypeid" type="int"/>
+			</protocol>
+			<protocol name="MEnterArenaLogger">进入竞技场日志
+				<variable name="ectypeid" type="int"/>
+				<variable name="enemyroleid" type="long"/>
+			</protocol>
+			<protocol name="MEndEctypeLogger">
+				<variable name="ectypeid" type="int"/>
+				<variable name="result" type="int"/>
+				<variable name="time" type="long"/>
+			</protocol>
+			<protocol name="MEndArenaLogger">
+				<variable name="ectypeid" type="int"/>
+				<variable name="result" type="int"/>
+				<variable name="time" type="long"/>
+				<variable name="enemyroleid" type="long"/>
+			</protocol>
+
+			<protocol name="XPlayCGSetState">
+				<variable name="taskid" type="int"/>
+			</protocol>
+
+			<protocol name="CPlayCGOver">
+			</protocol>
+
+			<protocol name="XPlayerChangeTask">
+				<variable name="taskmonsters" type="set" value="int"/>
+			</protocol>
+
+			<protocol name="MKillTaskMonster">
+				<variable name="roles" type="vector" value="long"/>
+				<variable name="monsterid" type="int"/>
+			</protocol>
+
+			<protocol name="XCreatExpMonster">
+				<variable name="lvlindex" type="int"/>
+				<variable name="positionindex" type="int"/>
+			</protocol>
+
+			<protocol name="XCloseExpMonster">
+				<variable name="monsterid" type="int"/>
+			</protocol>
+
+			<protocol name="MKillExpMonster">
+				<variable name="roleids" type="vector" value="long"/>
+			</protocol>
+			
+			<protocol name="SEnterFamilyTeam">
+				<variable name="ectypeid" type="int"/>
+				<variable name="mapid" type="long"/>
+				<variable name="monsterwaveindex" type="int"/>从1开始
+			</protocol>
+			<protocol name="SEndFamilyTeam">
+				<variable name="errcode" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			<protocol name="MEndFamilyTeam">
+				<variable name="errcode" type="int"/>
+				<variable name="bonus" type="Bonus"/>
+			</protocol>
+			
+			<protocol name="MWorldPKKill">
+				<variable name="attacker" type="long"/>
+				<variable name="defencer" type="long"/>
+			</protocol>
+	</provider>
+</application>

@@ -1,0 +1,933 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<xdb>
+<xbean name="NormalEquip">
+<variable name="anneallevel" typeName="int"/>
+<variable name="perfuselevel" typeName="int"/>
+<variable name="goldcost" typeName="int"/>
+<variable name="annealitemcost" typeName="int"/>
+<variable name="perfuseitemcost" typeName="int"/>
+</xbean>
+<xbean name="RoleConfigure">
+<variable keyTypeName="string" name="datas" typeName="map" valueTypeName="string"/>
+</xbean>
+<xbean name="AccessoryProp">
+<variable name="key" typeName="int"/>
+<variable name="val" typeName="float"/>
+</xbean>
+<xbean name="ExchangeItem">
+<variable name="id" typeName="long"/>
+<variable name="owner" typeName="long"/>
+<variable name="price" typeName="int"/>
+<variable name="modelid" typeName="int"/>
+<variable name="num" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+<variable name="anneallevel" typeName="int"/>
+<variable name="perfuselevel" typeName="int"/>
+<variable name="accessorymainprop" typeName="list" valueTypeName="AccessoryProp"/>
+<variable name="accessoryviceprop" typeName="list" valueTypeName="AccessoryProp"/>
+<variable name="unshelvetime" typeName="long"/>
+</xbean>
+<xbean name="Jewelry">
+<variable name="id" typeName="int"/>
+<variable name="level" typeName="int"/>
+<variable name="exp" typeName="int"/>
+</xbean>
+<xbean name="DailyResetData">
+<variable name="lastupdatedailytime" typeName="long"/>
+<variable name="arena" typeName="DailyArena"/>
+<variable name="monsterexp" typeName="DailyMonsterExp"/>
+<variable name="killexpmonsters" typeName="int"/>
+<variable name="recexpmonbonus" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleTeamInfo">
+<variable name="teamid" typeName="long"/>
+<variable name="autoacceptrequest" typeName="int"/>
+<variable name="autoacceptinvite" typeName="int"/>
+<variable keyTypeName="long" name="requesttojoin" typeName="map" valueTypeName="TeamMember"/>
+</xbean>
+<xbean name="Fragment">
+<variable name="fragmentid" typeName="long"/>
+<variable name="modelid" typeName="int"/>
+<variable name="count" typeName="int"/>
+<variable name="isbind" typeName="boolean"/>
+<variable name="position" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="RoleAmuletInfo">
+<variable keyTypeName="int" name="pagemap" typeName="map" valueTypeName="AmuletPage"/>
+</xbean>
+<xbean name="GMSenseword">
+<variable name="addwords" typeName="set" valueTypeName="string"/>
+<variable name="removewords" typeName="set" valueTypeName="string"/>
+</xbean>
+<xbean name="Item">
+<variable name="itemid" typeName="long"/>
+<variable name="modelid" typeName="int"/>
+<variable name="count" typeName="int"/>
+<variable name="isbind" typeName="boolean"/>
+<variable name="position" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="Equip">
+<variable name="equipid" typeName="long"/>
+<variable name="modelid" typeName="int"/>
+<variable name="position" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+<variable name="isbind" typeName="boolean"/>
+<variable name="normalequip" typeName="NormalEquip"/>
+<variable name="accessory" typeName="Accessory"/>
+</xbean>
+<xbean name="RoleTalismanDepot">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="talismans" typeName="map" valueTypeName="Talisman"/>
+</xbean>
+<xbean name="RoleRank">
+<variable keyTypeName="int" name="ranks" typeName="map" valueTypeName="ARankInfo"/>
+</xbean>
+<xbean name="FamilySkill">
+<variable name="skillid" typeName="int"/>
+<variable name="studytime" typeName="long"/>
+<variable name="level" typeName="int"/>
+<variable name="uptime" typeName="long"/>
+</xbean>
+<xbean name="RoleFragmentBag">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="Fragment"/>
+</xbean>
+<xbean name="ForbidItem">
+<variable name="forbidtimeinterval" typeName="long"/>
+<variable name="forbidrealsetime" typeName="long"/>
+<variable name="desc" typeName="string"/>
+<variable name="notifytouser" typeName="string"/>
+</xbean>
+<xbean name="TaskHistory">
+<variable name="taskid" typeName="int"/>
+<variable name="count" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="FNameToID">
+<variable keyTypeName="string" name="data" typeName="map" valueTypeName="long"/>
+</xbean>
+<xbean name="ARankInfo"/>
+<xbean name="BoardInfo">
+<variable keyTypeName="int" name="latestboard" typeName="map" valueTypeName="BoardEntry"/>
+<variable keyTypeName="long" name="rolerank" typeName="map" valueTypeName="int"/>
+<variable name="lastupdatetime" typeName="long"/>
+<variable keyTypeName="long" name="yesterdayrank" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleFriend">
+<variable name="frienddegress" typeName="int"/>
+<variable name="relation" typeName="int"/>
+<variable name="time" typeName="long"/>
+</xbean>
+<xbean name="IdGen">
+<variable name="itemid" typeName="long"/>
+</xbean>
+<xbean name="HuiWuChampion">
+<variable name="roleid" typeName="long"/>
+<variable name="worshipnum" typeName="int"/>
+<variable name="awardword" typeName="string"/>
+</xbean>
+<xbean name="LongSet">
+<variable name="val" typeName="set" valueTypeName="long"/>
+</xbean>
+<xbean name="RoleMemInfo">
+<variable keyTypeName="int" name="herogroupmeminfos" typeName="map" valueTypeName="HeroesGroupMemInfo"/>
+</xbean>
+<xbean name="RoleItemDepot">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="Item"/>
+</xbean>
+<xbean name="Bonus">
+<variable name="bindtype" typeName="int"/>
+<variable keyTypeName="int" name="currencys" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="int"/>
+<variable name="equips" typeName="list" valueTypeName="Equip"/>
+</xbean>
+<xbean name="BoardRecord">
+<variable keyTypeName="int" name="records" typeName="map" valueTypeName="BoardRecordEntry"/>
+</xbean>
+<xbean name="StoryNoteChapter">
+<variable name="notes" typeName="set" valueTypeName="int"/>
+</xbean>
+<xbean name="HuiWuRound">
+<variable name="battles" typeName="list" valueTypeName="HuiWuBattle"/>
+</xbean>
+<xbean name="RoleOrderHistroy">
+<variable keyTypeName="long" name="succeedorder" typeName="map" valueTypeName="AppOrder"/>
+<variable keyTypeName="long" name="timeoutorder" typeName="map" valueTypeName="AppOrder"/>
+</xbean>
+<xbean name="AmuletPage">
+<variable name="pageindex" typeName="int"/>
+<variable keyTypeName="int" name="propmap" typeName="map" valueTypeName="AmuletProperty"/>
+<variable keyTypeName="int" name="lastwashresult" typeName="map" valueTypeName="AmuletProperty"/>
+</xbean>
+<xbean name="OnlineUser">
+<variable name="username" typeName="string"/>
+<variable name="plattype" typeName="int"/>
+<variable name="deviceid" typeName="string"/>
+<variable name="os" typeName="string"/>
+<variable name="peer" typeName="string"/>
+<variable name="logintime" typeName="long"/>
+<variable name="platform" typeName="string"/>
+</xbean>
+<xbean name="DailyEctypeRecord">
+<variable name="roleid" typeName="long"/>
+<variable name="value" typeName="int"/>
+</xbean>
+<xbean name="Ride">
+<variable name="modelid" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="DailyInfo">
+<variable name="value" typeName="int"/>
+</xbean>
+<xbean name="RoleActivityRecord">
+<variable name="totalcostyuanbbao" typeName="long"/>
+<variable name="killworldboss" typeName="int"/>
+<variable name="arenawin" typeName="int"/>
+<variable name="teamspeedwin" typeName="int"/>
+<variable name="teamfightwin" typeName="int"/>
+</xbean>
+<xbean name="ChapterInfo">
+<variable name="sectionstars" typeName="list" valueTypeName="int"/>
+<variable name="obtainrewardindexs" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleStoryNote">
+<variable keyTypeName="int" name="chapters" typeName="map" valueTypeName="StoryNoteChapter"/>
+</xbean>
+<xbean name="UserDeletedRole">
+<variable name="roles" typeName="list" valueTypeName="DeletedRole"/>
+</xbean>
+<xbean name="AccessoryWashResult">
+<variable initial="-1" name="oldpropindex" typeName="int"/>
+<variable name="newprop" typeName="AccessoryProp"/>
+<variable name="needbind" typeName="boolean"/>
+</xbean>
+<xbean name="RoleAttr">
+<variable name="roleid" typeName="long"/>
+<variable name="rolecombatpower" typeName="int"/>
+<variable name="rawattrs" typeName="list" valueTypeName="float"/>
+<variable name="finalattrs" typeName="list" valueTypeName="float"/>
+<variable keyTypeName="string" name="groupattrs" typeName="map" valueTypeName="GroupAttr"/>
+<variable name="hp" typeName="int"/>
+<variable name="mp" typeName="int"/>
+<variable keyTypeName="int" name="skillcolddowns" typeName="map" valueTypeName="long"/>
+<variable name="resethpmp" typeName="int"/>
+<variable name="petcombatpower" typeName="int"/>
+<variable name="totalcombatpower" typeName="int"/>
+</xbean>
+<xbean name="IdList">
+<variable name="lists" typeName="list" valueTypeName="long"/>
+</xbean>
+<xbean name="TeamFightInfo">
+<variable name="lastupdatetime" typeName="long"/>
+<variable name="weekscore" typeName="int"/>
+<variable name="todaywinnum" typeName="int"/>
+<variable name="obtaintodaywinreward" typeName="boolean"/>
+<variable name="todayfightnum" typeName="int"/>
+<variable name="obtainscorerewards" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="FamilyLogReport">
+<variable name="actiontype" typeName="int"/>
+<variable name="roleid" typeName="long"/>
+<variable name="actiontime" typeName="long"/>
+<variable name="number" typeName="int"/>
+</xbean>
+<xbean name="GlobalAllActivity">
+<variable keyTypeName="int" name="openinfos" typeName="map" valueTypeName="GlobalActivityOpenInfos"/>
+<variable keyTypeName="int" name="datas" typeName="map" valueTypeName="GlobalActivity"/>
+</xbean>
+<xbean name="BoardEntry">
+<variable name="ranking" typeName="int"/>
+<variable name="id" typeName="long"/>
+<variable name="name" typeName="string"/>
+<variable name="val1" typeName="long"/>
+<variable name="val2" typeName="int"/>
+<variable name="updatetime" typeName="long"/>
+</xbean>
+<xbean name="RoleMapInfo">
+<variable name="mapid" typeName="long"/>
+<variable name="position" typeName="Vector3"/>
+<variable name="orient" typeName="Vector3"/>
+<variable name="ridestatus" typeName="int"/>
+</xbean>
+<xbean name="DailyActive">
+<variable keyTypeName="int" name="activetimes" typeName="map" valueTypeName="int"/>
+<variable name="receivedbonus" typeName="list" valueTypeName="int"/>
+<variable name="activescores" typeName="int"/>
+<variable keyTypeName="int" name="undoactive" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="eventdonetimes" typeName="map" valueTypeName="int"/>
+<variable name="lastactivelvl" typeName="int"/>
+</xbean>
+<xbean name="RoleItemBag">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="Item"/>
+</xbean>
+<xbean name="Team">
+<variable name="teamid" typeName="long"/>
+<variable name="leaderid" typeName="long"/>
+<variable name="createtime" typeName="long"/>
+<variable keyTypeName="long" name="members" typeName="map" valueTypeName="TeamMember"/>
+<variable keyTypeName="long" name="requestforjoin" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="long" name="invitetojoin" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="long" name="invitefollow" typeName="map" valueTypeName="long"/>
+<variable name="leadertransroleid" typeName="long"/>
+</xbean>
+<xbean name="RoleRide">
+<variable keyTypeName="int" name="rides" typeName="map" valueTypeName="Ride"/>
+<variable name="activeride" typeName="int"/>
+</xbean>
+<xbean name="AppOrder">
+<variable name="roleid" typeName="long"/>
+<variable name="productid" typeName="int"/>
+<variable name="time" typeName="long"/>
+</xbean>
+<xbean name="RoleEctype">
+<variable keyTypeName="int" name="climbtowers" typeName="map" valueTypeName="ClimbTowerInfo"/>
+<variable keyTypeName="int" name="chapters" typeName="map" valueTypeName="ChapterInfo"/>
+<variable keyTypeName="int" name="dailys" typeName="map" valueTypeName="DailyInfo"/>
+<variable keyTypeName="int" name="multistory" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="herogroups" typeName="map" valueTypeName="HeroesGroupInfo"/>
+<variable name="teamfight" typeName="TeamFightInfo"/>
+<variable name="matchtype" typeName="int"/>
+<variable name="nextmatchtime" typeName="long"/>
+<variable name="multiectypid" typeName="int"/>
+</xbean>
+<xbean name="SkillInfo">
+<variable name="level" typeName="int"/>
+</xbean>
+<xbean name="RoleRelation">
+<variable name="rolelist" typeName="list" valueTypeName="long"/>
+</xbean>
+<xbean name="Vector3">
+<variable name="x" typeName="float"/>
+<variable name="y" typeName="float"/>
+<variable name="z" typeName="float"/>
+</xbean>
+<xbean name="RoleFragmentDepot">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="fragments" typeName="map" valueTypeName="Fragment"/>
+</xbean>
+<xbean name="LongList">
+<variable name="val" typeName="list" valueTypeName="long"/>
+</xbean>
+<xbean name="RoleWelfareInfo">
+<variable name="lastsigntime" typeName="long"/>
+<variable name="totalsigncount" typeName="int"/>
+<variable name="continuesigncount" typeName="int"/>
+<variable name="signdate" typeName="list" valueTypeName="int"/>
+<variable name="hastodaysign" typeName="int"/>
+<variable name="receivedmonthcarddate" typeName="vector" valueTypeName="int"/>
+<variable name="receivedonlinegift" typeName="list" valueTypeName="int"/>
+<variable name="receivednewgift" typeName="list" valueTypeName="int"/>
+<variable name="receiveconlogingift" typeName="list" valueTypeName="int"/>
+<variable name="wishtimes" typeName="int"/>
+<variable name="lastwishtime" typeName="long"/>
+<variable name="lastwishpetid" typeName="long"/>
+<variable name="receivedgrowplangift" typeName="list" valueTypeName="int"/>
+<variable name="receivedpaycharge" typeName="list" valueTypeName="int"/>
+<variable name="iseatlunch" typeName="int"/>
+<variable name="iseatdinner" typeName="int"/>
+<variable name="threegrowplan" typeName="list" valueTypeName="int"/>
+<variable name="fivegrowplan" typeName="list" valueTypeName="int"/>
+<variable name="sevengrowplan" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="FamilyGodAnimalAct">
+<variable name="lastlaunchtime" typeName="long"/>
+<variable name="starttime" typeName="long"/>
+<variable name="endtime" typeName="long"/>
+<variable name="weeklaunchnum" typeName="int"/>
+</xbean>
+<xbean name="Forbid">
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="ForbidItem"/>
+</xbean>
+<xbean name="HuiWuPriviousTerm">
+<variable name="termid" typeName="int"/>
+<variable name="opentime" typeName="long"/>
+<variable name="endtime" typeName="long"/>
+<variable keyTypeName="int" name="champions" typeName="map" valueTypeName="HuiWuChampion"/>
+</xbean>
+<xbean name="RoleEquipDepot">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="equipbag" typeName="treemap" valueTypeName="Equip"/>
+</xbean>
+<xbean name="ArenaFightReport">
+<variable name="fighttime" typeName="long"/>
+<variable name="challengetype" typeName="int"/>
+<variable name="succ" typeName="int"/>
+<variable name="newrank" typeName="int"/>
+<variable name="opponentname" typeName="string"/>
+<variable name="oldrank" typeName="int"/>
+</xbean>
+<xbean name="Family">
+<variable name="familyid" typeName="long"/>
+<variable name="familyname" typeName="string"/>
+<variable name="flevel" typeName="int"/>
+<variable name="money" typeName="long"/>
+<variable name="curlvlbuilddegree" typeName="int"/>
+<variable name="totalbuilddegree" typeName="int"/>
+<variable name="totalbanggong" typeName="long"/>
+<variable name="declaration" typeName="string"/>
+<variable name="publicinfo" typeName="string"/>
+<variable name="publictime" typeName="long"/>
+<variable initial="1" name="malllevel" typeName="int"/>
+<variable name="logs" typeName="list" valueTypeName="FamilyLogReport"/>
+<variable keyTypeName="long" name="requestinglist" typeName="map" valueTypeName="long"/>
+<variable name="activity" typeName="FamilyActivity"/>
+<variable name="beatanimalactivity" typeName="FamilyGodAnimalAct"/>
+<variable name="welfare" typeName="FamilyWelfare"/>
+<variable name="chiefid" typeName="long"/>
+<variable keyTypeName="int" name="jobinfo" typeName="map" valueTypeName="FamilyJobStaffList"/>
+<variable keyTypeName="long" name="members" typeName="map" valueTypeName="FamilyMember"/>
+<variable name="updatetime" typeName="long"/>
+<variable name="createtime" typeName="long"/>
+<variable name="lastpartyopentime" typeName="long"/>
+<variable name="lastpartycalltime" typeName="long"/>
+<variable name="issystemfam" typeName="int"/>
+<variable keyTypeName="long" name="invitelist" typeName="map" valueTypeName="long"/>
+<variable name="lastresettime" typeName="long"/>
+</xbean>
+<xbean name="RolePay">
+<variable name="cangetfirstbonus" typeName="boolean"/>
+<variable name="isfirstpayused" typeName="boolean"/>
+<variable keyTypeName="int" name="isentryfirstpay" typeName="map" valueTypeName="boolean"/>
+<variable name="totalpay" typeName="long"/>
+<variable name="lastrefreshtime" typeName="long"/>
+<variable name="dailypaystatus" typeName="int"/>
+<variable name="dailytotalpay" typeName="long"/>
+<variable name="dailytotalpaystatus" typeName="int"/>
+<variable name="roleallpay" typeName="long"/>
+<variable name="dailyactivepay" typeName="int"/>
+<variable name="hasgotpayreturn" typeName="boolean"/>
+<variable name="totalyunbao" typeName="long"/>
+<variable name="totalbindyuanbao" typeName="long"/>
+<variable name="totalvipexp" typeName="long"/>
+</xbean>
+<xbean name="DailyMonsterExp">
+<variable name="todaytotaladdmonsterexp" typeName="long"/>
+</xbean>
+<xbean name="RoleNotice">
+<variable name="notices" typeName="list" valueTypeName="Notice"/>
+</xbean>
+<xbean name="RoleMarriage">
+<variable name="coupleroleid" typeName="long"/>
+<variable name="curproposeid" typeName="long"/>
+<variable name="startproposetime" typeName="long"/>
+<variable name="wishfriendlist" typeName="list" valueTypeName="long"/>
+</xbean>
+<xbean name="SystemMail">
+<variable name="id" typeName="long"/>
+<variable name="mailid" typeName="int"/>
+<variable name="sendtime" typeName="long"/>
+<variable name="title" typeName="string"/>
+<variable name="content" typeName="string"/>
+<variable name="bonus" typeName="Bonus"/>
+<variable name="params" typeName="list" valueTypeName="string"/>
+<variable name="records" typeName="set" valueTypeName="long"/>
+</xbean>
+<xbean name="FamilyActivity">
+<variable keyTypeName="int" name="godanimalinfo" typeName="map" valueTypeName="FamilyGodAnimal"/>
+</xbean>
+<xbean name="EctypeSingle">
+<variable keyTypeName="int" name="dailyectypebestrecords" typeName="map" valueTypeName="DailyEctypeRecord"/>
+</xbean>
+<xbean name="TaskData">
+<variable name="taskid" typeName="int"/>
+<variable keyTypeName="int" name="counter" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="HuiWuCurTerm">
+<variable name="termid" typeName="int"/>
+<variable name="opentime" typeName="long"/>
+<variable name="endtime" typeName="long"/>
+<variable name="guessendtime" typeName="long"/>
+<variable name="stage" typeName="int"/>
+<variable name="roundindex" typeName="int"/>
+<variable name="roundstage" typeName="int"/>
+<variable name="battlebegintime" typeName="long"/>
+<variable keyTypeName="int" name="terminfobyprofession" typeName="map" valueTypeName="HuiWuProfessionTerm"/>
+<variable keyTypeName="long" name="guess" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="long" name="continuouschampions" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleEquipBag">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="equipmap" typeName="map" valueTypeName="Equip"/>
+<variable keyTypeName="int" name="equiponbodymap" typeName="map" valueTypeName="Equip"/>
+</xbean>
+<xbean name="IdolAwardClaim">
+<variable name="claiminfo" typeName="set" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleFriendsInfo">
+<variable keyTypeName="long" name="friends" typeName="map" valueTypeName="RoleFriend"/>
+<variable keyTypeName="long" name="requesting" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="long" name="blacklist" typeName="map" valueTypeName="long"/>
+<variable name="charmdegree" typeName="int"/>
+<variable keyTypeName="long" name="idolfrienddegree" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="long" name="idolawardclaiminfo" typeName="map" valueTypeName="IdolAwardClaim"/>
+<variable keyTypeName="long" name="enemylist" typeName="map" valueTypeName="Enemyinfo"/>
+<variable name="isallowfriendgetmm" typeName="int"/>
+<variable name="isallowstrangergetmm" typeName="int"/>
+<variable keyTypeName="int" name="relationinfo" typeName="map" valueTypeName="RoleRelation"/>
+</xbean>
+<xbean name="Accessory">
+<variable name="mainprop" typeName="list" valueTypeName="AccessoryProp"/>
+<variable name="extraprop" typeName="list" valueTypeName="AccessoryProp"/>
+<variable name="lastwashrecord" typeName="AccessoryWashResult"/>
+</xbean>
+<xbean name="Notice">
+<variable name="data" typeName="binary"/>
+</xbean>
+<xbean name="CounterSet">
+<variable name="items" typeName="set" valueTypeName="long"/>
+</xbean>
+<xbean name="RoleInfo">
+<variable name="userid" typeName="long"/>
+<variable name="profession" typeName="int"/>
+<variable name="createtime" typeName="long"/>
+<variable name="serverid" typeName="int"/>
+<variable name="lastlogintime" typeName="long"/>
+<variable name="totalonlinetime" typeName="long"/>
+<variable name="lastlvluptotalonlinetime" typeName="long"/>
+<variable name="lastlogouttime" typeName="long"/>
+<variable name="logindaycount" typeName="int"/>
+<variable name="lastaddlogindaytime" typeName="long"/>
+<variable name="continuesloginday" typeName="int"/>
+<variable name="totaldayonlinetime" typeName="long"/>
+<variable name="leftgifttimes" typeName="int"/>
+<variable name="monthcardlefttimes" typeName="int"/>
+<variable name="buymonthcardtimes" typeName="int"/>
+<variable name="buygrowplan" typeName="int"/>
+<variable name="growonetime" typeName="int"/>
+<variable name="buygrowplantwo" typeName="int"/>
+<variable name="growtwotime" typeName="int"/>
+<variable name="buygrowplanthree" typeName="int"/>
+<variable name="growthreetime" typeName="int"/>
+<variable name="name" typeName="string"/>
+<variable name="changenametime" typeName="int"/>
+<variable name="level" typeName="int"/>
+<variable name="lastlvluptime" typeName="long"/>
+<variable name="viplevel" typeName="int"/>
+<variable name="vipexp" typeName="long"/>
+<variable keyTypeName="int" name="currencys" typeName="map" valueTypeName="long"/>
+<variable name="gender" typeName="int"/>
+<variable name="totalcostyuanbao" typeName="int"/>
+<variable name="lastaddtilitime" typeName="long"/>
+<variable name="lastworldtalktime" typeName="long"/>
+<variable name="silentendtime" typeName="long"/>
+<variable name="leftreporttime" typeName="int"/>
+<variable name="bereportedtime" typeName="int"/>
+</xbean>
+<xbean name="CoolDown">
+<variable name="id" typeName="long"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="PickCardInfo">
+<variable name="lastfreehuoban" typeName="long"/>
+<variable name="huobanhighyuanbao" typeName="int"/>
+<variable name="huobanlowyuanbao" typeName="int"/>
+<variable name="fabaoyuanbao" typeName="int"/>
+<variable name="fabaofree" typeName="int"/>
+<variable name="fabaoxunibi" typeName="int"/>
+</xbean>
+<xbean name="RoleSkill">
+<variable keyTypeName="int" name="skills" typeName="map" valueTypeName="SkillInfo"/>
+<variable keyTypeName="int" name="equipskillpositions" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleFamily">
+<variable name="currentfid" typeName="long"/>
+<variable keyTypeName="long" name="requestedfamily" typeName="map" valueTypeName="long"/>
+<variable name="lastquittime" typeName="long"/>
+<variable name="totalquitnum" typeName="int"/>
+<variable name="hasjoinpartytoday" typeName="int"/>
+<variable name="isfindbackparty" typeName="int"/>
+</xbean>
+<xbean name="GroupTitle">
+<variable keyTypeName="int" name="titles" typeName="map" valueTypeName="Title"/>
+</xbean>
+<xbean name="IdolCharmInfo">
+<variable name="charm" typeName="int"/>
+<variable name="guardid" typeName="long"/>
+<variable name="guarddegree" typeName="int"/>
+<variable name="guardtime" typeName="long"/>
+</xbean>
+<xbean name="RankRecord">
+<variable name="value" typeName="long"/>
+<variable name="id" typeName="long"/>
+</xbean>
+<xbean name="RoleExchange">
+<variable name="items" typeName="list" valueTypeName="long"/>
+<variable name="logs" typeName="list" valueTypeName="long"/>
+</xbean>
+<xbean name="RoleActivityStatus">
+<variable name="timestamp" typeName="long"/>
+<variable name="status" typeName="int"/>
+</xbean>
+<xbean name="AmuletProperty">
+<variable name="propindex" typeName="int"/>
+<variable name="islock" typeName="int"/>
+<variable name="skillid" typeName="int"/>
+<variable name="professionid" typeName="int"/>
+<variable name="addlevel" typeName="int"/>
+</xbean>
+<xbean name="RoleLimit">
+<variable keyTypeName="long" name="limits" typeName="map" valueTypeName="Limit"/>
+<variable keyTypeName="long" name="cooldowns" typeName="map" valueTypeName="CoolDown"/>
+</xbean>
+<xbean name="ActiveCode">
+<variable name="lastusetime" typeName="long"/>
+<variable name="todayusecount" typeName="int"/>
+<variable name="totalusecount" typeName="int"/>
+</xbean>
+<xbean name="FamilyTaskDetail">
+<variable name="taskid" typeName="int"/>
+<variable name="npcid" typeName="int"/>
+</xbean>
+<xbean name="RoleMap">
+<variable keyTypeName="int" name="pkstates" typeName="map" valueTypeName="int"/>
+<variable name="finishprologue" typeName="boolean"/>
+<variable name="hp" typeName="int"/>
+<variable name="mp" typeName="int"/>
+<variable name="prevs" typeName="list" valueTypeName="RoleMapInfo"/>
+<variable name="isnew" typeName="boolean"/>
+</xbean>
+<xbean name="TimeRange">
+<variable name="opentime" typeName="long"/>
+<variable name="closetime" typeName="long"/>
+</xbean>
+<xbean name="HeroesGroupInfo">
+<variable name="refreshtime" typeName="int"/>
+<variable name="ectypeid" typeName="int"/>
+</xbean>
+<xbean name="FamilyMember">
+<variable name="jointime" typeName="long"/>
+<variable name="familyjob" typeName="int"/>
+<variable name="roleid" typeName="long"/>
+<variable name="personalbuild" typeName="long"/>
+<variable name="dailybuild" typeName="long"/>
+</xbean>
+<xbean name="ARank">
+<variable keyTypeName="long" name="id2rank" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="records" typeName="map" valueTypeName="RankRecord"/>
+<variable name="createtime" typeName="long"/>
+</xbean>
+<xbean name="Talisman">
+<variable name="talismanid" typeName="long"/>
+<variable name="modelid" typeName="int"/>
+<variable name="pos" typeName="int"/>
+<variable name="isbind" typeName="boolean"/>
+<variable name="expiretime" typeName="long"/>
+<variable name="normalexp" typeName="long"/>
+<variable initial="1" name="normallevel" typeName="int"/>
+<variable name="starexp" typeName="int"/>
+<variable initial="1" name="starlevel" typeName="int"/>
+<variable name="wuxingtype" typeName="int"/>
+<variable name="wuxingvalue" typeName="int"/>
+<variable name="awakelevel" typeName="int"/>
+<variable keyTypeName="int" name="skills" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="FamilyJobStaffList">
+<variable keyTypeName="long" name="staffs" typeName="map" valueTypeName="long"/>
+</xbean>
+<xbean name="RoleAllActivity">
+<variable keyTypeName="int" name="status" typeName="map" valueTypeName="RoleActivityStatus"/>
+<variable keyTypeName="int" name="records" typeName="map" valueTypeName="RoleActivityRecordMap"/>
+</xbean>
+<xbean name="RoleTitle">
+<variable name="activekey" typeName="int"/>
+<variable name="activetype" typeName="int"/>
+<variable keyTypeName="int" name="titleinfo" typeName="map" valueTypeName="GroupTitle"/>
+</xbean>
+<xbean name="RoleDress">
+<variable keyTypeName="int" name="dresses" typeName="map" valueTypeName="Dress"/>
+<variable name="activedress" typeName="int"/>
+</xbean>
+<xbean name="DailyArena">
+<variable name="challengesuccnum" typeName="int"/>
+<variable name="obtainrewards" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleArena">
+<variable name="open" typeName="boolean"/>
+<variable name="isrobot" typeName="boolean"/>
+<variable name="lastupdateshengwangtime" typeName="long"/>
+<variable name="challengeranks" typeName="list" valueTypeName="int"/>
+<variable name="challengerobots" typeName="list" valueTypeName="long"/>
+<variable name="bechallenging" typeName="int"/>
+<variable name="bechallengelockexpiretime" typeName="long"/>
+<variable name="fightreports" typeName="list" valueTypeName="ArenaFightReport"/>
+<variable name="bestrank" typeName="int"/>
+<variable name="haswin" typeName="boolean"/>
+<variable name="fakerank" typeName="int"/>
+</xbean>
+<xbean name="FamilyWelfare">
+<variable keyTypeName="int" name="skills" typeName="map" valueTypeName="FamilySkill"/>
+<variable initial="1" name="maxskilllevel" typeName="int"/>
+</xbean>
+<xbean name="User">
+<variable name="roleids" typeName="list" valueTypeName="long"/>
+<variable name="lastloginrole" typeName="long"/>
+<variable name="deletedroles" typeName="int"/>
+<variable keyTypeName="long" name="deleteinfo" typeName="map" valueTypeName="long"/>
+</xbean>
+<xbean name="IntSet">
+<variable name="val" typeName="set" valueTypeName="int"/>
+</xbean>
+<xbean name="GlobalActivity">
+<variable name="timestamp" typeName="long"/>
+</xbean>
+<xbean name="ClimbTowerInfo">
+<variable name="maxfloorid" typeName="int"/>
+<variable name="costtime" typeName="int"/>
+</xbean>
+<xbean name="RoleJadeInfo">
+<variable name="level" typeName="int"/>
+<variable name="bonus" typeName="int"/>
+<variable name="holenum" typeName="int"/>
+<variable keyTypeName="int" name="jewelry" typeName="map" valueTypeName="Jewelry"/>
+<variable name="jewelrybag" typeName="vector" valueTypeName="Jewelry"/>
+<variable name="jewelrygetlevel" typeName="int"/>
+</xbean>
+<xbean name="MailBox">
+<variable name="nextmailid" typeName="int"/>
+<variable keyTypeName="int" name="mails" typeName="map" valueTypeName="Mail"/>
+<variable name="maxsysmail" typeName="long"/>
+</xbean>
+<xbean name="DeletedRole">
+<variable name="roleid" typeName="long"/>
+<variable name="username" typeName="string"/>
+<variable name="newusername" typeName="string"/>
+<variable name="deletetime" typeName="long"/>
+</xbean>
+<xbean name="RoleActivityRecordMap">
+<variable keyTypeName="long" name="records" typeName="map" valueTypeName="RoleActivityRecord"/>
+</xbean>
+<xbean name="RoleTask">
+<variable name="roleid" typeName="long"/>
+<variable name="minhistoryexpiretime" typeName="long"/>
+<variable keyTypeName="int" name="historys" typeName="map" valueTypeName="TaskHistory"/>
+<variable keyTypeName="int" name="lastcompletetaskid" typeName="map" valueTypeName="int"/>
+<variable name="acceptbranchtasks" typeName="int"/>
+<variable name="shownpcs" typeName="set" valueTypeName="int"/>
+<variable name="hidemines" typeName="set" valueTypeName="int"/>
+<variable keyTypeName="int" name="tasks" typeName="map" valueTypeName="TaskData"/>
+<variable keyTypeName="int" name="variables" typeName="map" valueTypeName="int"/>
+<variable name="acceptedfamilytasks" typeName="vector" valueTypeName="FamilyTaskDetail"/>
+<variable name="completednumsinfamtasks" typeName="int"/>
+<variable name="isuseyuanbao" typeName="int"/>
+<variable name="iscancletask" typeName="int"/>
+<variable name="dailycompletedfamtasks" typeName="int"/>
+<variable name="weekcompletedsmallfamtasks" typeName="int"/>
+<variable name="weekspebonus" typeName="list" valueTypeName="int"/>
+<variable name="lastgiveupfamtasktime" typeName="long"/>
+<variable name="guidebranchtaskid" typeName="int"/>
+<variable keyTypeName="int" name="accepttasktime" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="int" name="familytaskorder" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="familylasttaskorder" typeName="map" valueTypeName="int"/>
+<variable name="allcandobranch" typeName="set" valueTypeName="int"/>
+</xbean>
+<xbean name="System">
+<variable name="initrobot" typeName="boolean"/>
+<variable name="outrankrobots" typeName="list" valueTypeName="long"/>
+<variable name="gsdfirststarttime" typeName="long"/>
+<variable name="rolenumsreach20" typeName="int"/>
+<variable initial="200" name="maxsystemfamnum" typeName="int"/>
+</xbean>
+<xbean name="ExchangeLog">
+<variable name="seller" typeName="long"/>
+<variable name="buyer" typeName="long"/>
+<variable name="item" typeName="ExchangeItem"/>
+<variable name="time" typeName="long"/>
+</xbean>
+<xbean name="AdvancedEquip"/>
+<xbean name="HuiWuBattle">
+<variable name="index" typeName="int"/>
+<variable name="roleid1" typeName="long"/>
+<variable name="roleid2" typeName="long"/>
+<variable name="state" typeName="int"/>
+<variable name="mapid" typeName="long"/>
+</xbean>
+<xbean name="RoleAchievement">
+<variable keyTypeName="int" name="achievementstates" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="counters" typeName="map" valueTypeName="long"/>
+<variable keyTypeName="int" name="countersets" typeName="map" valueTypeName="CounterSet"/>
+</xbean>
+<xbean name="HuiWuProfessionTerm">
+<variable name="profession" typeName="int"/>
+<variable name="enrollroleids" typeName="set" valueTypeName="long"/>
+<variable name="preselection1roleids" typeName="list" valueTypeName="long"/>
+<variable name="preselection2roleids" typeName="list" valueTypeName="long"/>
+<variable keyTypeName="long" name="preselection2roleidbeguessnums" typeName="map" valueTypeName="int"/>
+<variable keyTypeName="int" name="rounds" typeName="map" valueTypeName="HuiWuRound"/>
+<variable name="champion" typeName="long"/>
+</xbean>
+<xbean name="RandomBonus">
+<variable name="bindtype" typeName="int"/>
+<variable keyTypeName="int" name="items" typeName="map" valueTypeName="int"/>
+</xbean>
+<xbean name="RoleChat">
+<variable name="chatface" typeName="set" valueTypeName="string"/>
+</xbean>
+<xbean name="RolePet">
+<variable keyTypeName="int" name="petmap" typeName="map" valueTypeName="Pet"/>
+<variable name="fightpets" typeName="list" valueTypeName="int"/>
+<variable name="activepetmodelid" typeName="int"/>
+<variable keyTypeName="int" name="petfragmentmap" typeName="map" valueTypeName="int"/>
+<variable name="totalcombatpower" typeName="int"/>
+</xbean>
+<xbean name="FamilyGodAnimal">
+<variable name="animalid" typeName="int"/>
+<variable initial="1" name="animallevel" typeName="int"/>
+<variable name="exp" typeName="long"/>
+</xbean>
+<xbean name="Dress">
+<variable name="modelid" typeName="int"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="Title">
+<variable name="titlekey" typeName="int"/>
+<variable name="titletype" typeName="int"/>
+<variable name="state" typeName="int"/>
+<variable name="gettime" typeName="long"/>
+<variable name="activetime" typeName="long"/>
+<variable name="expiretime" typeName="long"/>
+</xbean>
+<xbean name="RoleActiveCode">
+<variable keyTypeName="int" name="codegroups" typeName="map" valueTypeName="ActiveCode"/>
+</xbean>
+<xbean name="TeamMember">
+<variable name="roleid" typeName="long"/>
+<variable name="jointime" typeName="long"/>
+<variable name="follow" typeName="int"/>
+<variable name="followtime" typeName="long"/>
+</xbean>
+<xbean name="IntList">
+<variable name="val" typeName="list" valueTypeName="int"/>
+</xbean>
+<xbean name="GlobalActivityOpenInfos">
+<variable name="infos" typeName="list" valueTypeName="TimeRange"/>
+<variable name="enable" typeName="boolean"/>
+</xbean>
+<xbean name="Mail">
+<variable name="mailid" typeName="int"/>
+<variable name="sendtime" typeName="long"/>
+<variable name="title" typeName="string"/>
+<variable name="content" typeName="string"/>
+<variable name="read" typeName="int"/>
+<variable name="accessory" typeName="Bonus"/>
+<variable name="params" typeName="list" valueTypeName="string"/>
+</xbean>
+<xbean name="GroupAttr">
+<variable keyTypeName="int" name="attrs" typeName="map" valueTypeName="float"/>
+</xbean>
+<xbean name="Enemyinfo">
+<variable name="bekillnum" typeName="int"/>
+<variable name="killnum" typeName="int"/>
+<variable name="lastbekilltime" typeName="long"/>
+</xbean>
+<xbean name="HeroesGroupMemInfo">
+<variable name="ectypeid" typeName="int"/>
+<variable name="randomtime" typeName="int"/>
+<variable name="bonus" typeName="list" valueTypeName="RandomBonus"/>
+</xbean>
+<xbean name="Limit">
+<variable name="id" typeName="long"/>
+<variable keyTypeName="int" name="typenums" typeName="map" valueTypeName="int"/>
+<variable name="lastbuytime" typeName="int"/>
+</xbean>
+<xbean name="Pet">
+<variable name="modelid" typeName="int"/>
+<variable name="activeskinid" typeName="int"/>
+<variable name="skinidlist" typeName="set" valueTypeName="int"/>
+<variable name="level" typeName="int"/>
+<variable name="exp" typeName="long"/>
+<variable name="starlevel" typeName="int"/>
+<variable keyTypeName="int" name="skills" typeName="map" valueTypeName="int"/>
+<variable name="awakelevel" typeName="int"/>
+<variable keyTypeName="int" name="fixedattrs" typeName="map" valueTypeName="float"/>
+<variable keyTypeName="int" name="karmaattrs" typeName="map" valueTypeName="float"/>
+<variable keyTypeName="int" name="growthattrs" typeName="map" valueTypeName="float"/>
+<variable name="buffids" typeName="list" valueTypeName="int"/>
+<variable keyTypeName="int" name="lastwashrecord" typeName="map" valueTypeName="float"/>
+<variable keyTypeName="int" name="washattrs" typeName="map" valueTypeName="float"/>
+</xbean>
+<xbean name="RoleTalismanBag">
+<variable name="capacity" typeName="int"/>
+<variable keyTypeName="int" name="talismans" typeName="map" valueTypeName="Talisman"/>
+<variable keyTypeName="int" name="equipedtalismans" typeName="map" valueTypeName="Talisman"/>
+<variable name="luckytype" typeName="int"/>
+<variable name="luckywashtimes" typeName="int"/>
+<variable name="maxcombatpower" typeName="int"/>
+</xbean>
+<xbean name="BoardRecordEntry">
+<variable name="val1" typeName="long"/>
+<variable name="val2" typeName="int"/>
+<variable name="updatetime" typeName="long"/>
+</xbean>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolemarriageinfo" persistence="DB" valueName="RoleMarriage"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="dress" persistence="DB" valueName="RoleDress"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleskill" persistence="DB" valueName="RoleSkill"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolerank" persistence="DB" valueName="RoleRank"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="leaderboards" persistence="DB" valueName="BoardInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="familyname2id" persistence="DB" valueName="FNameToID"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="amulet" persistence="DB" valueName="RoleAmuletInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleorderhistorys" persistence="DB" valueName="RoleOrderHistroy"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roletalismandepot" persistence="DB" valueName="RoleTalismanDepot"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleequipbag" persistence="DB" valueName="RoleEquipBag"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolefamily" persistence="DB" valueName="RoleFamily"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="ectypesingle" persistence="DB" valueName="EctypeSingle"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="leaderboardrecord" persistence="DB" valueName="BoardRecord"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="systemmailbox" persistence="DB" valueName="SystemMail"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolefriendsinfo" persistence="DB" valueName="RoleFriendsInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleachievement" persistence="DB" valueName="RoleAchievement"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleectypes" persistence="DB" valueName="RoleEctype"/>
+<table autoKey="false" capacity="" foreign="" keyName="string" name="rolename2ids" persistence="DB" valueName="long"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="userdeletedroles" persistence="DB" valueName="UserDeletedRole"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="idgen" persistence="DB" valueName="IdGen"/>
+<table autoKey="true" capacity="" foreign="" keyName="long" name="exchangelog" persistence="DB" valueName="ExchangeLog"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolewelfareinfo" persistence="DB" valueName="RoleWelfareInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolemaps" persistence="DB" valueName="RoleMap"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolefragmentdepot" persistence="DB" valueName="RoleFragmentDepot"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="huiwucurterms" persistence="DB" valueName="HuiWuCurTerm"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="users" persistence="DB" valueName="User"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="huiwupriviousterms" persistence="DB" valueName="HuiWuPriviousTerm"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="ranks" persistence="DB" valueName="ARank"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="mailbox" persistence="DB" valueName="MailBox"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="system" persistence="DB" valueName="System"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="goldcoindepot" persistence="DB" valueName="long"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="pickcardinfos" persistence="DB" valueName="PickCardInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolememinfos" persistence="MEMORY" valueName="RoleMemInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="processingorders" persistence="DB" valueName="AppOrder"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolelimit" persistence="DB" valueName="RoleLimit"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolefragmentbag" persistence="DB" valueName="RoleFragmentBag"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleitemdepot" persistence="DB" valueName="RoleItemDepot"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="globallactivity" persistence="DB" valueName="GlobalAllActivity"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roledailyresetdata" persistence="DB" valueName="DailyResetData"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleexchange" persistence="DB" valueName="RoleExchange"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="forbids" persistence="DB" valueName="Forbid"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolestorynotes" persistence="DB" valueName="RoleStoryNote"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="jade" persistence="DB" valueName="RoleJadeInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="onlineusers" persistence="MEMORY" valueName="OnlineUser"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="title" persistence="DB" valueName="RoleTitle"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="ride" persistence="DB" valueName="RoleRide"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="dailyactives" persistence="DB" valueName="DailyActive"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleattrs" persistence="DB" valueName="RoleAttr"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roletask" persistence="DB" valueName="RoleTask"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleconfigure" persistence="DB" valueName="RoleConfigure"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="role2team" persistence="DB" valueName="RoleTeamInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="idolcharm" persistence="DB" valueName="IdolCharmInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleitembag" persistence="DB" valueName="RoleItemBag"/>
+<table autoKey="false" capacity="" foreign="" keyName="int" name="gmsenseword" persistence="DB" valueName="GMSenseword"/>
+<table autoKey="true" capacity="" foreign="" keyName="long" name="roleinfos" persistence="DB" valueName="RoleInfo"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roletalismanbag" persistence="DB" valueName="RoleTalismanBag"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleactivecodes" persistence="DB" valueName="RoleActiveCode"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolepays" persistence="DB" valueName="RolePay"/>
+<table autoKey="true" capacity="" foreign="" keyName="long" name="team" persistence="MEMORY" valueName="Team"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolechat" persistence="DB" valueName="RoleChat"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleequipdepot" persistence="DB" valueName="RoleEquipDepot"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="roleallactivity" persistence="DB" valueName="RoleAllActivity"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolenotice" persistence="DB" valueName="RoleNotice"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolearena" persistence="DB" valueName="RoleArena"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="familyextrinfo" persistence="DB" valueName="IdList"/>
+<table autoKey="true" capacity="" foreign="" keyName="long" name="exchangeitem" persistence="DB" valueName="ExchangeItem"/>
+<table autoKey="false" capacity="" foreign="" keyName="long" name="rolepet" persistence="DB" valueName="RolePet"/>
+<table autoKey="true" capacity="" foreign="" keyName="long" name="family" persistence="DB" valueName="Family"/>
+</xdb>

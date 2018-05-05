@@ -1,0 +1,19 @@
+<project name="logger" default="dist">
+	<target name="init">
+		<mkdir dir="bin" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac encoding="GBK" srcdir="src" destdir="bin" includeantruntime="false" debug="true" debuglevel="lines,source">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+
+	<target name="dist" depends="clean, compile">
+		<jar destfile="logger.jar" basedir="bin" manifest="src/MANIFEST.MF"/>
+	</target>
+</project>

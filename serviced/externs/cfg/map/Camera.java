@@ -1,0 +1,63 @@
+package cfg.map;
+public final class Camera extends cfg.CfgObject {
+	public final static int TYPEID = -679516191;
+	final public int getTypeId() { return TYPEID; }
+	public final int id;
+	public final float CameraModeAnglex;
+	public final float CameraModeAngley;
+	public final float CameraModeHeight;
+	public final float CameraModeDistance;
+	public final float CameraModeDistanceMin;
+	public final float CameraModeDistanceMax;
+	public final float CameraAngleX;
+	public final float CameraAngleMinX;
+	public final float CameraAngleMaxX;
+	public final String CameraModeBackground;
+	public final float CameraModeFov;
+	public final float CameraModeFar;
+	public final float Offset;
+	public final float MoveSpeedRateX;
+	public final float MoveSpeedRateY;
+	public final float MoveDistanceSpeed;
+	public final float CameraAngleDampSpeed;
+	public final float CameraDistanceDampSpeed;
+	public final float Orhtographic;
+	public final int IsOrthoGraphic;
+	public final float AngleXMin;
+	public final float AngleXMax;
+	public final float defaultdistance;
+	public final float lockeddistancemin;
+	public final float lockeddistancemax;
+	public final float lockedlowangle;
+	public final float lockedhightangle;
+	public Camera(cfg.DataStream fs) {
+		this.id = fs.getInt();
+		this.CameraModeAnglex = fs.getFloat();
+		this.CameraModeAngley = fs.getFloat();
+		this.CameraModeHeight = fs.getFloat();
+		this.CameraModeDistance = fs.getFloat();
+		this.CameraModeDistanceMin = fs.getFloat();
+		this.CameraModeDistanceMax = fs.getFloat();
+		this.CameraAngleX = fs.getFloat();
+		this.CameraAngleMinX = fs.getFloat();
+		this.CameraAngleMaxX = fs.getFloat();
+		this.CameraModeBackground = fs.getString();
+		this.CameraModeFov = fs.getFloat();
+		this.CameraModeFar = fs.getFloat();
+		this.Offset = fs.getFloat();
+		this.MoveSpeedRateX = fs.getFloat();
+		this.MoveSpeedRateY = fs.getFloat();
+		this.MoveDistanceSpeed = fs.getFloat();
+		this.CameraAngleDampSpeed = fs.getFloat();
+		this.CameraDistanceDampSpeed = fs.getFloat();
+		this.Orhtographic = fs.getFloat();
+		this.IsOrthoGraphic = fs.getInt();
+		this.AngleXMin = fs.getFloat();
+		this.AngleXMax = fs.getFloat();
+		this.defaultdistance = fs.getFloat();
+		this.lockeddistancemin = fs.getFloat();
+		this.lockeddistancemax = fs.getFloat();
+		this.lockedlowangle = fs.getFloat();
+		this.lockedhightangle = fs.getFloat();
+	}
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><XioConf xmlns:xi="http://www.w3.org/2001/XInclude" name="robot">
+	<Manager name="Client">
+		<DynamicMultiConnector inputBufferSize="1048576" outputBufferSize="1048576" receiveBufferSize="65536" sendBufferSize="65536" tcpNoDelay="true"/>
+		<xi:include href="coder.Client.xml"/>
+	</Manager>
+</XioConf>

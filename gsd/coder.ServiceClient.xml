@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Coder>
+	<Protocol class="gnet.AnnounceGsd" maxsize="1024"/>
+	<Protocol class="gnet.AnnounceGsds" maxsize="100000"/>
+	<Protocol class="gnet.AnnounceServiced" maxsize="1024"/>
+	<Protocol class="lx.matcher.GAddMultiMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.GAddTeamFightMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.GCancelMultiMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.GCancelTeamFightMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.GEndTeamFight" maxsize="1024"/>
+	<Protocol class="lx.matcher.MAddMultiMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.MAddTeamFightMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.MCancelMultiMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.MCancelTeamFightMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.MMatchMultiSuccess" maxsize="1024"/>
+	<Protocol class="lx.matcher.MTeamFightMatchSucc" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.GAddGuardTowerMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.GCancelGuardTowerMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.GEndGuardTower" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.MAddGuardTowerMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.MCancelGuardTowerMatch" maxsize="1024"/>
+	<Protocol class="lx.matcher.guardtower.MGuardTowerMatchSucc" maxsize="1024"/>
+	<Protocol class="map.msg.MCreateMap" maxsize="1024"/>
+	<Protocol class="map.msg.MRpc" maxsize="1024"/>
+	<Protocol class="map.msg.ServicedRefs" maxsize="2097152"/>
+	<Protocol class="map.msg.XCreateEctypeMultiStory" maxsize="1024"/>
+	<Protocol class="map.msg.XCreateTeamFight" maxsize="1024"/>
+	<Protocol class="map.msg.XRpc" maxsize="1024"/>
+</Coder>

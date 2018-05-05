@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="xdb">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lib/xdb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/javapns_2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../lib/gm.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><XioConf xmlns:xi="http://www.w3.org/2001/XInclude" name="mapd">
+	<Manager class="gnet.MapServer" name="MapServer">
+		<xi:include href="coder.MapServer.xml"/>
+		<Acceptor backlog="32" inputBufferSize="16384000" localIp="0.0.0.0" localPort="$mapd_port" outputBufferSize="16384000" receiveBufferSize="16384" sendBufferSize="16384" tcpNoDelay="true"/>
+	</Manager>
+
+	<Manager class="gnet.ServiceClient" name="ServiceClient">
+		<Connector inputBufferSize="16384000" outputBufferSize="16384000" receiveBufferSize="16384" remoteIp="$serviced_ip" remotePort="$serviced_port" sendBufferSize="16384" tcpNoDelay="true"/>
+		<xi:include href="coder.ServiceClient.xml"/>
+	</Manager>
+</XioConf>

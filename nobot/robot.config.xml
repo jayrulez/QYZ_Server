@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gsd 
+	debug="true"
+
+	trace.level="info"
+	trace.protocol="true"
+
+	xio.xml="nobot.xio.xml"
+	xio.link.ip="10.241.69.16"
+	xio.link.port="10061"
+	
+	config.dir="config"
+	config.encoding="utf8"
+	
+	robot.prefix="lxy"
+	robot.count="1000"
+	robot.loginpersecond="30"
+    >
+</gsd>

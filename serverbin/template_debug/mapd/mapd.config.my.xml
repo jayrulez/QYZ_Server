@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gsd 
+	debug="true"
+
+	serverid="1800"
+	
+	trace.level="INFO"
+	trace.protocol="false"
+
+	xio.xml="mapd.xio.my.xml"
+	
+	config.dir="config"
+	config.encoding="utf8"
+	
+	rmi.host="$mapd_rmi_addr"
+	rmi.port="$mapd_rmi_port"
+	
+	gm.telnetport="$mapd_gm_port"
+    >
+</gsd>

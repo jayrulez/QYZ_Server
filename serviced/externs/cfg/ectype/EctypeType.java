@@ -1,0 +1,34 @@
+package cfg.ectype;
+public final class EctypeType {
+	public final static int NULL = -1;
+	public final static int WORLD = 1;
+	public final static int CLIMB_TOWER = 2;
+	public final static int STORY = 3;
+	public final static int CURRENCY = 4;
+	public final static int EXP = 5;
+	public final static int ZAOHUA = 6;
+	public final static int PETECTYPE = 7;
+	public final static int FABAOECTYPE = 8;
+	public final static int YUPEI = 9;
+	public final static int HUFU = 10;
+	public final static int PERSONAL_BOSS = 11;
+	public final static int CHALLENGE = 12;
+	public final static int ARENA = 13;
+	public final static int GUARDTOWER = 14;
+	public final static int HEROES = 15;
+	public final static int TEAMFIGHT = 16;
+	public final static int PROLOGUE = 17;
+	public final static int HUIWU = 18;
+	public final static int FAMILY = 19;
+	public final static int TEAM_SPEED = 20;
+	public final static int ATK_CITY = 21;
+	public final static int MULTI_STORY = 22;
+	public final static int PLAIN_STORY = 23;
+	public final static int FAMILY_TEAM = 24;
+	public final static int MAIMAIECTYPE = 25;
+	public final static int FAMILYWAR = 26;
+	public final static int CITY_WAR = 27;
+	public final static int HERO_CHALLENGE = 28;
+	public final static int CURRENCY_ACTIVITY = 29;
+	public final static java.util.List<Integer> enums = java.util.Arrays.asList(1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12 ,13 ,14 ,15 ,16 ,17 ,18 ,19 ,20 ,21 ,22 ,23 ,24 ,25 ,26 ,27 ,28 ,29);
+}

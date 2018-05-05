@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>E439935D-B2A2-46AE-856D-2AA408428F33</ProjectGuid>
+    <!--$guid1$-->
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="scripts\" />
+    <Folder Include="scripts\cfg\" />
+    <Folder Include="scripts\common\" />
+    <Folder Include="scripts\msg\" />
+    <Folder Include="scripts\map\" />
+    <Folder Include="scripts\robot\" />
+    <Folder Include="scripts\system\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="scripts\auth.lua" />
+    <Compile Include="scripts\cfg\configmanager.lua" />
+    <Compile Include="scripts\cfg\configs.lua" />
+    <Compile Include="scripts\cfg\datastream.lua" />
+    <Compile Include="scripts\cfg\server.lua" />
+    <Compile Include="scripts\cfg\structs.lua" />
+    <Compile Include="scripts\common\binaryencoder.lua" />
+    <Compile Include="scripts\common\class.lua" />
+    <Compile Include="scripts\common\event.lua" />
+    <Compile Include="scripts\common\message.lua" />
+    <Compile Include="scripts\common\octets.lua" />
+    <Compile Include="scripts\common\utils.lua" />
+    <Compile Include="scripts\common\xmlparser.lua" />
+    <Compile Include="scripts\errorcode.lua" />
+    <Compile Include="scripts\gameevent.lua" />
+    <Compile Include="scripts\global.lua" />
+    <Compile Include="scripts\link.lua" />
+    <Compile Include="scripts\map\robotmapconfig.lua" />
+    <Compile Include="scripts\robot\robotenum.lua" />
+    <Compile Include="scripts\robot\robotectype.lua" />
+    <Compile Include="scripts\robot\robotfight.lua" />
+    <Compile Include="scripts\robot\robotteam.lua" />
+    <Compile Include="scripts\robot\robotlogin.lua" />
+    <Compile Include="scripts\main.lua" />
+    <Compile Include="scripts\modules.lua" />
+    <Compile Include="scripts\msg\allmsg.lua" />
+    <Compile Include="scripts\msg\client_allmsg.lua" />
+    <Compile Include="scripts\network.lua" />
+    <Compile Include="scripts\robot\robotcfg.lua" />
+    <Compile Include="scripts\robot\robotinfo.lua" />
+    <Compile Include="scripts\robot\robotutils.lua" />
+    <Compile Include="scripts\robot\robotmove.lua" />
+    <Compile Include="scripts\robot\robot.lua" />
+    <Compile Include="scripts\robot\robotmanager.lua" />
+    <Compile Include="scripts\system\bounds.lua" />
+    <Compile Include="scripts\system\color.lua" />
+    <Compile Include="scripts\system\coroutine.lua" />
+    <Compile Include="scripts\system\layer.lua" />
+    <Compile Include="scripts\system\list.lua" />
+    <Compile Include="scripts\system\math.lua" />
+    <Compile Include="scripts\system\plane.lua" />
+    <Compile Include="scripts\system\quaternion.lua" />
+    <Compile Include="scripts\system\ray.lua" />
+    <Compile Include="scripts\system\raycast.lua" />
+    <Compile Include="scripts\system\set.lua" />
+    <Compile Include="scripts\system\strict.lua" />
+    <Compile Include="scripts\system\time.lua" />
+    <Compile Include="scripts\system\timer.lua" />
+    <Compile Include="scripts\system\touch.lua" />
+    <Compile Include="scripts\system\vector2.lua" />
+    <Compile Include="scripts\system\vector3.lua" />
+    <Compile Include="scripts\system\vector4.lua" />
+    <Compile Include="scripts\system\wrap.lua" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="xdb">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../lib/xdb.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

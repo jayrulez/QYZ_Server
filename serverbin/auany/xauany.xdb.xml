@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="gbk"?>
+
+<xdb xgenOutput="../xauany/beans" trace="info" traceTo=":file"
+	corePoolSize="100" schedPoolSize="10" dbhome="xdb" logpages="4096"
+	backupDir="xbackup" checkpointPeriod="60000" backupIncPeriod="600000" backupFullPeriod="3600000"
+	angelPeriod="1000">
+
+	<xbean name="UserInfo">
+		<variable id="0" name="plattype" type="int" comment="平台id" />
+		<variable id="1" name="useridentity" type="string" comment="平台用户id" />
+	</xbean>
+	
+	<table name="users" key="long" value="UserInfo" lock="userlock" autoIncrement="true"/>
+	
+	<xbean name="UserPayInfo">
+		<variable id="1" name="totalpay" type="long"/>
+		<variable id="4" name="totalyunbao" type="long"/>
+		<variable id="5" name="totalbindyuanbao" type="long"/>
+		<variable id="6" name="totalvipexp" type="long"/>
+		<variable id="2" name="hasgotreturn" type="boolean"/>
+		<variable id="3" name="roleid" type="long"/>
+	</xbean>
+	<table name="userpays" key="long" value="UserPayInfo" lock="userlock"/>
+	
+	<xbean name="UncompletedOrderInfo" comment="未收到gs发送的订单处理过的订单信息">
+		<variable id="0" name="serverid" type="int" />
+		<variable id="1" name="plattype" type="int" />
+		<variable id="2" name="platorderid" type="string" />
+		<variable id="3" name="userid" type="long" />
+		<variable id="4" name="vars" type="binary" />
+		<variable id="5" name="times" type="int" />
+	</xbean>
+	
+	<table name="uncompletedorderinfos" key="string" value="UncompletedOrderInfo" lock="uncompletedorderinfolock"/>
+	
+	<xbean name="GsdErrorOrderInfo" comment="GSD认为是错误的订单">
+		<variable id="0" name="order" type="UncompletedOrderInfo" />
+		<variable id="1" name="reason" type="int" />
+	</xbean>
+	
+	<table name="gsderrororderinfos" key="string" value="GsdErrorOrderInfo" />
+	
+	<!-- 开发测试用 -->
+	<xbean name="TestUserInfo">
+		<variable id="0" name="userid" type="long" />
+		<variable id="1" name="userinfoid" type="long"/>
+	</xbean>
+	<table name="testusers" key="string" value="TestUserInfo" lock="testuserlock"/>
+	
+	<xbean name="TestOrderInfo">
+		<variable id="0" name="createtime" type="long" />
+		<variable id="1" name="gsOrderid" type="string" comment="游戏服务器订单id" />
+		<variable id="2" name="useridentity" type="string" comment="平台用户id"/>
+		<variable id="3" name="vars" type="binary" />
+	</xbean>
+	
+	<!-- key:platorderid -->
+	<table name="testorderinfos" key="string" value="TestOrderInfo" lock="testorderinfolock"/>
+	
+	<table name="testordergs2plat" key="string" value="string" lock="testordergs2platlock"/>
+	
+	
+	<!--下面开始是老虎Onesdk相关的  -->
+	<xbean name="OnesdkUserInfo">
+		<variable id="0" name="userid" type="long" />
+		<variable id="1" name="userinfoid" type="long"/>
+	</xbean>
+	<table name="onesdkusers" key="string" value="OnesdkUserInfo" lock="onesdkuserlock"/>
+	
+	<xbean name="OnesdkOrderInfo">
+		<variable id="0" name="createtime" type="long" />
+		<variable id="1" name="gsOrderid" type="string" comment="游戏服务器订单id" />
+		<variable id="2" name="useridentity" type="string" comment="平台用户id"/>
+		<variable id="3" name="vars" type="binary" />
+	</xbean>
+	
+	<!-- key:platorderid -->
+	<table name="onesdkorderinfos" key="string" value="OnesdkOrderInfo" lock="onesdkorderinfolock"/>
+	
+	<table name="onesdkordergs2plat" key="string" value="string" lock="onesdkordergs2platlock"/>
+	
+	
+	<xbean name="ApnsDevice">
+		<variable id="0" name="token" type="string"/>
+		<variable id="1" name="updatetime" type="long"/>
+	</xbean>
+	
+	<table name="apnsdevices" key="long" value="ApnsDevice" lock="userlock"/>
+	
+	<!-- 旧的auany记录历史是为了根据msgid过滤重复的推送，但是从gs发送过来的msgid有可能会重复吗？在什么情况下msgid会重复？如果所有的发送过的msgid的历史全部记录，数据也是一直在增长中，不可控。xauany不记录历史msgid了 -->
+	<!-- 
+	<xbean name="ApnsHistory">
+		<variable id="0" name="sended" type="list" value="int"/>
+	</xbean>
+	<table name="apnshistory" key="int" value="ApnsHistory" cacheCapacity="10240" cachehigh="512" cachelow="256" lock="userlock"/> 每个玩家已发送过的msgId
+	 -->
+	
+	<!-- 标记机器人 -->
+    <xbean name="RobotId" comment="auany预留出一部分userid用于机器人使用">
+        <enum name="ROBOT_COUNT" value="10000" comment="预留机器人数量"/>
+        <variable id="0" name="minuserid" type="long" />
+        <variable id="1" name="maxuserid" type="long" />
+    </xbean>
+    <table name="robotids" key="int" value="RobotId" />
+    
+    <xbean name="GlobalActivationCode">
+        <variable id="1" name="alltypes" type="set" value="int"/>
+		<!-- id 2 - 5  is reserved remove.!!! -->
+    </xbean>
+    <table name="globalactivationcodes" key="int" value="GlobalActivationCode" lock="globalactivationcodelock"/>
+    
+    <xbean name="ActivationCodeSet">
+        <variable id="0" name="type" type="int"/>
+        <variable id="2" name="values" type="set" value="long" />
+        <variable id="3" name="createtime" type="long"/>
+        <variable id="4" name="opentime" type="long"/>
+        <variable id="5" name="expiratetime" type="long"/>
+        <variable id="6" name="platformset" type="set" value="int" comment="可以激活的平台，空表示无平台限制"/>
+        <variable id="7" name="isshared" type="int" comment="是否是共享的礼包码"/>
+		<variable id="8" name="islogin" type="boolean" comment="是否用于激活码登陆"/>
+    </xbean>
+    
+    <table name="activationcodesets" key="int" value="ActivationCodeSet" lock="activationcodesetlock"/>
+    
+    <xbean name="ActivationCode">
+        <enum name="STATE_NEW" value="0"/>
+        <enum name="STATE_ALLOCATE" value="1"/>
+        <enum name="STATE_CONFIRM"  value="2"/>
+        <enum name="ALLOCATE_TIMEOUT_SECONDS" value="30"/>
+        <variable id="0" name="type" type="int"/>
+        <variable id="1" name="status" type="int" />
+        <variable id="2" name="usetime" type="long" />
+    </xbean>
+    
+    <table name="activationcodes" key="long" value="ActivationCode" lock="activationcodelock"/>
+    
+    <xbean name="UserActivationCode">
+        <variable id="0" name="all" type="map" key="int" value="long" comment="key:codetype" />codetye = 0,用来标识是否已经激活登陆
+    </xbean>
+    <table name="useractivationcodes" key="long" value="UserActivationCode" lock="useractivationcodelock"/>
+	
+	<!--================ 存储过程，唯一名字服务器配置 ================ -->
+	<ProcedureConf executionTime="3000" maxExecutionTime="0" retryTimes="3" retryDelay="100"/>
+	<UniqNameConf localId="1">
+		<XioConf name="xdb.util.UniqName">
+			<!--  Manager name="Client" keepSize="1" maxSize="1">
+				<Coder>
+					<Rpc class="xdb.util.UniqName$Allocate"/>
+					<Rpc class="xdb.util.UniqName$Confirm"/>
+					<Rpc class="xdb.util.UniqName$Release"/>
+					<Rpc class="xdb.util.UniqName$Exist"/>
+					<Rpc class="xdb.util.UniqName$AllocateId"/>
+					<Rpc class="xdb.util.UniqName$ReleaseId"/>
+				</Coder>
+				<Connector remoteIp="10.7.0.37" remotePort="29024" sendBufferSize="16384" receiveBufferSize="16384" tcpNoDelay="true" inputBufferSize="131072" outputBufferSize="131072"/>
+			</Manager -->
+		</XioConf>
+	</UniqNameConf>
+</xdb>

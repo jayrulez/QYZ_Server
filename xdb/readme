@@ -1,0 +1,146 @@
+======================================================================================
+xdb
+  定义和管理数据。提供事务支持。当事务回滚时，所有的修改操作都撤销。
+
+  [限制]
+  * 只能在Procedure实现中访问xbean和xtable。
+  * 从xdb中得到的数据对象引用只在事务中有效。可以传递给嵌套过程或函数，但不能保存下来。
+  * 禁止多重引用，如，同一个xbean实例多次加入到xtable中。这个目前有保护，违例报告异常。
+
+======================================================================================
+启动停止
+  单件 xdb.Xdb.getInstance();
+  启动 start(); startWithNetwork();
+    停止 stop(); 程序退出的时候会自动调用。
+
+======================================================================================
+定义数据结构和表，配置管理参数
+
+xdb.xml
+  定义好数据结构和表以后，运行 xgen 生成 xbean xtable 的实现代码。
+  文件格式参考 test/xdb.xml。
+
+xdb.xml:xbean 目前支持的数据类型。
+  ------------------------------------------------
+  名字       内部实现类型   装箱类型(1)  访问接口    其他
+  ------------------------------------------------
+  short    short          Short        get/set     可配置默认值
+  int      int            Integer      get/set     可配置默认值
+  long     long           Long         get/set     可配置默认值
+  boolean  boolean        Boolean      get/set     可配置默认值
+  string   String         String       get/set     可配置默认值
+  binary   byte[]         -            get/set(2)
+  set      HashSet(3)     -            Set
+  list     LinkedList     -            List
+  vector   ArrayList      -            List
+  map      HashMap        -            Map         key必须是常变量。其中 entrySet().remove(Object)操作不支持。
+  treemap  TreeMap        -            NavigableMap
+
+  (1) 装箱类型决定了这个类型能不能放到容器中，简单类型和自定义个xbean都可以放到容器中。
+  (2) 接口比较特殊，看生成出来的代码。
+  (3) 实际上是用 xdb.logs.SetX，这个实现和java.util.HashSet基本一样。
+
+======================================================================================
+编程接口
+
+xdb.Procedure
+  process 重载，编写实现代码。返回false，所有修改被回滚到这个过程开始的保存点。
+  call    嵌套调用。
+  submit  外部线程异步调用。一般编写逻辑时不使用这个方法。
+
+  例子：
+  class ProcA extends xdb.Procedure {
+  	boolean process() {
+  		...; // some change
+  		boolean result = new ProcB().call(); // nest procdure
+  		if (result == false)
+  			return false;
+  		...; // another change.
+  		if (some_condition)
+  			return true;
+  		return false; // ProcB 的修改也会被回滚。
+  	}
+  }
+
+  class ProcB extends xdb.Procedure {
+  	boolean process() {
+  		...; // some change 1
+  		if (some_conditon) {
+  			...; // another change
+  			return true;
+  		}
+  		return false; // rollback some change 1  
+  	}
+  }
+  可运行例子: test/src/atest/ProcedureNest.java
+
+xdb.Procedure 高级编程接口，目前主要用于测试。
+  事务和嵌套相关方法
+  void begin()                 开始一个事务层次。必须对应一个 commit 或者 rollback。
+  int savepoint()              新建一个保存点，返回保存点编号。
+  void commit()                减少事务层次。
+  void rollback(int savepoint) 回滚到保存点。
+    int beginAndSavepoint()      = { begin(); return savepoint(); }
+  void rollbackall()           * 抛出异常，中段执行流程。
+
+  例子：test/src/atest/ProcedureSample.java
+  例子：test/src/atest/ProcedureSample2.java
+
+/////////////////////////
+Procedure.psend与Transaction.tsend的问题
+
+Procedure.psend可能存在的问题：
+
+首先先明确下面两个函数：
+			protocol.send()函数：直接送到xio的bytebuffer
+       假设：
+              Procedure A
+              {
+                     Lock(ALL) //全部锁起来，事务执行串行化
+                     ProtocolA.send();
+              }
+
+              Procedure B
+              {
+                     Lock(ALL)//全部锁起来
+                     ProtocolB.send();
+              }
+
+              这时候，对客户端来说，假设Procedure A先执行，Procedure B后执行，则先收到ProtocolA协议，后收到ProtocolB协议，这是可以保证的 ，反之亦然
+
+       xdb.procedure.psend()函数：xdb procedure先收集所有需要的protocol，在Commit成功的后，一条条发送procedure中的协议
+              假设：
+              Procedure A
+              {
+                     Lock(ALL) //全部锁起来
+                     xdb.procedure.psend() (ProtocolA);
+              }
+
+              Procedure B
+              {
+                     Lock(ALL)//全部锁起来
+                     xdb.procedure.psend() (ProtocolB);
+              }
+                     
+                     在xdb的内部源码中：
+                     大概执行流程如下：
+                     Procedure
+{
+              Procedure.call(); //执行事务，其中xdb.Listener()也在call中调用
+              //请注意，这下面的执行将放开Procedure中的所有锁
+              …………..
+                                   For ( protocol each : xdb.allNeedSendProtocols)
+                                   {
+                                          Each.send();//这里调用xio的protocol.send()
+                                   }
+                     }
+       
+                     根据上面的流程，所以对客户端来说，假设Procedure A先执行，Procedure B后执行，则不一定先收到ProtocolA协议，有可能先收到ProtocolB，再收到ProtocolA.
+              
+              而如此会引起逻辑上的一些问题：
+假设Role现在在一个队伍中，ProtoclA为让Role的离开队伍协议(LeaveTeam())，ProtocolB为让Role的进入队伍协议(EnterTeam())，服务器先执行Procedure A,再执行Procedure B
+              正常情况下，客户端先收到LeaveTeam()离开队伍，再收到EnterTeam()进入另一个队伍，
+              异常情况下，客户端则先收到EnterTeam()进入另一个队伍，再收到LeaveTeam()离开队伍，这时候客户端就很难处理这种问题，当然可以在协议逻辑中避免这种情况，这不在这讨论范围之内。
+
+Transaction.tsend()函数：
+			将在Procedure执行完事务，并且调用finish()释放所有lock()之前调用，从而避免上面的问题

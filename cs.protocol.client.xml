@@ -1,0 +1,12 @@
+<application name="lx" shareHome="../../share" pvids="">
+	<import file="protocol.gsd.xml"/>
+	<state name="Game" >
+		<!--protocol ref="lx.gs.DummyforTerrain"/-->
+		<protocol ref="lx.gs.CPing"/>
+		<protocol ref="lx.gs.SPing"/>
+	</state>
+
+	<service name="client">
+		<manager name="LinkClient" type="client" initstate="Game" port="10000"/>
+	</service>
+</application>
